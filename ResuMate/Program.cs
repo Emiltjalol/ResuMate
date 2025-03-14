@@ -21,6 +21,13 @@ public class Program
         builder.Services.AddScoped<IdentityUserAccessor>();
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+        builder.Services.AddHttpClient();
+
+        builder.Services.AddScoped(sp => new HttpClient
+        {
+            BaseAddress = new Uri("https://localhost:7068/api/")  // Change to the correct port
+        });
+
 
         builder.Services.AddAuthentication(options =>
             {
