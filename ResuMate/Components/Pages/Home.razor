@@ -1,14 +1,42 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
-<h3>Test Button</h3>
+
+
+<input @bind="nameInput" placeholder="Enter your name" class="form-control" />
+<button class="btn btn-primary" @onclick="CallApi">Click me</button>
+
+<h3>API Response:</h3>
+
 <p>@responseMessage</p>
-<button type="button" @onclick="TestButtonMethod">Click Me</button>
+
+@inject HttpClient Http
 
 @code {
-    private string responseMessage = "Waiting for response...";
+    private string nameInput = "";
+    private string responseMessage = "No response yet.";
 
-    private void TestButtonMethod()
+    private async Task CallApi()
     {
-        responseMessage = "Button clicked!";
+        if (string.IsNullOrWhiteSpace(nameInput))
+        {
+            responseMessage = "Please enter a name.";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.GetFromJsonAsync<ResponseDto>($"sayhello?name={Uri.EscapeDataString(nameInput)}");
+            responseMessage = response?.Message ?? "No message received.";
+        }
+        catch (Exception ex)
+        {
+            responseMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private class ResponseDto
+    {
+        public string Message { get; set; }
     }
 }

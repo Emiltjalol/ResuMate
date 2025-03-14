@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
 namespace ResuMate.Api.Controllers;
+
 
 [ApiController]
 [Route("api/")]
@@ -24,6 +24,7 @@ public class CvController : ControllerBase
     {
         return Ok(new { message = $"Hello, {name}! Welcome to our API." });
     }
+  
 }
 
 public class TestRequest

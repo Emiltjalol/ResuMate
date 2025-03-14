@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResuMate", "ResuMate\ResuMate.csproj", "{EBD6EE73-2F15-4179-A794-5812155EB674}"
-	ProjectSection(ProjectDependencies) = postProject
-		{8F29D7AD-0300-46D0-BBE1-18236C00FAE4} = {8F29D7AD-0300-46D0-BBE1-18236C00FAE4}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResuMate.Api", "ResuMate.Api\ResuMate.Api.csproj", "{8F29D7AD-0300-46D0-BBE1-18236C00FAE4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EBD6EE73-2F15-4179-A794-5812155EB674} = {EBD6EE73-2F15-4179-A794-5812155EB674}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
