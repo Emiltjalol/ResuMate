@@ -1,42 +1,98 @@
 ﻿@page "/"
+@using ResuMate.Components.Models
 @rendermode InteractiveServer
 
+<h3>Enter Your CV Details</h3>
 
+<div class="form-group">
+    <label>Name:</label>
+    <input @bind="cv.Name" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Email:</label>
+    <input @bind="cv.Email" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Birth Year:</label>
+    <input type="number" @bind="cv.BirthYear" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Address:</label>
+    <input @bind="cv.Adress" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Postal Code:</label>
+    <input @bind="cv.PostralCode" class="form-control" />
+</div>
+<div class="form-group">
+    <label>City:</label>
+    <input @bind="cv.City" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Phone Number:</label>
+    <input @bind="cv.PhoneNumber" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Weaknesses:</label>
+    <input @bind="cv.Weaknesses" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Strengths:</label>
+    <input @bind="cv.Strenghts" class="form-control" />
+</div>
+<div class="form-group">
+    <label>About Me:</label>
+    <textarea @bind="cv.AboutMe" class="form-control"></textarea>
+</div>
+<div class="form-group">
+    <label>Languages:</label>
+    <input @bind="cv.Languages" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Career Goals:</label>
+    <textarea @bind="cv.CareerGoals" class="form-control"></textarea>
+</div>
+<div class="form-group">
+    <label>References:</label>
+    <textarea @bind="cv.References" class="form-control"></textarea>
+</div>
 
-<input @bind="nameInput" placeholder="Enter your name" class="form-control" />
-<button class="btn btn-primary" @onclick="CallApi">Click me</button>
+<button class="btn btn-primary" @onclick="GenerateSummary">Generate Summary</button>
 
-<h3>API Response:</h3>
-
-<p>@responseMessage</p>
-
-@inject HttpClient Http
+<h3>Summary:</h3>
+<p>@summary</p>
 
 @code {
-    private string nameInput = "";
-    private string responseMessage = "No response yet.";
+    private CvDto cv = new CvDto
+        {
+            Name = "",
+            Email = "",
+            BirthYear = 0,
+            Adress = "",
+            PostralCode = "",
+            City = "",
+            PhoneNumber = "",
+            Weaknesses = "",
+            Strenghts = "",
+            AboutMe = "",
+            Languages = "",
+            CareerGoals = "",
+            References = ""
+        };
 
-    private async Task CallApi()
+    private string summary = "";
+
+    private void GenerateSummary()
     {
-        if (string.IsNullOrWhiteSpace(nameInput))
-        {
-            responseMessage = "Please enter a name.";
-            return;
-        }
-
-        try
-        {
-            var response = await Http.GetFromJsonAsync<ResponseDto>($"sayhello?name={Uri.EscapeDataString(nameInput)}");
-            responseMessage = response?.Message ?? "No message received.";
-        }
-        catch (Exception ex)
-        {
-            responseMessage = $"Error: {ex.Message}";
-        }
+        summary = $"Hi, my name is {cv.Name}. I live at {cv.Adress}, {cv.PostralCode}, {cv.City}. " +
+                  $"You can contact me at {cv.PhoneNumber} or via email at {cv.Email}. " +
+                  $"I was born in {cv.BirthYear}. " +
+                  $"A little about me: {cv.AboutMe}. " +
+                  $"My strengths include {cv.Strenghts}, while my weaknesses are {cv.Weaknesses}. " +
+                  $"I speak {cv.Languages}. " +
+                  $"My career goals are: {cv.CareerGoals}. " +
+                  $"References: {cv.References}.";
     }
 
-    private class ResponseDto
-    {
-        public string Message { get; set; }
-    }
+    
 }
