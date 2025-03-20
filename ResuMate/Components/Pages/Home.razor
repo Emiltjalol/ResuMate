@@ -2,10 +2,10 @@
 @using ResuMate.Components.Models
 @rendermode InteractiveServer
 
-<h3>Enter Your CV Details</h3>
+<h3>CV detaljer</h3>
 
 <div class="form-group">
-    <label>Name:</label>
+    <label>Namn:</label>
     <input @bind="cv.Name" class="form-control" />
 </div>
 <div class="form-group">
@@ -13,7 +13,7 @@
     <input @bind="cv.Email" class="form-control" />
 </div>
 <div class="form-group">
-    <label>Birth Year:</label>
+    <label>Födelseår:</label>
     <input type="number" @bind="cv.BirthYear" class="form-control" />
 </div>
 <div class="form-group">
@@ -21,39 +21,39 @@
     <input @bind="cv.Adress" class="form-control" />
 </div>
 <div class="form-group">
-    <label>Postal Code:</label>
+    <label>Postkod:</label>
     <input @bind="cv.PostralCode" class="form-control" />
 </div>
 <div class="form-group">
-    <label>City:</label>
+    <label>Stad:</label>
     <input @bind="cv.City" class="form-control" />
 </div>
 <div class="form-group">
-    <label>Phone Number:</label>
+    <label>Telefonnummer:</label>
     <input @bind="cv.PhoneNumber" class="form-control" />
 </div>
 <div class="form-group">
-    <label>Weaknesses:</label>
+    <label>Svagheter:</label>
     <input @bind="cv.Weaknesses" class="form-control" />
 </div>
 <div class="form-group">
-    <label>Strengths:</label>
+    <label>Styrkor:</label>
     <input @bind="cv.Strenghts" class="form-control" />
 </div>
 <div class="form-group">
-    <label>About Me:</label>
+    <label>Om mig:</label>
     <textarea @bind="cv.AboutMe" class="form-control"></textarea>
 </div>
 <div class="form-group">
-    <label>Languages:</label>
+    <label>Språk:</label>
     <input @bind="cv.Languages" class="form-control" />
 </div>
 <div class="form-group">
-    <label>Career Goals:</label>
+    <label>Karriärmål:</label>
     <textarea @bind="cv.CareerGoals" class="form-control"></textarea>
 </div>
 <div class="form-group">
-    <label>References:</label>
+    <label>Mina referenser:</label>
     <textarea @bind="cv.References" class="form-control"></textarea>
 </div>
 
@@ -63,36 +63,82 @@
 <p>@summary</p>
 
 @code {
-    private CvDto cv = new CvDto
+    CvDto cv = new CvDto
         {
-            Name = "",
-            Email = "",
-            BirthYear = 0,
-            Adress = "",
-            PostralCode = "",
-            City = "",
-            PhoneNumber = "",
+            Name = "Emil Öhrström",
+            Email = "Emil.ohrstrom@hotmail.com",
+            BirthYear = 1993,
+            Adress = "Bränntorp Björnmossen",
+            PostralCode = "61892",
+            City = "Kolmården",
+            PhoneNumber = "073-123 45 67",
             Weaknesses = "",
             Strenghts = "",
-            AboutMe = "",
-            Languages = "",
-            CareerGoals = "",
-            References = ""
+            AboutMe = "Jag bor med min fru och två barn",
+            Languages = "Svenska och engelska",
+            CareerGoals = "Att bli världens bästa programmerare",
+            References = "Finns vid behov",
+            Educations = new List<EducationDto>()
+            {
+                new EducationDto()
+                {
+                    School = "Campus Nyköping",
+                    Degree = "YH examen",
+                    Specialization = "Systemutvecklare .Net",
+                    StartYear = 2023,
+                    EndYear = 2025
+                }
+            },
+            Experiences = new List<ExperienceDto>()
+            {
+                new ExperienceDto()
+                {
+                    JobTitle = "Idrottsplatsvaktmästare",
+                    Company = "Pema Partner",
+                    JobDescription = "idrottsplatsvaktmästare på himmelstalundshallen, klippt gräs, kört ismaskin, tagit hand om fotbollsplaner",
+                    StartYear = 2020,
+                    EndYear = 2023
+                }
+            }
+
         };
 
     private string summary = "";
 
     private void GenerateSummary()
     {
-        summary = $"Hi, my name is {cv.Name}. I live at {cv.Adress}, {cv.PostralCode}, {cv.City}. " +
-                  $"You can contact me at {cv.PhoneNumber} or via email at {cv.Email}. " +
-                  $"I was born in {cv.BirthYear}. " +
-                  $"A little about me: {cv.AboutMe}. " +
-                  $"My strengths include {cv.Strenghts}, while my weaknesses are {cv.Weaknesses}. " +
-                  $"I speak {cv.Languages}. " +
-                  $"My career goals are: {cv.CareerGoals}. " +
-                  $"References: {cv.References}.";
-    }
+       summary = $"Hej, mitt namn är {cv.Name}. Jag bor på {cv.Adress}, {cv.PostralCode}, {cv.City}. " +
+                 $"Du kan kontakta mig på {cv.PhoneNumber} eller via e-post på {cv.Email}. " +
+                 $"Jag är född år {cv.BirthYear}. " +
+                 $"Lite om mig: {cv.AboutMe}. " +
+                 $"Mina styrkor inkluderar {cv.Strenghts}, medan mina svagheter är {cv.Weaknesses}. " +
+                 $"Jag talar {cv.Languages}. " +
+                 $"Mina karriärmål är: {cv.CareerGoals}. " +
+                 $"Referenser: {cv.References}. ";
+
+
+        if (cv.Educations != null && cv.Educations.Count > 0)
+        {
+            summary += " Jag har följande utbildningar: ";
+            foreach (var edu in cv.Educations)
+            {
+                summary += $"{edu.Degree} vid {edu.School} med inriktning {edu.Specialization} ({edu.StartYear}-{edu.EndYear}). ";
+            }
+        }
+
+
+        if (cv.Experiences != null && cv.Experiences.Count > 0)
+        {
+            summary += " Min arbetslivserfarenhet inkluderar: ";
+            foreach (var exp in cv.Experiences)
+            {
+                summary += $"{exp.JobTitle} på {exp.Company} ({exp.StartYear}-{exp.EndYear}) där jag arbetade med {exp.JobDescription}. ";
+            }
+        }
+
+        Console.WriteLine(summary);
+
+            }
 
     
 }
