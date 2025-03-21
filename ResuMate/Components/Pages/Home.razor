@@ -4,50 +4,54 @@
 
 <h3>CV detaljer</h3>
 
-<div class="form-group">
-    <label>Namn:</label>
+<div class="form-group label">
+    <label>Namn</label>
     <input @bind="cv.Name" class="form-control" />
 </div>
-<div class="form-group">
-    <label>Email:</label>
+<div class="form-group label">
+    <label>Email</label>
     <input @bind="cv.Email" class="form-control" />
 </div>
-<div class="form-group">
-    <label>Födelseår:</label>
+<div class="form-group label">
+    <label>Födelseår</label>
     <input type="number" @bind="cv.BirthYear" class="form-control" />
 </div>
-<div class="form-group">
-    <label>Address:</label>
-    <input @bind="cv.Adress" class="form-control" />
+
+<div class="form-group d-flex gap-2">
+    <div class="form-group label" style="flex: 2;">
+        <label>Address</label>
+        <input @bind="cv.Adress" class="form-control" />
+    </div>
+    <div class="form-group label" style="flex: 1;">
+        <label>Postkod</label>
+        <input @bind="cv.PostralCode" class="form-control" />
+    </div>
+    <div class="form-group label" style="flex: 1;">
+        <label>Stad</label>
+        <input @bind="cv.City" class="form-control" />
+    </div>
 </div>
-<div class="form-group">
-    <label>Postkod:</label>
-    <input @bind="cv.PostralCode" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Stad:</label>
-    <input @bind="cv.City" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Telefonnummer:</label>
+
+<div class="form-group label">
+    <label>Telefonnummer</label>
     <input @bind="cv.PhoneNumber" class="form-control" />
 </div>
 
 
-<div class="form-group">
-    <label>Svagheter:</label>
+<div class="form-group label">
+    <label>Svagheter</label>
     <input @bind="cv.Weaknesses" class="form-control" />
 </div>
-<div class="form-group">
-    <label>Styrkor:</label>
+<div class="form-group label">
+    <label>Styrkor</label>
     <input @bind="cv.Strenghts" class="form-control" />
 </div>
-<div class="form-group">
-    <label>Om mig:</label>
+<div class="form-group label">
+    <label>Om mig</label>
     <textarea @bind="cv.AboutMe" class="form-control"></textarea>
 </div>
-<div class="form-group">
-    <label>Språk:</label>
+<div class="form-group label">
+    <label>Språk</label>
     <input @bind="cv.Languages" class="form-control" />
 </div>
 
@@ -55,28 +59,28 @@
 <h3>Arbetslivserfarenheter</h3>
 @foreach (var job in cv.Experiences)
 {
-    <div class="form-group">
-        <label>Jobbtitel:</label>
+    <div class="form-group label">
+        <label>Jobbtitel</label>
         <input @bind="job.JobTitle" class="form-control" />
     </div>
 
-    <div class="form-group">
-        <label>Företag:</label>
+    <div class="form-group label">
+        <label>Företag</label>
         <input @bind="job.Company" class="form-control" />
     </div>
 
-    <div class="form-group">
-        <label>Beskrivning av arbetsuppgifter:</label>
+    <div class="form-group label">
+        <label>Beskrivning av arbetsuppgifter</label>
         <textarea @bind="job.JobDescription" class="form-control" />
     </div>
 
-    <div class="form-group d-flex gap-3">
+    <div class="form-group d-flex gap-3 label">
         <div>
-            <label>Startår:</label>
+            <label>Startår</label>
             <input type="number" @bind="job.StartYear" class="form-control" />
         </div>
         <div>
-            <label>Slutår:</label>
+            <label>Slutår</label>
             <input type="number" @bind="job.EndYear" class="form-control" />
         </div>
     </div>
@@ -85,51 +89,51 @@
 <h3>Utbildningar</h3>
 @foreach(var edu in cv.Educations)
 {
-    <div class="form-group">
-    <label>Skola:</label>
+    <div class="form-group label">
+    <label>Skola</label>
     <input @bind="edu.School" class="form-control"/>
     </div>
 
-    <div class="form-group">
-        <label>Inriktning:</label>
+    <div class="form-group label">
+        <label>Inriktning</label>
         <input @bind="edu.Degree"class="form-control" />
     </div>
 
-    <div class="form-group">
-        <label>Examen:</label>
+    <div class="form-group label">
+        <label>Examen</label>
         <input @bind="edu.Degree" class="form-control" />
     </div>
 
-    <div class="form-group d-flex gap-3">
+    <div class="form-group d-flex gap-3 label">
         <div>
-            <label>Startår:</label>
+            <label>Startår</label>
             <input type="number" @bind="edu.StartYear" class="form-control" />
         </div>
         <div>
-            <label>Slutår:</label>
+            <label>Slutår</label>
             <input type="number" @bind="edu.EndYear" class="form-control" />
         </div>
     </div>
 
-    <div class="form-group">
-        <label>Examen:</label>
+    <div class="form-group label">
+        <label>Examen</label>
         <input @bind="edu.Degree" class="form-control" />
     </div>
 }
 
 
-<div class="form-group">
-    <label>Karriärmål:</label>
+<div class="form-group label">
+    <label>Karriärmål</label>
     <textarea @bind="cv.CareerGoals" class="form-control"></textarea>
 </div>
-<div class="form-group">
-    <label>Mina referenser:</label>
+<div class="form-group label">
+    <label>Mina referenser</label>
     <textarea @bind="cv.References" class="form-control"></textarea>
 </div>
 
 <button class="btn btn-primary" @onclick="GenerateSummary">Generate Summary</button>
 
-<h3>Summary:</h3>
+<h3>Summary</h3>
 <p>@summary</p>
 
 @code {
@@ -207,8 +211,7 @@
         }
 
         Console.WriteLine(summary);
-
-            }
+    }
 
     
 }
