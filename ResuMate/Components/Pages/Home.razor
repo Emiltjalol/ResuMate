@@ -51,6 +51,37 @@
     <input @bind="cv.Languages" class="form-control" />
 </div>
 
+
+<h3>Arbetslivserfarenheter</h3>
+@foreach (var job in cv.Experiences)
+{
+    <div class="form-group">
+        <label>Jobbtitel:</label>
+        <input @bind="job.JobTitle" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Företag:</label>
+        <input @bind="job.Company" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Beskrivning av arbetsuppgifter:</label>
+        <textarea @bind="job.JobDescription" class="form-control" />
+    </div>
+
+    <div class="form-group d-flex gap-3">
+        <div>
+            <label>Startår:</label>
+            <input type="number" @bind="job.StartYear" class="form-control" />
+        </div>
+        <div>
+            <label>Slutår:</label>
+            <input type="number" @bind="job.EndYear" class="form-control" />
+        </div>
+    </div>
+}
+
 <h3>Utbildningar</h3>
 @foreach(var edu in cv.Educations)
 {
@@ -84,7 +115,6 @@
         <label>Examen:</label>
         <input @bind="edu.Degree" class="form-control" />
     </div>
-
 }
 
 
