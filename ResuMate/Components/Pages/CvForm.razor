@@ -1,0 +1,341 @@
+﻿@page "/"
+@using QuestPDF.Fluent
+@using ResuMate.Services
+@using ResuMate.Components.Models
+@rendermode InteractiveServer
+@inject CreatePdfService CreatePdfService
+
+<h3>Fyll i dina uppgifter</h3>
+
+<h3>CV detaljer</h3>
+
+<div class="form-group label">
+    <label>Namn</label>
+    <input @bind="cv.Name" class="form-control" />
+</div>
+
+<div class="form-group label">
+    <label>Yrkestitel</label>
+    <input @bind="cv.Yrkestitel" class="form-control" />
+</div>
+<div class="form-group label">
+    <label>Email</label>
+    <input @bind="cv.Email" class="form-control" />
+</div>
+
+<div class="form-group d-flex gap-2">
+    <div class="form-group label" style="flex: 2;">
+        <label>Address</label>
+        <input @bind="cv.Adress" class="form-control" />
+    </div>
+    <div class="form-group label" style="flex: 1;">
+        <label>Postkod</label>
+        <input @bind="cv.PostalCode" class="form-control" />
+    </div>
+    <div class="form-group label" style="flex: 1;">
+        <label>Stad</label>
+        <input @bind="cv.City" class="form-control" />
+    </div>
+</div>
+
+<div class="form-group label">
+    <label>Telefonnummer</label>
+    <input @bind="cv.PhoneNumber" class="form-control" />
+</div>
+
+<div class="form-group label">
+    <label>Kort om mig</label>
+    <textarea @bind="cv.AboutMe" class="form-control"></textarea>
+</div>
+<div class="form-group label">
+    <label>Språk</label>
+    <input @bind="cv.Languages" class="form-control" />
+</div>
+
+
+
+<h1>Utbildningar</h1>
+@foreach (var edu in educationDtoList)
+{
+    <div class="education-card">
+        <h4>Utbildning @(@educationDtoList.IndexOf(edu) + 1)</h4> 
+        <div class="form-group d-flex gap-2">
+            <div class="form-group label">
+                <label>Skola</label>
+                <input @bind="edu.School" class="form-control" />
+            </div>
+
+            <div class="form-group label">
+                <label>Inriktning</label>
+                <input @bind="edu.Specialization" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group label">
+            <label>Examen</label>
+            <input @bind="edu.Degree" class="form-control" />
+        </div>
+
+        <div class="form-group d-flex gap-3 label">
+            <div>
+                <label>Startår</label>
+                <input type="number" @bind="edu.StartYear" class="form-control" />
+            </div>
+            <div>
+                <label>Slutår</label>
+                <input type="number" @bind="edu.EndYear" class="form-control" />
+            </div>
+        </div>
+        
+        <button class="btn btn-danger" @onclick="() => RemoveEducation(edu)">Ta bort utbildning</button>
+    </div>
+}
+
+
+@if (educationDtoList.Count < 3)
+{
+    <button class="btn btn-secondary" @onclick="AddEducation">
+        Lägg till utbildning
+    </button>
+}
+
+
+<h1>Arbetslivserfarenhet</h1>
+<p>Ange dina tre senaste arbetslivserfarenheter</p>
+@foreach (var job in experienceDtoList)
+{
+    <div class="job-card">
+        <h4>Jobb @(@experienceDtoList.IndexOf(job) + 1)</h4> 
+        <div class="form-group d-flex gap-2">
+            <div class="form-group label">
+                <label>Jobbtitel</label>
+                <input @bind="job.JobTitle" class="form-control" />
+            </div>
+
+            <div class="form-group label">
+                <label>Företag</label>
+                <input @bind="job.Company" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group label">
+            <label>Beskrivning av arbetsuppgifter</label>
+            <textarea @bind="job.JobDescription" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group d-flex gap-3 label">
+            <div>
+                <label>Startår</label>
+                <input type="number" @bind="job.StartYear" class="form-control" />
+            </div>
+            <div>
+                <label>Slutår</label>
+                <input type="number" @bind="job.EndYear" class="form-control" />
+            </div>
+        </div>
+      
+        <button class="btn btn-danger" @onclick="() => RemoveJobExperience(job)">Ta bort arbetslivserfarenhet</button>
+    </div>
+}
+
+<button class="btn btn-secondary" @onclick="AddExperience">Lägg till arbetslivserfarenhet</button>
+
+
+<div class="form-group label">
+    <label>Mina referenser</label>
+    <textarea @bind="cv.References" class="form-control"></textarea>
+</div>
+
+
+<h1>Färdigheter</h1>
+
+@foreach (var skill in cv.Skills)
+{
+    <div class="skill-card">
+        <span>@skill</span>
+       
+        <button class="btn btn-danger" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+    </div>
+}
+
+
+<div class="form-group label">
+    <label>Lägg till färdighet</label>
+    <input @bind="newSkill" class="form-control" />
+</div>
+
+
+<button class="btn btn-secondary" @onclick="AddSkill">Lägg till färdighet</button>
+
+
+@if (PdfData != null)
+{
+    <iframe src="@PdfData" width="100%" height="600px"></iframe>
+
+    <a href="@PdfData" download="Resume.pdf">Download PDF</a>
+}
+
+<button class="btn btn-primary" @onclick="GeneratePdf">Generera CV</button>
+
+@code {
+    private string? PdfData { get; set; }
+    private List<EducationDto> educationDtoList = new List<EducationDto>();
+    private List<ExperienceDto> experienceDtoList = new List<ExperienceDto>();
+ 
+    private string newSkill = "";
+
+    private CvDto cv = new CvDto
+        {           
+            Name = "Johan Andersson",
+            Yrkestitel = "Fullstackutvecklare",
+            Email = "johan.andersson@mail.com",
+            Adress = "Tallvägen 12",
+            PostalCode = "12345",
+            City = "Stockholm",
+            PhoneNumber = "070-1234567",
+            AboutMe = "Jag är en driven och lösningsorienterad utvecklare med erfarenhet inom både frontend och backend. Jag älskar att skapa moderna, responsiva webbapplikationer och automatisera processer för att förbättra arbetsflöden.",
+            Languages = "Svenska, engelska, tyska",            
+            References = "Finns tillgängliga på begäran.",
+            Skills = new List<string>
+    {
+        "C#, .NET Core, ASP.NET",
+        "JavaScript, TypeScript, React, Angular",
+        "SQL, PostgreSQL, MongoDB",
+        "Azure DevOps, Docker, Kubernetes",
+        "Microservices & REST API-design",
+        "CI/CD, Jenkins, GitHub Actions",
+        "Testdriven utveckling (TDD), enhetstester & integrationstester"
+    }
+        };
+
+        
+
+    
+
+   
+    private void AddSkill()
+    {
+        if (!string.IsNullOrWhiteSpace(newSkill) && !cv.Skills.Contains(newSkill))
+        {
+            cv.Skills.Add(newSkill);
+            newSkill = "";
+        }
+    }
+
+
+    private void RemoveSkill(string skill)
+    {
+        if (cv.Skills != null)
+        {
+            cv.Skills.Remove(skill);
+        }        
+    }
+    
+    private void AddExperience()
+    {
+        if (experienceDtoList.Count < 3)
+        {
+            experienceDtoList.Add(new ExperienceDto
+            {
+                    // JobTitle = "",
+                    // Company = "",
+                    // JobDescription = "",
+                    // StartYear = null,
+                    // EndYear = null
+
+                //För att fylla på med random fakta till för testning
+                    JobTitle = "Fullstackutvecklare",
+                    Company = "Digital Solutions AB",
+                    JobDescription = "Utvecklade och underhöll webbapplikationer i .NET och React, samt implementerade CI/CD-pipelines för automatiserad deployment.",
+                    StartYear = 2019,
+                    EndYear = 2022
+            });         
+
+            experienceDtoList.Add(new ExperienceDto
+                {
+                    JobTitle = "Systemutvecklare .NET",
+                    Company = "Tech Solutions AB",
+                    JobDescription = "Utvecklade och underhöll webbaserade applikationer i .NET och React.",
+                    StartYear = 2021,
+                    EndYear = 2024
+                });
+
+            experienceDtoList.Add(new ExperienceDto
+                {
+                    JobTitle = "Junior Systemutvecklare",
+                    Company = "Innovate IT",
+                    JobDescription = "Arbetade med backend-utveckling och databashantering i SQL Server och Entity Framework.",
+                    StartYear = 2018,
+                    EndYear = 2021
+                });
+
+        }
+    }
+    
+    private void AddEducation()
+    {
+        if (educationDtoList.Count < 3)
+        {
+            educationDtoList.Add(new EducationDto
+            {
+                    // School = "",
+                    // Degree = "",
+                    // Specialization = "",
+                    // StartYear = null,
+                    // EndYear = null
+
+                //För att fylla på med random fakta till för testning
+                    School = "KTH - Kungliga Tekniska Högskolan",
+                    Degree = "Civilingenjör i Datateknik",
+                    Specialization = "Mjukvaruutveckling & AI",
+                    StartYear = 2015,
+                    EndYear = 2020
+            });
+            educationDtoList.Add(new EducationDto
+                {
+                    School = "Linnéuniversitetet",
+                    Degree = "Kandidatexamen i Datavetenskap",
+                    Specialization = "Programvaruteknik",
+                    StartYear = 2020,
+                    EndYear = 2023
+                });
+
+            educationDtoList.Add(new EducationDto
+                {
+                    School = "Chalmers Tekniska Högskola",
+                    Degree = "Masterexamen i Programvaruutveckling",
+                    Specialization = "AI och maskininlärning",
+                    StartYear = 2025,
+                    EndYear = 2027
+                });
+        }
+    }
+
+    private void RemoveEducation(EducationDto education)
+    {
+        educationDtoList.Remove(education);
+    }
+
+    private void RemoveJobExperience(ExperienceDto experiences)
+    {
+        experienceDtoList.Remove(experiences);
+    }
+
+    
+    private async Task GeneratePdf()
+    {
+        var document = Document.Create(container =>
+        {
+            CreatePdfService.Compose(container, cv, educationDtoList, experienceDtoList);
+            CreatePdfService.Compose2(container, cv, educationDtoList, experienceDtoList);
+            CreatePdfService.Compose3(container, cv, educationDtoList, experienceDtoList);            
+        });
+        
+        using (var memoryStream = new MemoryStream())
+        {
+            document.GeneratePdf(memoryStream);
+            var pdfBytes = memoryStream.ToArray();
+            PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+        }
+    }
+}
+
+

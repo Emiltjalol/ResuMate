@@ -62,3 +62,100 @@ h1:focus {
 .label{
     font-weight: 600
 }
+
+.education-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .education-card h4 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .education-card .form-group {
+        margin-bottom: 10px;
+    }
+
+    .education-card .form-control {
+        background-color: #ffffff;
+        border-radius: 4px;
+        padding: 8px;
+    }
+
+    .education-card button {
+        margin-top: 15px;
+    }
+
+    .education-card label {
+        font-weight: normal;
+        color: #555;
+    }
+
+    .education-card input[type="number"] {
+        width: 100%;
+    }
+
+    .education-card input, .education-card textarea {
+        border: 1px solid #ddd;
+    }
+
+    .education-card button.btn-danger {
+        background-color: #ff4c4c;
+        border-color: #ff4c4c;
+        color: white;
+    }
+
+
+.job-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .job-card h4 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .job-card .form-group {
+        margin-bottom: 10px;
+    }
+
+    .job-card .form-control {
+        background-color: #ffffff;
+        border-radius: 4px;
+        padding: 8px;
+    }
+
+    .job-card button {
+        margin-top: 15px;
+    }
+
+    .job-card label {
+        font-weight: normal;
+        color: #555;
+    }
+
+    .job-card input[type="number"] {
+        width: 100%;
+    }
+
+    .job-card input, .job-card textarea {
+        border: 1px solid #ddd;
+    }
+
+    .job-card button.btn-danger {
+        background-color: #ff4c4c;
+        border-color: #ff4c4c;
+        color: white;
+    }
