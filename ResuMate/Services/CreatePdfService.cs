@@ -1,7 +1,7 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using ResuMate.Components.Models;
+using ResuMate.Shared.Models;
 using System.Security.Cryptography.Xml;
 
 namespace ResuMate.Services

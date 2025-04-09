@@ -1,9 +1,9 @@
-﻿namespace ResuMate.Components.Models
-{
-    public enum CvTemplate
-    {
-        Classic,
-        Modern,
-        Professional,       
-    }
-}
+﻿//namespace ResuMate.Components.Models
+//{
+//    public enum CvTemplate
+//    {
+//        Classic,
+//        Modern,
+//        Professional,       
+//    }
+//}

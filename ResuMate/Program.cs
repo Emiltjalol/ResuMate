@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
 using ResuMate.Components;
 using ResuMate.Components.Account;
-using ResuMate.Components.Models;
 using ResuMate.Data;
 using ResuMate.Services;
+using ResuMate.Shared.Models;
 
 namespace ResuMate;
 
