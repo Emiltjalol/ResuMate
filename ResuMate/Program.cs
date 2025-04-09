@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 using ResuMate.Components;
 using ResuMate.Components.Account;
+using ResuMate.Components.Models;
 using ResuMate.Data;
+using ResuMate.Services;
 
 namespace ResuMate;
 
@@ -21,6 +24,7 @@ public class Program
         builder.Services.AddScoped<IdentityUserAccessor>();
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+        
         builder.Services.AddHttpClient();
 
         builder.Services.AddScoped(sp => new HttpClient
@@ -28,13 +32,21 @@ public class Program
             BaseAddress = new Uri("https://localhost:7068/api/")  // Change to the correct port
         });
 
+        QuestPDF.Settings.License = LicenseType.Community;
 
+        builder.Services.AddSingleton<CvDto>();
+        builder.Services.AddSingleton<EducationDto>();
+        builder.Services.AddSingleton<ExperienceDto>();
+        builder.Services.AddSingleton<ReferenceDto>();
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityConstants.ApplicationScheme;
                 options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
             })
             .AddIdentityCookies();
+
+        builder.Services.AddSingleton<CreatePdfService>();
+
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -47,6 +59,8 @@ public class Program
             .AddDefaultTokenProviders();
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+        
+
 
         var app = builder.Build();
 

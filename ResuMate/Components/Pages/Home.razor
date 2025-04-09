@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@* @page "/home"
 @using ResuMate.Components.Models
 @rendermode InteractiveServer
 
@@ -12,10 +12,6 @@
     <label>Email</label>
     <input @bind="cv.Email" class="form-control" />
 </div>
-<div class="form-group label">
-    <label>Födelseår</label>
-    <input type="number" @bind="cv.BirthYear" class="form-control" />
-</div>
 
 <div class="form-group d-flex gap-2">
     <div class="form-group label" style="flex: 2;">
@@ -24,7 +20,7 @@
     </div>
     <div class="form-group label" style="flex: 1;">
         <label>Postkod</label>
-        <input @bind="cv.PostralCode" class="form-control" />
+        <input @bind="cv.PostalCode" class="form-control" />
     </div>
     <div class="form-group label" style="flex: 1;">
         <label>Stad</label>
@@ -133,7 +129,7 @@
 
 <button class="btn btn-primary" @onclick="GenerateSummary">Generate Summary</button>
 
-<h3>Summary</h3>
+<h3>Summary:</h3>
 <p>@summary</p>
 
 @code {
@@ -143,7 +139,7 @@
             Email = "Emil.ohrstrom@hotmail.com",
             BirthYear = 1993,
             Adress = "Bränntorp Björnmossen",
-            PostralCode = "61892",
+            PostalCode = "61892",
             City = "Kolmården",
             PhoneNumber = "073-123 45 67",
             Weaknesses = "",
@@ -181,7 +177,7 @@
 
     private void GenerateSummary()
     {
-       summary = $"Hej, mitt namn är {cv.Name}. Jag bor på {cv.Adress}, {cv.PostralCode}, {cv.City}. " +
+       summary = $"Hej, mitt namn är {cv.Name}. Jag bor på {cv.Adress}, {cv.PostalCode}, {cv.City}. " +
                  $"Du kan kontakta mig på {cv.PhoneNumber} eller via e-post på {cv.Email}. " +
                  $"Jag är född år {cv.BirthYear}. " +
                  $"Lite om mig: {cv.AboutMe}. " +
@@ -215,3 +211,4 @@
 
     
 }
+ *@
