@@ -5,212 +5,260 @@
 @rendermode InteractiveServer
 @inject CreatePdfService CreatePdfService
 
-<h3>Fyll i dina uppgifter</h3>
+<h3 class="section-title">Fyll i dina uppgifter</h3>
 
-<h3>CV detaljer</h3>
+<h3 class="section-title">CV detaljer</h3>
 
 <div class="form-group label">
-    <label>Namn</label>
-    <input @bind="cv.Name" class="form-control" />
+    <label for="name">Namn</label>
+    <input id="name" @bind="cv.Name" class="form-control" placeholder="Ditt namn" />
 </div>
 
 <div class="form-group label">
-    <label>Yrkestitel</label>
-    <input @bind="cv.Yrkestitel" class="form-control" />
+    <label for="yrkestitel">Yrkestitel</label>
+    <input id="yrkestitel" @bind="cv.Yrkestitel" class="form-control" placeholder="Din yrkestitel" />
 </div>
+
 <div class="form-group label">
-    <label>Email</label>
-    <input @bind="cv.Email" class="form-control" />
+    <label for="email">Email</label>
+    <input id="email" @bind="cv.Email" class="form-control" placeholder="Din e-postadress" />
 </div>
 
 <div class="form-group d-flex gap-2">
     <div class="form-group label" style="flex: 2;">
-        <label>Address</label>
-        <input @bind="cv.Adress" class="form-control" />
+        <label for="address">Adress</label>
+        <input id="address" @bind="cv.Adress" class="form-control" placeholder="Din adress" />
     </div>
     <div class="form-group label" style="flex: 1;">
-        <label>Postkod</label>
-        <input @bind="cv.PostalCode" class="form-control" />
+        <label for="postalcode">Postkod</label>
+        <input id="postalcode" @bind="cv.PostalCode" class="form-control" placeholder="Postkod" />
     </div>
     <div class="form-group label" style="flex: 1;">
-        <label>Stad</label>
-        <input @bind="cv.City" class="form-control" />
+        <label for="city">Stad</label>
+        <input id="city" @bind="cv.City" class="form-control" placeholder="Stad" />
     </div>
 </div>
 
 <div class="form-group label">
-    <label>Telefonnummer</label>
-    <input @bind="cv.PhoneNumber" class="form-control" />
+    <label for="phone">Telefonnummer</label>
+    <input id="phone" @bind="cv.PhoneNumber" class="form-control" placeholder="Telefonnummer" />
 </div>
 
 <div class="form-group label">
-    <label>Kort om mig</label>
-    <textarea @bind="cv.AboutMe" class="form-control"></textarea>
+    <label for="aboutMe">Kort om mig</label>
+    <textarea id="aboutMe" @bind="cv.AboutMe" class="form-control" placeholder="Skriv kort om dig själv"></textarea>
 </div>
+
 <div class="form-group label">
-    <label>Språk</label>
-    <input @bind="cv.Languages" class="form-control" />
+    <label for="languages">Språk</label>
+    <input id="languages" @bind="cv.Languages" class="form-control" placeholder="Språk du talar" />
 </div>
 
+<hr class="section-divider">
 
-
-<h1>Utbildningar</h1>
+<h3 class="section-title">Utbildningar</h3>
+<p>Ange dina senaste utbildningar (Max tre)</p>
 @foreach (var edu in educationDtoList)
 {
     <div class="education-card">
-        <h4>Utbildning @(@educationDtoList.IndexOf(edu) + 1)</h4> 
+        <h4>Utbildning @(@educationDtoList.IndexOf(edu) + 1)</h4>
         <div class="form-group d-flex gap-2">
             <div class="form-group label">
-                <label>Skola</label>
-                <input @bind="edu.School" class="form-control" />
+                <label for="school">Skola</label>
+                <input id="school" @bind="edu.School" class="form-control" placeholder="Skolans namn" />
             </div>
 
             <div class="form-group label">
-                <label>Inriktning</label>
-                <input @bind="edu.Specialization" class="form-control" />
+                <label for="specialization">Inriktning</label>
+                <input id="specialization" @bind="edu.Specialization" class="form-control" placeholder="Inriktning" />
             </div>
         </div>
         <div class="form-group label">
-            <label>Examen</label>
-            <input @bind="edu.Degree" class="form-control" />
+            <label for="degree">Examen</label>
+            <input id="degree" @bind="edu.Degree" class="form-control" placeholder="Examen" />
         </div>
 
         <div class="form-group d-flex gap-3 label">
             <div>
-                <label>Startår</label>
-                <input type="number" @bind="edu.StartYear" class="form-control" />
+                <label for="startYear">Startår</label>
+                <input id="startYear" type="number" @bind="edu.StartYear" class="form-control" placeholder="Startår" />
             </div>
             <div>
-                <label>Slutår</label>
-                <input type="number" @bind="edu.EndYear" class="form-control" />
+                <label for="endYear">Slutår</label>
+                <input id="endYear" type="number" @bind="edu.EndYear" class="form-control" placeholder="Slutår" />
             </div>
         </div>
-        
+
         <button class="btn btn-danger" @onclick="() => RemoveEducation(edu)">Ta bort utbildning</button>
     </div>
 }
 
-
 @if (educationDtoList.Count < 3)
 {
-    <button class="btn btn-secondary" @onclick="AddEducation">
-        Lägg till utbildning
-    </button>
+    <button class="btn btn-secondary" @onclick="AddEducation">Lägg till utbildning</button>
 }
 
+<hr class="section-divider">
 
-<h1>Arbetslivserfarenhet</h1>
-<p>Ange dina tre senaste arbetslivserfarenheter</p>
+<h3 class="section-title">Arbetslivserfarenhet</h3>
+<p>Ange dinasenaste arbetslivserfarenheter (Max tre)</p>
+
 @foreach (var job in experienceDtoList)
 {
     <div class="job-card">
-        <h4>Jobb @(@experienceDtoList.IndexOf(job) + 1)</h4> 
+        <h4>Jobb @(@experienceDtoList.IndexOf(job) + 1)</h4>
         <div class="form-group d-flex gap-2">
             <div class="form-group label">
-                <label>Jobbtitel</label>
-                <input @bind="job.JobTitle" class="form-control" />
+                <label for="jobTitle">Jobbtitel</label>
+                <input id="jobTitle" @bind="job.JobTitle" class="form-control" placeholder="Jobbtitel" />
             </div>
 
             <div class="form-group label">
-                <label>Företag</label>
-                <input @bind="job.Company" class="form-control" />
+                <label for="company">Företag</label>
+                <input id="company" @bind="job.Company" class="form-control" placeholder="Företag" />
             </div>
         </div>
         <div class="form-group label">
-            <label>Beskrivning av arbetsuppgifter</label>
-            <textarea @bind="job.JobDescription" class="form-control"></textarea>
+            <label for="jobDescription">Beskrivning av arbetsuppgifter</label>
+            <textarea id="jobDescription" @bind="job.JobDescription" class="form-control" placeholder="Beskriv arbetsuppgifterna"></textarea>
         </div>
 
         <div class="form-group d-flex gap-3 label">
             <div>
-                <label>Startår</label>
-                <input type="number" @bind="job.StartYear" class="form-control" />
+                <label for="jobStartYear">Startår</label>
+                <input id="jobStartYear" type="number" @bind="job.StartYear" class="form-control" placeholder="Startår" />
             </div>
             <div>
-                <label>Slutår</label>
-                <input type="number" @bind="job.EndYear" class="form-control" />
+                <label for="jobEndYear">Slutår</label>
+                <input id="jobEndYear" type="number" @bind="job.EndYear" class="form-control" placeholder="Slutår" />
             </div>
         </div>
-      
+
         <button class="btn btn-danger" @onclick="() => RemoveJobExperience(job)">Ta bort arbetslivserfarenhet</button>
     </div>
 }
 
-<button class="btn btn-secondary" @onclick="AddExperience">Lägg till arbetslivserfarenhet</button>
-
-
-<div class="form-group label">
-    <label>Mina referenser</label>
-    <textarea @bind="cv.References" class="form-control"></textarea>
-</div>
-
-
-<h1>Färdigheter</h1>
-
-@foreach (var skill in cv.Skills)
+@if (experienceDtoList.Count < 3)
 {
-    <div class="skill-card">
-        <span>@skill</span>
-       
-        <button class="btn btn-danger" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+    <button class="btn btn-secondary" @onclick="AddExperience">Lägg till ny erfarenhet</button>
+}
+
+<hr class="section-divider">
+
+<h3 class="section-title">Referenser</h3>
+<p>Ange dina referenser (Max tre)</p>
+
+@foreach (var reference in referenceDtoList)
+{
+    <div class="reference-card">
+        <h4>Referens @(@referenceDtoList.IndexOf(reference) + 1)</h4>
+
+        <div class="form-group d-flex gap-3 label">
+            <div class="flex-fill">
+                <label for="referenceName">Namn</label>
+                <input id="referenceName" @bind="reference.Name" class="form-control" placeholder="Referensens namn" />
+            </div>
+            <div class="flex-fill">
+                <label for="referenceRelation">Relation</label>
+                <input id="referenceRelation" @bind="reference.Relation" class="form-control" placeholder="Relation till referens" />
+            </div>
+            <div class="flex-fill">
+                <label for="referencePhone">Telefonnummer</label>
+                <input id="referencePhone" @bind="reference.PhoneNumber" class="form-control" placeholder="Telefonnummer" />
+            </div>
+        </div>
+
+        <button class="btn btn-danger mt-2" @onclick="() => RemoveReference(reference)">Ta bort referens</button>
     </div>
 }
 
+@if (referenceDtoList.Count < 3)
+{
+    <button class="btn btn-secondary" @onclick="AddReference">Lägg till ny referens</button>
+}
+
+<hr class="section-divider">
+
+<h3 class="section-title">Övrigt</h3>
 
 <div class="form-group label">
-    <label>Lägg till färdighet</label>
-    <input @bind="newSkill" class="form-control" />
+    <label for="newSkill">Här kan du lägga till andra kompetenser eller meriterande egenskaper</label>
+    <input id="newSkill" @bind="newSkill" class="form-control" placeholder="Kompetens eller merit" />
 </div>
 
+<button class="btn btn-secondary" @onclick="AddSkill">Lägg till</button>
 
-<button class="btn btn-secondary" @onclick="AddSkill">Lägg till färdighet</button>
+<div class="skills-container">
+    @foreach (var skill in cv.Skills)
+    {
+        <div class="skill-card">
+            <span class="skill-name">@skill</span>
+            <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+        </div>
+    }
+</div>
+
 
 
 @if (PdfData != null)
 {
-    <iframe src="@PdfData" width="100%" height="600px"></iframe>
-
-    <a href="@PdfData" download="Resume.pdf">Download PDF</a>
+    <div class="pdf-container">
+        <iframe class="pdf-viewer" src="@PdfData" width="100%" height="600px"></iframe>
+        <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>
+    </div>
 }
 
-<button class="btn btn-primary" @onclick="GeneratePdf">Generera CV</button>
+<button class="btn btn-primary btn-generate" @onclick="GeneratePdf">Generera CV</button>
+
 
 @code {
     private string? PdfData { get; set; }
+    private List<ReferenceDto> referenceDtoList = new List<ReferenceDto>();
     private List<EducationDto> educationDtoList = new List<EducationDto>();
     private List<ExperienceDto> experienceDtoList = new List<ExperienceDto>();
- 
+
     private string newSkill = "";
 
     private CvDto cv = new CvDto
         {           
             Name = "Johan Andersson",
             Yrkestitel = "Fullstackutvecklare",
-            Email = "johan.andersson@mail.com",
+            Email = "Johan.andersson@hotmail.com",
             Adress = "Tallvägen 12",
             PostalCode = "12345",
             City = "Stockholm",
             PhoneNumber = "070-1234567",
             AboutMe = "Jag är en driven och lösningsorienterad utvecklare med erfarenhet inom både frontend och backend. Jag älskar att skapa moderna, responsiva webbapplikationer och automatisera processer för att förbättra arbetsflöden.",
-            Languages = "Svenska, engelska, tyska",            
-            References = "Finns tillgängliga på begäran.",
+            Languages = "Svenska, engelska, tyska",         
             Skills = new List<string>
+        {
+            "C#, .NET Core, ASP.NET",
+            "JavaScript, TypeScript, React, Angular",
+            "SQL, PostgreSQL, MongoDB",
+            "Azure DevOps, Docker, Kubernetes",
+            "Microservices & REST API-design",
+            "CI/CD, Jenkins, GitHub Actions",
+            "Testdriven utveckling (TDD), enhetstester & integrationstester"
+        }};  
+
+
+    private void AddReference()
     {
-        "C#, .NET Core, ASP.NET",
-        "JavaScript, TypeScript, React, Angular",
-        "SQL, PostgreSQL, MongoDB",
-        "Azure DevOps, Docker, Kubernetes",
-        "Microservices & REST API-design",
-        "CI/CD, Jenkins, GitHub Actions",
-        "Testdriven utveckling (TDD), enhetstester & integrationstester"
+        if (referenceDtoList.Count < 3)
+        {
+            referenceDtoList.Add(new ReferenceDto
+                {
+                    Name = "",
+                    Relation = "",
+                    PhoneNumber = ""
+                });
+        }
     }
-        };
 
-        
-
-    
-
-   
+    private void RemoveReference(ReferenceDto reference)
+    {        
+            referenceDtoList.Remove(reference);       
+    }
     private void AddSkill()
     {
         if (!string.IsNullOrWhiteSpace(newSkill) && !cv.Skills.Contains(newSkill))
@@ -220,7 +268,6 @@
         }
     }
 
-
     private void RemoveSkill(string skill)
     {
         if (cv.Skills != null)
@@ -228,25 +275,25 @@
             cv.Skills.Remove(skill);
         }        
     }
-    
+
     private void AddExperience()
     {
         if (experienceDtoList.Count < 3)
         {
             experienceDtoList.Add(new ExperienceDto
             {
-                    // JobTitle = "",
-                    // Company = "",
-                    // JobDescription = "",
-                    // StartYear = null,
-                    // EndYear = null
+                // JobTitle = "",
+                // Company = "",
+                // JobDescription = "",
+                // StartYear = null,
+                // EndYear = null
 
                 //För att fylla på med random fakta till för testning
                     JobTitle = "Fullstackutvecklare",
                     Company = "Digital Solutions AB",
                     JobDescription = "Utvecklade och underhöll webbapplikationer i .NET och React, samt implementerade CI/CD-pipelines för automatiserad deployment.",
-                    StartYear = 2019,
-                    EndYear = 2022
+                    StartYear = "2019",
+                    EndYear = "2022"
             });         
 
             experienceDtoList.Add(new ExperienceDto
@@ -254,8 +301,8 @@
                     JobTitle = "Systemutvecklare .NET",
                     Company = "Tech Solutions AB",
                     JobDescription = "Utvecklade och underhöll webbaserade applikationer i .NET och React.",
-                    StartYear = 2021,
-                    EndYear = 2024
+                    StartYear = "2021",
+                    EndYear = "2023"
                 });
 
             experienceDtoList.Add(new ExperienceDto
@@ -263,10 +310,22 @@
                     JobTitle = "Junior Systemutvecklare",
                     Company = "Innovate IT",
                     JobDescription = "Arbetade med backend-utveckling och databashantering i SQL Server och Entity Framework.",
-                    StartYear = 2018,
-                    EndYear = 2021
+                    StartYear = "2018",
+                    EndYear = "2021"
                 });
 
+            referenceDtoList.Add(new ReferenceDto
+            {
+                Name = "Gunilla Persson",
+                Relation = "Tidigare kollega",
+                PhoneNumber = "0798459283"
+            });
+            referenceDtoList.Add(new ReferenceDto
+                {
+                    Name = "Tommy Tran",
+                    Relation = "Framtida kollega och partner på Tommy och Emil AB",
+                    PhoneNumber = "0798459283"
+                });
         }
     }
     
@@ -286,16 +345,16 @@
                     School = "KTH - Kungliga Tekniska Högskolan",
                     Degree = "Civilingenjör i Datateknik",
                     Specialization = "Mjukvaruutveckling & AI",
-                    StartYear = 2015,
-                    EndYear = 2020
+                    StartYear = "2023",
+                    EndYear = "2025"
             });
             educationDtoList.Add(new EducationDto
                 {
                     School = "Linnéuniversitetet",
                     Degree = "Kandidatexamen i Datavetenskap",
                     Specialization = "Programvaruteknik",
-                    StartYear = 2020,
-                    EndYear = 2023
+                    StartYear = "2022",
+                    EndYear = "2023"
                 });
 
             educationDtoList.Add(new EducationDto
@@ -303,8 +362,8 @@
                     School = "Chalmers Tekniska Högskola",
                     Degree = "Masterexamen i Programvaruutveckling",
                     Specialization = "AI och maskininlärning",
-                    StartYear = 2025,
-                    EndYear = 2027
+                    StartYear = "2021",
+                    EndYear = "2022"
                 });
         }
     }
@@ -323,10 +382,17 @@
     private async Task GeneratePdf()
     {
         var document = Document.Create(container =>
-        {
-            CreatePdfService.Compose(container, cv, educationDtoList, experienceDtoList);
-            CreatePdfService.Compose2(container, cv, educationDtoList, experienceDtoList);
-            CreatePdfService.Compose3(container, cv, educationDtoList, experienceDtoList);            
+           {
+            CreatePdfService.Template1(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+              // CreatePdfService.Template2(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+            CreatePdfService.Template3(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+             CreatePdfService.Template4(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+             CreatePdfService.Template5(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+                 CreatePdfService.Template6(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+               CreatePdfService.Template7(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+               //CreatePdfService.Template8(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+               // CreatePdfService.Template9(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+               // CreatePdfService.Template10(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
         });
         
         using (var memoryStream = new MemoryStream())
@@ -336,6 +402,7 @@
             PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
         }
     }
+
 }
 
 

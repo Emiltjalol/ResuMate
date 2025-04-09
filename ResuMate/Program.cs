@@ -37,6 +37,7 @@ public class Program
         builder.Services.AddSingleton<CvDto>();
         builder.Services.AddSingleton<EducationDto>();
         builder.Services.AddSingleton<ExperienceDto>();
+        builder.Services.AddSingleton<ReferenceDto>();
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityConstants.ApplicationScheme;
