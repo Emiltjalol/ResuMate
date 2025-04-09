@@ -1,6 +1,6 @@
 namespace ResuMate.Components.Models
 {
-    public class ExperienceDto
+    public class ExperienceModel
     {
         public string? JobTitle { get; set; }
         public string? Company { get; set; }

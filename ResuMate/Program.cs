@@ -34,10 +34,10 @@ public class Program
 
         QuestPDF.Settings.License = LicenseType.Community;
 
-        builder.Services.AddSingleton<CvDto>();
-        builder.Services.AddSingleton<EducationDto>();
-        builder.Services.AddSingleton<ExperienceDto>();
-        builder.Services.AddSingleton<ReferenceDto>();
+        builder.Services.AddSingleton<CvModel>();
+        builder.Services.AddSingleton<EducationModel>();
+        builder.Services.AddSingleton<ExperienceModel>();
+        builder.Services.AddSingleton<ReferenceModel>();
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityConstants.ApplicationScheme;

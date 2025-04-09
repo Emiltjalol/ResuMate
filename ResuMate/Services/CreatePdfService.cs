@@ -8,20 +8,20 @@ namespace ResuMate.Services
 {
     public class CreatePdfService
     {
-        public CvDto CvDto { get; set; }
-        public EducationDto EducationDto { get; set; }
-        public ExperienceDto ExperienceDto { get; set; }
-        public ReferenceDto ReferenceDto { get; set; }
+        public CvModel CvModel { get; set; }
+        public EducationModel EducationModel { get; set; }
+        public ExperienceModel ExperienceModel { get; set; }
+        public ReferenceModel ReferenceModel { get; set; }
 
-        public CreatePdfService(CvDto cvDto, EducationDto educationDto, ExperienceDto experienceDto, ReferenceDto referenceDto)
+        public CreatePdfService(CvModel cvDto, EducationModel educationDto, ExperienceModel experienceDto, ReferenceModel referenceDto)
         {
-            CvDto = cvDto;
-            EducationDto = educationDto;
-            ExperienceDto = experienceDto;
-            ReferenceDto = referenceDto;
+            CvModel = cvDto;
+            EducationModel = educationDto;
+            ExperienceModel = experienceDto;
+            ReferenceModel = referenceDto;
         }
 
-        public void Template1(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template1(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -37,12 +37,12 @@ namespace ResuMate.Services
                         col.Item().AlignCenter().Height(150).Image(imageBytes).FitWidth().FitHeight();
 
                         col.Item().Text(cvDto.Name).FontSize(22).Bold().FontColor(Colors.White).AlignCenter();
-                        col.Item().PaddingBottom(15).Text(cvDto.Yrkestitel).FontSize(14).Italic().FontColor(Colors.White).AlignCenter();
+                        col.Item().PaddingBottom(15).Text(cvDto.ProfessionalTitle).FontSize(14).Italic().FontColor(Colors.White).AlignCenter();
 
                         col.Item().Text("KONTAKTINFO").FontSize(16).Bold().FontColor(Colors.White).Underline();
                         col.Item().PaddingTop(8).Text($"{cvDto.PhoneNumber}").FontSize(14).FontColor(Colors.White);
                         col.Item().Text($"{cvDto.Email}").FontSize(14).FontColor(Colors.White);
-                        col.Item().Text($"{cvDto.Adress}, ").FontSize(14).FontColor(Colors.White);
+                        col.Item().Text($"{cvDto.Address}, ").FontSize(14).FontColor(Colors.White);
                         col.Item().Text($"{cvDto.PostalCode} {cvDto.City}").FontSize(12).FontColor(Colors.White);
 
                         col.Item().PaddingTop(20).PaddingBottom(8).Text("MIN BAKGRUND").FontSize(16).Bold().FontColor(Colors.White).Underline();
@@ -101,7 +101,7 @@ namespace ResuMate.Services
             });
         
         }
-        public void Template2(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template2(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
 
             container.Page(page =>
@@ -132,7 +132,7 @@ namespace ResuMate.Services
 
                         
                         col.Item().AlignCenter().Text(cvDto.Name).FontSize(26).Bold().FontColor(Colors.Red.Darken1);
-                        col.Item().AlignCenter().Text(cvDto.Yrkestitel).FontSize(16).Italic();
+                        col.Item().AlignCenter().Text(cvDto.ProfessionalTitle).FontSize(16).Italic();
 
                         
                         col.Item().PaddingLeft(5).Text("MIN BAKGRUND").FontSize(16).Bold().FontColor(Colors.Grey.Darken2);
@@ -147,7 +147,7 @@ namespace ResuMate.Services
                             contactCol.Item().PaddingLeft(5).PaddingBottom(5).Text("KONTAKTA MIG PÅ:").FontSize(16).Bold().FontColor(Colors.Grey.Darken2);
                             contactCol.Item().PaddingLeft(5).Text($"📧 {cvDto.Email}").FontSize(12);
                             contactCol.Item().PaddingLeft(5).Text($"📞 {cvDto.PhoneNumber}").FontSize(12);
-                            contactCol.Item().PaddingLeft(5).Text($"📍 {cvDto.Adress}").FontSize(12);
+                            contactCol.Item().PaddingLeft(5).Text($"📍 {cvDto.Address}").FontSize(12);
                             contactCol.Item().PaddingLeft(22).Text($" {cvDto.PostalCode}, {cvDto.City}").FontSize(12);
                         });
 
@@ -189,7 +189,7 @@ namespace ResuMate.Services
                 
             });
         }
-        public void Template3(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template3(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -201,7 +201,7 @@ namespace ResuMate.Services
                     mainCol.Item().Height(80).Background(Colors.Green.Darken2).AlignCenter().AlignMiddle().Text(cvDto.Name)
                         .FontSize(28).Bold().FontColor(Colors.White);
 
-                    mainCol.Item().Height(40).Background(Colors.Green.Lighten1).AlignCenter().AlignMiddle().Text(cvDto.Yrkestitel)
+                    mainCol.Item().Height(40).Background(Colors.Green.Lighten1).AlignCenter().AlignMiddle().Text(cvDto.ProfessionalTitle)
                         .FontSize(18).FontColor(Colors.White);
 
                     mainCol.Item().Row(row =>
@@ -218,7 +218,7 @@ namespace ResuMate.Services
 
                             col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.PhoneNumber}").FontSize(14);
                             col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Email}").FontSize(14);
-                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Adress},").FontSize(14);
+                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Address},").FontSize(14);
                             col.Item().PaddingLeft(20).PaddingRight(10).PaddingBottom(10).Text($"{cvDto.PostalCode}, {cvDto.City}").FontSize(14);
 
                             col.Item().PaddingLeft(20).PaddingBottom(10).Text("KORT OM MIG").FontColor(Colors.Green.Darken2).FontSize(16).Bold().Underline();
@@ -299,7 +299,7 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template4(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template4(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -314,7 +314,7 @@ namespace ResuMate.Services
                         row.RelativeItem().Column(leftCol =>
                         {
                             leftCol.Item().AlignLeft().Text($"{cvDto.Name}").FontSize(12);
-                            leftCol.Item().AlignLeft().Text($"{cvDto.Adress}").FontSize(12);
+                            leftCol.Item().AlignLeft().Text($"{cvDto.Address}").FontSize(12);
                             leftCol.Item().AlignLeft().Text($"{cvDto.PostalCode} {cvDto.City}").FontSize(12);
                         });
 
@@ -459,7 +459,7 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template5(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template5(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -472,7 +472,7 @@ namespace ResuMate.Services
                     mainCol.Item().Height(100).Background(Colors.Blue.Darken2).AlignCenter().AlignMiddle().Column(header =>
                     {
                         header.Item().Text(cvDto.Name).FontSize(28).Bold().FontColor(Colors.White);
-                        header.Item().Text(cvDto.Yrkestitel).FontSize(14).FontColor(Colors.White);
+                        header.Item().Text(cvDto.ProfessionalTitle).FontSize(14).FontColor(Colors.White);
                     });
 
                     mainCol.Item().Row(row =>
@@ -484,7 +484,7 @@ namespace ResuMate.Services
                             leftCol.Item().PaddingTop(10).Text("Kontakt").FontSize(14).Bold();
                             leftCol.Item().Text($"📞 {cvDto.PhoneNumber}").FontSize(10);
                             leftCol.Item().Text($"📧 {cvDto.Email}").FontSize(10);
-                            leftCol.Item().Text($"📍 {cvDto.Adress}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
+                            leftCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
 
                             leftCol.Item().PaddingTop(10).LineHorizontal(1);
 
@@ -535,7 +535,7 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template6(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template6(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -551,7 +551,7 @@ namespace ResuMate.Services
 
                         leftCol.Item().PaddingTop(15).Text(cvDto.Name)
                             .FontSize(18).Bold().FontColor(Colors.White).AlignCenter();
-                        leftCol.Item().Text(cvDto.Yrkestitel)
+                        leftCol.Item().Text(cvDto.ProfessionalTitle)
                             .FontSize(12).FontColor(Colors.White).AlignCenter();
 
                         leftCol.Item().PaddingTop(10).LineHorizontal(1);
@@ -559,7 +559,7 @@ namespace ResuMate.Services
                         leftCol.Item().PaddingTop(10).PaddingBottom(8).Text("Kontakt").FontSize(14).Bold().FontColor(Colors.White).Underline();
                         leftCol.Item().Text($"{cvDto.PhoneNumber}").FontSize(12).FontColor(Colors.White);
                         leftCol.Item().Text($"{cvDto.Email}").FontSize(12).FontColor(Colors.White);
-                        leftCol.Item().Text($"{cvDto.Adress}, {cvDto.PostalCode} {cvDto.City}").FontSize(12).FontColor(Colors.White);
+                        leftCol.Item().Text($"{cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(12).FontColor(Colors.White);
 
                         leftCol.Item().PaddingTop(15).LineHorizontal(1);
 
@@ -619,7 +619,7 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template7(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template7(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
 {
     container.Page(page =>
     {
@@ -634,7 +634,7 @@ namespace ResuMate.Services
                 {
                     header.Item().Text(cvDto.Name)
                         .FontSize(24).Bold().FontColor(Colors.White).AlignCenter();
-                    header.Item().Text(cvDto.Yrkestitel)
+                    header.Item().Text(cvDto.ProfessionalTitle)
                         .FontSize(14).FontColor(Colors.White).AlignCenter();
                 });
 
@@ -646,7 +646,7 @@ namespace ResuMate.Services
                     leftCol.Item().Text("Kontakt").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
                     leftCol.Item().Text($"📞 {cvDto.PhoneNumber}").FontSize(10);
                     leftCol.Item().Text($"📧 {cvDto.Email}").FontSize(10);
-                    leftCol.Item().Text($"📍 {cvDto.Adress}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
+                    leftCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
                 });
 
                 // Höger sektion - Om mig

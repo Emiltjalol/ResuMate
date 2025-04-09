@@ -1,0 +1,135 @@
+﻿@page "/Personal-letter"
+@inject HttpClient Http
+@using QuestPDF.Fluent
+@using ResuMate.Services
+@using ResuMate.Components.Models
+@rendermode InteractiveServer
+
+<h1 class="section-title">Här kan du med hjälp av AI skriva ett personligt brev riktat till ditt arbete</h1>
+<h1 class="section-title">Personligt brev detaljer</h1>
+
+
+<div class="form-group label">
+    <label for="name">Namn</label>
+    <input id="name" @bind="personalLetter.Name" class="form-control" placeholder="Ditt namn" />
+</div>
+
+<div class="form-group label">
+    <label for="yrkestitel">Din yrkestitel</label>
+    <input id="yrkestitel" @bind="personalLetter.ProfessionalTitle" class="form-control" placeholder="Fyll i din yrkestitel" />
+</div>
+
+<div class="form-group label">
+    <label for="firma">Företagsnamn</label>
+    <input id="firma" @bind="personalLetter.CompanyName" class="form-control" placeholder="Företag du söker jobb hos" />
+</div>
+
+<div class="form-group label">
+    <label for="firma">Vad företaget arbetar med</label>
+    <input id="firma" @bind="personalLetter.BusinessOverview" class="form-control" placeholder="Beskriv kort vad företaget arbetar med" />
+</div>
+
+<div class="form-group label">
+    <label for="aboutMe">Kort om mig</label>
+    <textarea id="aboutMe" @bind="personalLetter.AboutMe" class="form-control" placeholder="Skriv kort om dig själv"></textarea>
+</div>
+
+<div class="form-group label">
+    <label for="motivation">Motivation</label>
+    <textarea id="motivation" @bind="personalLetter.Motivation" class="form-control" placeholder="Vad får dig motiverad till att vilja arbeta hos företaget?"></textarea>
+</div>
+
+<div class="form-group label">
+    <label for="hobbies">Hobbies</label>
+    <textarea id="hobbies" @bind="personalLetter.Hobbies" class="form-control" placeholder="Dina hobbies"></textarea>
+</div>
+
+<div class="form-group label">
+    <label for="careerGoals">Kareergoals</label>
+    <textarea id="careerGoals" @bind="personalLetter.CareerGoals" class="form-control" placeholder="Dina kareergoals"></textarea>
+</div>
+
+<div class="form-group label">
+    <label for="styrkor">Styrkor</label>
+    <textarea id="styrkor" @bind="personalLetter.Strenghts" class="form-control" placeholder="Dina styrkor"></textarea>
+</div>
+
+<div class="form-group label">
+    <label for="svagheter">Svagheter</label>
+    <textarea id="svagheter" @bind="personalLetter.Weaknesses" class="form-control" placeholder="Dina svagheter"></textarea>
+</div>
+
+<button class="btn btn-success mt-3" @onclick="GenerateLetter">Generera brev</button>
+<button class="btn btn-success mt-3" @onclick="GenerateLetterFromApi">Generera brev via API anrop</button>
+
+
+@if (!string.IsNullOrWhiteSpace(generatedLetter))
+{
+     <div class="mt-4 p-3 border rounded bg-light">
+        <h3>Ditt personliga brev:</h3>
+        <pre>@generatedLetter</pre>
+    </div>
+}
+
+
+
+@code {
+
+    // private List<ReferenceModel> referenceList = new List<ReferenceModel>();
+    // private List<EducationModel> educationList = new List<EducationModel>();
+    // private List<ExperienceModel> experienceList = new List<ExperienceModel>();
+    private PersonalLetterModel personalLetter = new PersonalLetterModel();
+
+    private string generatedLetter = "";
+
+    private void GenerateLetter()
+    {
+        generatedLetter = $@"
+            Hej {personalLetter.CompanyName},
+
+            Jag heter {personalLetter.Name} och arbetar som {personalLetter.ProfessionalTitle}.
+            Jag är intresserad av att arbeta hos er eftersom {personalLetter.Motivation}.
+
+            Jag har tidigare erfarenhet inom området och är särskilt stark på {personalLetter.Strenghts},
+            men jag är medveten om mina svagheter såsom {personalLetter.Weaknesses}, vilket jag aktivt arbetar med.
+
+            På fritiden tycker jag om att: {personalLetter.Hobbies}
+
+            Mitt mål är att {personalLetter.CareerGoals}.
+
+            Lite om företaget: {personalLetter.BusinessOverview}
+
+            Med vänliga hälsningar,
+            {personalLetter.Name}
+            ";
+    }
+
+    private async Task GenerateLetterFromApi()
+    {
+        var response = await Http.PostAsJsonAsync("https://ditt-api.com/api/personal-letter", personalLetter);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            generatedLetter = result; // visa svaret i Blazor
+        }
+        else
+        {
+            generatedLetter = "Något gick fel med API-anropet.";
+        }
+    }
+
+    
+    // {
+    //         Name = "Emil",
+    //         ProfessionalTitle = "Software Developer",
+    //         CompanyName = "Microsoft",
+    //         AboutMe = "Jag är en glad snubbe",
+    //         Weaknesses = "Mina svagheter",
+    //         Strenghts = "Mina styrkor",
+    //         CareerGoals = "mina mål",
+    //         Hobbies ="Spela fotboll, spela tvspel och umgås med vänner",            
+    //         Motivation = "",
+    //         BusinessOverview = "",
+    //     };
+}
