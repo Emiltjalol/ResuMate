@@ -12,7 +12,7 @@
         public string? AboutMe { get; set; }
         public string? ProfileImage { get; set; }
         public string? Languages { get; set; } 
-        public List <ReferenceModel> References { get; set; }     
+        public List <ReferenceModel>? References { get; set; }     
         public List <string>? Skills { get; set; }
         public List<EducationModel>? Educations { get; set; }
         public List<ExperienceModel>? Experiences { get; set; }

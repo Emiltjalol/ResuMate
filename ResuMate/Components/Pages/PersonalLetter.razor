@@ -36,7 +36,7 @@
 
 <div class="form-group label">
     <label for="motivation">Motivation</label>
-    <textarea id="motivation" @bind="personalLetter.Motivation" class="form-control" placeholder="Vad får dig motiverad till att vilja arbeta hos företaget?"></textarea>
+    <textarea id="motivation" @bind="personalLetter.Motivation"class="form-control" placeholder="@GetMotivationPlaceholder()"></textarea>
 </div>
 
 <div class="form-group label">
@@ -59,6 +59,25 @@
     <textarea id="svagheter" @bind="personalLetter.Weaknesses" class="form-control" placeholder="Dina svagheter"></textarea>
 </div>
 
+<h3>Har du något mer som du tror är viktigt att tillägga?</h3>
+
+<div>
+    <input type="radio" id="yes" name="extraInfo" @onchange="@(() => hasExtraInfo = true)" checked="@hasExtraInfo" />
+    <label for="yes">Ja</label>
+
+    <input type="radio" id="no" name="extraInfo" @onchange="@(() => hasExtraInfo = false)" checked="@(!hasExtraInfo)" />
+    <label for="no">Nej</label>
+</div>
+
+@if (hasExtraInfo)
+{
+    <div class="form-group label">
+        <label for="extraDetails">Vad vill du lägga till?</label>
+        <textarea id="extraDetails" @bind="personalLetter.ExtraInfo" class="form-control" placeholder="Skriv mer här..."></textarea>
+    </div>
+}
+
+
 <button class="btn btn-success mt-3" @onclick="GenerateLetter">Generera brev</button>
 <button class="btn btn-success mt-3" @onclick="GenerateLetterFromApi">Generera brev via API anrop</button>
 
@@ -78,12 +97,17 @@
     // private List<ReferenceModel> referenceList = new List<ReferenceModel>();
     // private List<EducationModel> educationList = new List<EducationModel>();
     // private List<ExperienceModel> experienceList = new List<ExperienceModel>();
-    private PersonalLetterModel personalLetter = new PersonalLetterModel();
+    // private PersonalLetterModel personalLetter = new PersonalLetterModel();
 
+
+    private bool hasExtraInfo = false;
+    
     private string generatedLetter = "";
 
     private void GenerateLetter()
     {
+        var extra = hasExtraInfo ? $"Tilläggsinformation: {personalLetter.ExtraInfo}" : "";
+
         generatedLetter = $@"
             Hej {personalLetter.CompanyName},
 
@@ -99,6 +123,8 @@
 
             Lite om företaget: {personalLetter.BusinessOverview}
 
+            {personalLetter.ExtraInfo}
+
             Med vänliga hälsningar,
             {personalLetter.Name}
             ";
@@ -106,30 +132,42 @@
 
     private async Task GenerateLetterFromApi()
     {
-        var response = await Http.PostAsJsonAsync("https://ditt-api.com/api/personal-letter", personalLetter);
+        var response = await Http.PostAsJsonAsync("https://localhost:7068/api/PersonalLetter", personalLetter);
 
         if (response.IsSuccessStatusCode)
         {
             var result = await response.Content.ReadAsStringAsync();
-            generatedLetter = result; // visa svaret i Blazor
+            generatedLetter = result;
         }
         else
-        {
-            generatedLetter = "Något gick fel med API-anropet.";
+        {            
+            var errorMessage = await response.Content.ReadAsStringAsync();            
+            generatedLetter = $"Något gick fel med API-anropet. Statuskod: {response.StatusCode}. Felmeddelande: {errorMessage}";
         }
     }
 
-    
-    // {
-    //         Name = "Emil",
-    //         ProfessionalTitle = "Software Developer",
-    //         CompanyName = "Microsoft",
-    //         AboutMe = "Jag är en glad snubbe",
-    //         Weaknesses = "Mina svagheter",
-    //         Strenghts = "Mina styrkor",
-    //         CareerGoals = "mina mål",
-    //         Hobbies ="Spela fotboll, spela tvspel och umgås med vänner",            
-    //         Motivation = "",
-    //         BusinessOverview = "",
-    //     };
+
+    private PersonalLetterModel personalLetter = new PersonalLetterModel
+    {
+            Name = "Emil",
+            ProfessionalTitle = "Systemutvecklare inom .NET",
+            CompanyName = "Microsoft",
+            AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
+            Weaknesses = "",
+            Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
+            CareerGoals = "",
+            Hobbies ="Spela tv-spel, dator-spel, kolla film och serier",            
+            Motivation = "Att ständigt utvecklas och lära mig mer saker.",
+            BusinessOverview = "",
+            ExtraInfo = ""
+    };
+
+    private string GetMotivationPlaceholder()
+    {       
+        if (!string.IsNullOrEmpty(personalLetter.CompanyName))
+        {
+            return $"Varför vill du jobba hos {personalLetter.CompanyName}?";
+        }        
+        return "Varför vill du jobba hos detta företag?";
+    }
 }

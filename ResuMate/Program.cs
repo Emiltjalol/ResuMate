@@ -29,7 +29,7 @@ public class Program
 
         builder.Services.AddScoped(sp => new HttpClient
         {
-            BaseAddress = new Uri("https://localhost:7068/api/")  // Change to the correct port
+            BaseAddress = new Uri("https://localhost:7068/api/")
         });
 
         QuestPDF.Settings.License = LicenseType.Community;
