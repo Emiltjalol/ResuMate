@@ -45,7 +45,8 @@ public class Program
             })
             .AddIdentityCookies();
 
-        builder.Services.AddSingleton<CreatePdfService>();
+        builder.Services.AddSingleton<CreateCvPdfService>();
+        builder.Services.AddSingleton<CreatePersonalLetterPdfService>();
 
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

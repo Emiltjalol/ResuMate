@@ -25,16 +25,21 @@ namespace ResuMate.Api.Controllers
         public async Task<IActionResult> Post(PersonalLetterModel model)
         {
 
-
             string prompt = $@"
                 Skriv ett professionellt personligt brev på svenska för {model.Name} som söker jobb som {model.ProfessionalTitle} på {model.CompanyName}.
+                Jag har {model.YearsOfExperience} år erfarenhet inom yrket som {model.ProfessionalTitle}
                 Företaget arbetar med: {model.BusinessOverview}
                 Om {model.Name}: {model.AboutMe}
-                Motivation: {model.Motivation}
+                Hur kan jag bidra till er verksamhet: {model.YourValueToUs}
+                Motivation: {model.WhyThisCompany}
                 Styrkor: {model.Strenghts}
                 Svagheter: {model.Weaknesses}
                 Karriärmål: {model.CareerGoals}
                 Hobbies: {model.Hobbies}
+                Extra information: {model.ExtraInfo}
+                Du behöver inte ta med någon kontaktinformation angående mig eller företaget i fråga för det kommer automatiskt genereras i ett annat steg.
+                Om det är något fält som är tomt så ska den informationen inte vara med i brevet som t.ex hobbys eller extrainfo.
+               
                 ";
             
             var apiKey = _configuration["MY_API_KEY"];
@@ -69,16 +74,14 @@ namespace ResuMate.Api.Controllers
                     return Ok(reply);
                 }
                 else
-                {
-                    // Om det inte gick bra, skriv ut statuskoden och meddelandet
+                {                    
                     var errorResponse = await chatGptResponse.Content.ReadAsStringAsync();
                     generatedLetter = $"API-anropet misslyckades med statuskod {chatGptResponse.StatusCode}. Felmeddelande: {errorResponse}";
                     return BadRequest(generatedLetter);
                 }
             }
             catch (Exception ex)
-            {
-                // Om något annat gick fel (t.ex. nätverksfel)
+            {                
                 generatedLetter = $"Något gick fel med API-anropet. Felmeddelande: {ex.Message}";
                 return StatusCode(500, generatedLetter);
             }

@@ -5,14 +5,14 @@ using ResuMate.Shared.Models;
 
 namespace ResuMate.Services
 {
-    public class CreatePdfService
+    public class CreateCvPdfService
     {
         public CvModel CvModel { get; set; }
         public EducationModel EducationModel { get; set; }
         public ExperienceModel ExperienceModel { get; set; }
         public ReferenceModel ReferenceModel { get; set; }
 
-        public CreatePdfService(CvModel cvDto, EducationModel educationDto, ExperienceModel experienceDto, ReferenceModel referenceDto)
+        public CreateCvPdfService(CvModel cvDto, EducationModel educationDto, ExperienceModel experienceDto, ReferenceModel referenceDto)
         {
             CvModel = cvDto;
             EducationModel = educationDto;
@@ -57,9 +57,10 @@ namespace ResuMate.Services
 
                             foreach (var exp in experienceList)
                             {
-                                expCol.Item().PaddingTop(8).Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
-                                    .FontSize(13).Bold().FontColor(Colors.Black);
+                                expCol.Item().PaddingTop(8).Text($"{exp.JobTitle} - {exp.Company}").FontSize(13).Bold().FontColor(Colors.Black);
+                                expCol.Item().Text($"({exp.StartYear} - {exp.EndYear})").FontSize(13).Bold().FontColor(Colors.Black);
                                 expCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f).FontColor(Colors.Black);
+                            
                             }
                         });
 

@@ -4,7 +4,7 @@
 @using ResuMate.Components.Models
 @using ResuMate.Shared.Models
 @rendermode InteractiveServer
-@inject CreatePdfService CreatePdfService
+@inject CreateCvPdfService CreateCvPdfService
 
 <h3 class="section-title">Fyll i dina uppgifter</h3>
 
@@ -209,7 +209,7 @@
     </div>
 }
 
-<button class="btn btn-primary btn-generate" @onclick="GeneratePdf">Generera CV</button>
+<button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
 
 
 @code {
@@ -380,17 +380,17 @@
     }
 
     
-    private async Task GeneratePdf()
+    private async Task GenerateCvPdf()
     {
         var document = Document.Create(container =>
            {
-            // CreatePdfService.Template1(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template2(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template3(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template4(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template5(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template6(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template7(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList);
             // CreatePdfService.Template8(container, cv, educationList, experienceList, referenceList);
             // CreatePdfService.Template9(container, cv, educationList, experienceList, referenceList);
             // CreatePdfService.Template10(container, cv, educationList, experienceList, referenceList);
