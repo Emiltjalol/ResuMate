@@ -25,23 +25,31 @@ namespace ResuMate.Api.Controllers
         public async Task<IActionResult> Post(PersonalLetterModel model)
         {
 
-            string prompt = $@"
-                Skriv ett professionellt personligt brev på svenska för {model.Name} som söker jobb som {model.ProfessionalTitle} på {model.CompanyName}.
-                Jag har {model.YearsOfExperience} år erfarenhet inom yrket som {model.ProfessionalTitle}
-                Företaget arbetar med: {model.BusinessOverview}
-                Om {model.Name}: {model.AboutMe}
-                Hur kan jag bidra till er verksamhet: {model.YourValueToUs}
-                Motivation: {model.WhyThisCompany}
-                Styrkor: {model.Strenghts}
-                Svagheter: {model.Weaknesses}
-                Karriärmål: {model.CareerGoals}
-                Hobbies: {model.Hobbies}
-                Extra information: {model.ExtraInfo}
-                Du behöver inte ta med någon kontaktinformation angående mig eller företaget i fråga för det kommer automatiskt genereras i ett annat steg.
-                Om det är något fält som är tomt så ska den informationen inte vara med i brevet som t.ex hobbys eller extrainfo.
-               
-                ";
+            var sb = new StringBuilder();
+            sb.AppendLine($"Skriv ett professionellt personligt brev på svenska för {model.Name} som söker jobb som {model.ProfessionalTitle} på {model.CompanyName}.");
+            sb.AppendLine($"Jag har {model.YearsOfExperience} erfarenhet inom yrket som {model.ProfessionalTitle}.");
+            sb.AppendLine($"Företaget arbetar med: {model.BusinessOverview}");
+            sb.AppendLine($"Om {model.Name}: {model.AboutMe}");
+            sb.AppendLine($"Hur kan jag bidra till er verksamhet: {model.YourValueToUs}");
+            sb.AppendLine($"Motivation: {model.WhyThisCompany}");
+            sb.AppendLine($"Styrkor: {model.Strenghts}");
+            sb.AppendLine($"Svagheter: {model.Weaknesses}");
+            sb.AppendLine($"Karriärmål: {model.CareerGoals}");
+
+            if (!string.IsNullOrWhiteSpace(model.Hobbies))
+                sb.AppendLine($"Hobbies: {model.Hobbies}");
+
+            if (!string.IsNullOrWhiteSpace(model.ExtraInfo))
+                sb.AppendLine($"Extra information: {model.ExtraInfo}");
             
+            sb.AppendLine("Använd all information ovan där det är relevant. Om 'Hobbies' eller 'Extra information' är angivet är det mycket viktigt att det vävs in naturligt i brevet.");
+
+            
+            sb.AppendLine("Du behöver inte ta med någon kontaktinformation angående mig eller företaget i fråga, för det kommer automatiskt genereras i ett annat steg.");
+
+            string prompt = sb.ToString();
+
+
             var apiKey = _configuration["MY_API_KEY"];
 
             

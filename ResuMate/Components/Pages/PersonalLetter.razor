@@ -8,7 +8,7 @@
 @rendermode InteractiveServer
 @if(isFormVisible)
 {
-    
+
     <h1 class="section-title">Personligt brev</h1>
 
 
@@ -39,9 +39,16 @@
             <input id="yrkestitel" @bind="personalLetter.ProfessionalTitle" class="form-control" placeholder="Fyll i din yrkestitel" />
         </div>
         <div class="form-group label" style="flex: 1;">
-            <label for="yrkestitel">Tidigare erfarenhet</label>
-            <input id="yrkestitel" @bind="personalLetter.YearsOfExperience" class="form-control" placeholder="Om du har tidigare erfarenhet inom yrket, hur många år?" />
+            <label for="yrkestitel">Tidigare erfarenhet i yrket</label>
+            <select id="yrkestitel" @bind="personalLetter.YearsOfExperience" class="form-control">
+                <option value="">Välj antal år</option>
+                @foreach (var year in experienceOptions)
+                {
+                    <option value="@year">@year</option>
+                }
+            </select>
         </div>
+
     </div>
 
     <div class="form-group label">
@@ -121,7 +128,7 @@
             <textarea id="extraDetails" @bind="personalLetter.ExtraInfo" class="form-control" placeholder="Skriv mer här..."></textarea>
         </div>
     }
-    
+
 
 
     <button class="btn btn-success mt-3" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
@@ -186,8 +193,25 @@
     private bool hasAnyHobby = false;
     private bool isLoadingLetter = false;
     private bool isFormVisible = true;
+    private List<string> experienceOptions = new();
 
     string generatedLetter = "";
+
+
+    protected override void OnInitialized()
+    {
+        
+        for (int i = 0; i <= 10; i++)
+        {
+            if (i == 0)
+                experienceOptions.Add("Ingen tidigare erfarenhet");
+            else if (i == 10)
+                experienceOptions.Add("10+ år");
+            else
+                experienceOptions.Add($"{i} år");
+        }
+
+    }
 
     private async Task GenerateLetterFromApi()
     {
