@@ -2,8 +2,9 @@
 @using QuestPDF.Fluent
 @using ResuMate.Services
 @using ResuMate.Components.Models
+@using ResuMate.Shared.Models
 @rendermode InteractiveServer
-@inject CreatePdfService CreatePdfService
+@inject CreateCvPdfService CreateCvPdfService
 
 <h3 class="section-title">Fyll i dina uppgifter</h3>
 
@@ -15,8 +16,8 @@
 </div>
 
 <div class="form-group label">
-    <label for="yrkestitel">Yrkestitel</label>
-    <input id="yrkestitel" @bind="cv.Yrkestitel" class="form-control" placeholder="Din yrkestitel" />
+    <label for="yrkestitel">ProfessionalTitle</label>
+    <input id="yrkestitel" @bind="cv.ProfessionalTitle" class="form-control" placeholder="Din yrkestitel" />
 </div>
 
 <div class="form-group label">
@@ -26,8 +27,8 @@
 
 <div class="form-group d-flex gap-2">
     <div class="form-group label" style="flex: 2;">
-        <label for="address">Adress</label>
-        <input id="address" @bind="cv.Adress" class="form-control" placeholder="Din adress" />
+        <label for="address">Address</label>
+        <input id="address" @bind="cv.Address" class="form-control" placeholder="Din adress" />
     </div>
     <div class="form-group label" style="flex: 1;">
         <label for="postalcode">Postkod</label>
@@ -58,10 +59,10 @@
 
 <h3 class="section-title">Utbildningar</h3>
 <p>Ange dina senaste utbildningar (Max tre)</p>
-@foreach (var edu in educationDtoList)
+@foreach (var edu in educationList)
 {
     <div class="education-card">
-        <h4>Utbildning @(@educationDtoList.IndexOf(edu) + 1)</h4>
+        <h4>Utbildning @(@educationList.IndexOf(edu) + 1)</h4>
         <div class="form-group d-flex gap-2">
             <div class="form-group label">
                 <label for="school">Skola</label>
@@ -93,7 +94,7 @@
     </div>
 }
 
-@if (educationDtoList.Count < 3)
+@if (educationList.Count < 3)
 {
     <button class="btn btn-secondary" @onclick="AddEducation">Lägg till utbildning</button>
 }
@@ -103,10 +104,10 @@
 <h3 class="section-title">Arbetslivserfarenhet</h3>
 <p>Ange dinasenaste arbetslivserfarenheter (Max tre)</p>
 
-@foreach (var job in experienceDtoList)
+@foreach (var job in experienceList)
 {
     <div class="job-card">
-        <h4>Jobb @(@experienceDtoList.IndexOf(job) + 1)</h4>
+        <h4>Jobb @(@experienceList.IndexOf(job) + 1)</h4>
         <div class="form-group d-flex gap-2">
             <div class="form-group label">
                 <label for="jobTitle">Jobbtitel</label>
@@ -138,7 +139,7 @@
     </div>
 }
 
-@if (experienceDtoList.Count < 3)
+@if (experienceList.Count < 3)
 {
     <button class="btn btn-secondary" @onclick="AddExperience">Lägg till ny erfarenhet</button>
 }
@@ -148,10 +149,10 @@
 <h3 class="section-title">Referenser</h3>
 <p>Ange dina referenser (Max tre)</p>
 
-@foreach (var reference in referenceDtoList)
+@foreach (var reference in referenceList)
 {
     <div class="reference-card">
-        <h4>Referens @(@referenceDtoList.IndexOf(reference) + 1)</h4>
+        <h4>Referens @(@referenceList.IndexOf(reference) + 1)</h4>
 
         <div class="form-group d-flex gap-3 label">
             <div class="flex-fill">
@@ -172,7 +173,7 @@
     </div>
 }
 
-@if (referenceDtoList.Count < 3)
+@if (referenceList.Count < 3)
 {
     <button class="btn btn-secondary" @onclick="AddReference">Lägg till ny referens</button>
 }
@@ -208,23 +209,23 @@
     </div>
 }
 
-<button class="btn btn-primary btn-generate" @onclick="GeneratePdf">Generera CV</button>
+<button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
 
 
 @code {
     private string? PdfData { get; set; }
-    private List<ReferenceDto> referenceDtoList = new List<ReferenceDto>();
-    private List<EducationDto> educationDtoList = new List<EducationDto>();
-    private List<ExperienceDto> experienceDtoList = new List<ExperienceDto>();
+    private List<ReferenceModel> referenceList = new List<ReferenceModel>();
+    private List<EducationModel> educationList = new List<EducationModel>();
+    private List<ExperienceModel> experienceList = new List<ExperienceModel>();
 
     private string newSkill = "";
 
-    private CvDto cv = new CvDto
+    private CvModel cv = new CvModel
         {           
             Name = "Johan Andersson",
-            Yrkestitel = "Fullstackutvecklare",
+            ProfessionalTitle = "Fullstackutvecklare",
             Email = "Johan.andersson@hotmail.com",
-            Adress = "Tallvägen 12",
+            Address = "Tallvägen 12",
             PostalCode = "12345",
             City = "Stockholm",
             PhoneNumber = "070-1234567",
@@ -244,9 +245,9 @@
 
     private void AddReference()
     {
-        if (referenceDtoList.Count < 3)
+        if (referenceList.Count < 3)
         {
-            referenceDtoList.Add(new ReferenceDto
+            referenceList.Add(new ReferenceModel
                 {
                     Name = "",
                     Relation = "",
@@ -255,9 +256,9 @@
         }
     }
 
-    private void RemoveReference(ReferenceDto reference)
+    private void RemoveReference(ReferenceModel reference)
     {        
-            referenceDtoList.Remove(reference);       
+            referenceList.Remove(reference);       
     }
     private void AddSkill()
     {
@@ -278,9 +279,9 @@
 
     private void AddExperience()
     {
-        if (experienceDtoList.Count < 3)
+        if (experienceList.Count < 3)
         {
-            experienceDtoList.Add(new ExperienceDto
+            experienceList.Add(new ExperienceModel
             {
                 // JobTitle = "",
                 // Company = "",
@@ -296,7 +297,7 @@
                     EndYear = "2022"
             });         
 
-            experienceDtoList.Add(new ExperienceDto
+            experienceList.Add(new ExperienceModel
                 {
                     JobTitle = "Systemutvecklare .NET",
                     Company = "Tech Solutions AB",
@@ -305,7 +306,7 @@
                     EndYear = "2023"
                 });
 
-            experienceDtoList.Add(new ExperienceDto
+            experienceList.Add(new ExperienceModel
                 {
                     JobTitle = "Junior Systemutvecklare",
                     Company = "Innovate IT",
@@ -314,13 +315,13 @@
                     EndYear = "2021"
                 });
 
-            referenceDtoList.Add(new ReferenceDto
+            referenceList.Add(new ReferenceModel
             {
                 Name = "Gunilla Persson",
                 Relation = "Tidigare kollega",
                 PhoneNumber = "0798459283"
             });
-            referenceDtoList.Add(new ReferenceDto
+            referenceList.Add(new ReferenceModel
                 {
                     Name = "Tommy Tran",
                     Relation = "Framtida kollega och partner på Tommy och Emil AB",
@@ -331,9 +332,9 @@
     
     private void AddEducation()
     {
-        if (educationDtoList.Count < 3)
+        if (educationList.Count < 3)
         {
-            educationDtoList.Add(new EducationDto
+            educationList.Add(new EducationModel
             {
                     // School = "",
                     // Degree = "",
@@ -348,7 +349,7 @@
                     StartYear = "2023",
                     EndYear = "2025"
             });
-            educationDtoList.Add(new EducationDto
+            educationList.Add(new EducationModel
                 {
                     School = "Linnéuniversitetet",
                     Degree = "Kandidatexamen i Datavetenskap",
@@ -357,7 +358,7 @@
                     EndYear = "2023"
                 });
 
-            educationDtoList.Add(new EducationDto
+            educationList.Add(new EducationModel
                 {
                     School = "Chalmers Tekniska Högskola",
                     Degree = "Masterexamen i Programvaruutveckling",
@@ -368,31 +369,31 @@
         }
     }
 
-    private void RemoveEducation(EducationDto education)
+    private void RemoveEducation(EducationModel education)
     {
-        educationDtoList.Remove(education);
+        educationList.Remove(education);
     }
 
-    private void RemoveJobExperience(ExperienceDto experiences)
+    private void RemoveJobExperience(ExperienceModel experiences)
     {
-        experienceDtoList.Remove(experiences);
+        experienceList.Remove(experiences);
     }
 
     
-    private async Task GeneratePdf()
+    private async Task GenerateCvPdf()
     {
         var document = Document.Create(container =>
            {
-            CreatePdfService.Template1(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-              // CreatePdfService.Template2(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-            CreatePdfService.Template3(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-             CreatePdfService.Template4(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-             CreatePdfService.Template5(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-                 CreatePdfService.Template6(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-               CreatePdfService.Template7(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-               //CreatePdfService.Template8(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-               // CreatePdfService.Template9(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
-               // CreatePdfService.Template10(container, cv, educationDtoList, experienceDtoList, referenceDtoList);
+            CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList);
+            CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList);
+            // CreatePdfService.Template8(container, cv, educationList, experienceList, referenceList);
+            // CreatePdfService.Template9(container, cv, educationList, experienceList, referenceList);
+            // CreatePdfService.Template10(container, cv, educationList, experienceList, referenceList);
         });
         
         using (var memoryStream = new MemoryStream())

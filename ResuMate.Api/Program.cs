@@ -14,6 +14,11 @@ namespace ResuMate.Api
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Configuration.AddEnvironmentVariables();
+
+            builder.Services.AddHttpClient();
+
+            var apiKey = builder.Configuration["MY_API_KEY"];           
 
             // Lägg till Swagger
             builder.Services.AddEndpointsApiExplorer();

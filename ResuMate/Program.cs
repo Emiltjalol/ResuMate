@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
 using ResuMate.Components;
 using ResuMate.Components.Account;
-using ResuMate.Components.Models;
 using ResuMate.Data;
 using ResuMate.Services;
+using ResuMate.Shared.Models;
 
 namespace ResuMate;
 
@@ -29,15 +29,15 @@ public class Program
 
         builder.Services.AddScoped(sp => new HttpClient
         {
-            BaseAddress = new Uri("https://localhost:7068/api/")  // Change to the correct port
+            BaseAddress = new Uri("https://localhost:7068/api/")
         });
 
         QuestPDF.Settings.License = LicenseType.Community;
 
-        builder.Services.AddSingleton<CvDto>();
-        builder.Services.AddSingleton<EducationDto>();
-        builder.Services.AddSingleton<ExperienceDto>();
-        builder.Services.AddSingleton<ReferenceDto>();
+        builder.Services.AddSingleton<CvModel>();
+        builder.Services.AddSingleton<EducationModel>();
+        builder.Services.AddSingleton<ExperienceModel>();
+        builder.Services.AddSingleton<ReferenceModel>();
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -45,7 +45,8 @@ public class Program
             })
             .AddIdentityCookies();
 
-        builder.Services.AddSingleton<CreatePdfService>();
+        builder.Services.AddSingleton<CreateCvPdfService>();
+        builder.Services.AddSingleton<CreatePersonalLetterPdfService>();
 
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

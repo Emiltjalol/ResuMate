@@ -1,4 +1,4 @@
-﻿namespace ResuMate.Components.Models
+﻿namespace ResuMate.Shared.Models
 {
     public enum CvTemplate
     {

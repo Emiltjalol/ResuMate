@@ -1,0 +1,283 @@
+﻿@page "/Personal-letter"
+@inject HttpClient Http
+@inject CreatePersonalLetterPdfService CreatePersonalLetterPdfService
+@using QuestPDF.Fluent
+@using QuestPDF.Infrastructure
+@using ResuMate.Components.Models
+@using ResuMate.Services
+@rendermode InteractiveServer
+@if(isFormVisible)
+{
+    
+    <h1 class="section-title">Personligt brev</h1>
+
+
+    @* <div class="form-group d-flex gap-2">
+    <div class="form-group label" style="flex: 2;">
+        <label for="address">Address</label>
+        <input id="address" @bind="cv.Address" class="form-control" placeholder="Din adress" />
+    </div>
+    <div class="form-group label" style="flex: 1;">
+        <label for="postalcode">Postkod</label>
+        <input id="postalcode" @bind="cv.PostalCode" class="form-control" placeholder="Postkod" />
+    </div>
+    <div class="form-group label" style="flex: 1;">
+        <label for="city">Stad</label>
+        <input id="city" @bind="cv.City" class="form-control" placeholder="Stad" />
+    </div>
+    </div>
+     *@
+    <h1>Om dig själv</h1>
+    <div class="form-group d-flex gap-2">
+        <div class="form-group label" style="flex: 1;">
+            <label for="name">Namn</label>
+            <input id="name" @bind="personalLetter.Name" class="form-control" placeholder="För och efternamn" />
+        </div>
+
+        <div class="form-group label" style="flex: 1;">
+            <label for="yrkestitel">Din yrkestitel</label>
+            <input id="yrkestitel" @bind="personalLetter.ProfessionalTitle" class="form-control" placeholder="Fyll i din yrkestitel" />
+        </div>
+        <div class="form-group label" style="flex: 1;">
+            <label for="yrkestitel">Tidigare erfarenhet</label>
+            <input id="yrkestitel" @bind="personalLetter.YearsOfExperience" class="form-control" placeholder="Om du har tidigare erfarenhet inom yrket, hur många år?" />
+        </div>
+    </div>
+
+    <div class="form-group label">
+        <label for="aboutMe">Kort om mig</label>
+        <textarea id="aboutMe" @bind="personalLetter.AboutMe" class="form-control" placeholder="Skriv en liten beskrivning om vem du är."></textarea>
+    </div>
+
+
+    <h3>Har du någon speciell hobby du vill berätta om?</h3>
+
+    <div>
+        <input type="radio" id="yes" name="hobbys" @onchange="@(() => hasAnyHobby = true)" checked="@hasAnyHobby" />
+        <label for="yes">Ja</label>
+
+        <input type="radio" id="no" name="hobbys" @onchange="@(() => hasAnyHobby = false)" checked="@(!hasAnyHobby)" />
+        <label for="no">Nej</label>
+    </div>
+
+    @if (hasAnyHobby)
+    {
+        <div class="form-group label">
+            <label for="personalLetter.hobbies">Beskriv din hobby</label>
+            <textarea id="addHobbys" @bind="personalLetter.Hobbies" class="form-control" placeholder="Beskriv kort om din hobby"></textarea>
+        </div>}
+
+    <div class="form-group label">
+        <label for="careerGoals">Karriärmål</label>
+        <textarea id="careerGoals" @bind="personalLetter.CareerGoals" class="form-control" placeholder="Vad är dina karriärsmål?"></textarea>
+    </div>
+
+    <div class="form-group label">
+        <label for="styrkor">Styrkor</label>
+        <textarea id="styrkor" @bind="personalLetter.Strenghts" class="form-control" placeholder="Dina styrkor"></textarea>
+    </div>
+
+    <div class="form-group label">
+        <label for="svagheter">Svagheter</label>
+        <textarea id="svagheter" @bind="personalLetter.Weaknesses" class="form-control" placeholder="Dina svagheter"></textarea>
+    </div>
+
+    <h1>Om företaget du söker jobb hos</h1>
+    <div class="form-group label">
+        <label for="firma">Företagsnamn</label>
+        <input id="firma" @bind="personalLetter.CompanyName" class="form-control" placeholder="Ange vilket företag brevet riktar sig till." />
+    </div>
+
+    <div class="form-group label">
+        <label for="firma">Vad företaget arbetar med</label>
+        <input id="firma" @bind="personalLetter.BusinessOverview" class="form-control" placeholder="Beskriv kort vad företaget arbetar med." />
+    </div>
+
+    <div class="form-group label">
+        <label for="motivation">Motivation</label>
+        <textarea id="motivation" @bind="personalLetter.WhyThisCompany" class="form-control" placeholder="@GetMotivationPlaceholder()"></textarea>
+    </div>
+
+    <div class="form-group label">
+        <label for="aboutMe">Vad kan du bidra med i detta arbete?</label>
+        <textarea id="aboutMe" @bind="personalLetter.AboutMe" class="form-control" placeholder="@GetContributionPlaceholder()"></textarea>
+    </div>
+
+
+    <h3>Har du något mer information som du vill lägga till?</h3>
+
+    <div>
+        <input type="radio" id="yes" name="extraInfo" @onchange="@(() => hasExtraInfo = true)" checked="@hasExtraInfo" />
+        <label for="yes">Ja</label>
+
+        <input type="radio" id="no" name="extraInfo" @onchange="@(() => hasExtraInfo = false)" checked="@(!hasExtraInfo)" />
+        <label for="no">Nej</label>
+    </div>
+
+    @if (hasExtraInfo)
+    {
+        <div class="form-group label">
+            <label for="extraDetails">Vad vill du lägga till?</label>
+            <textarea id="extraDetails" @bind="personalLetter.ExtraInfo" class="form-control" placeholder="Skriv mer här..."></textarea>
+        </div>
+    }
+    
+
+
+    <button class="btn btn-success mt-3" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
+    <button class="btn btn-primary mt-2" @onclick="GeneratePersonalLetterPdf">Uppdatera PDF efter ändringar</button>
+}
+
+
+
+<div class="content-container">
+    <div class="letter-container">
+        @if (!string.IsNullOrWhiteSpace(generatedLetter))
+        {
+            <div class="mt-4 p-3 border rounded bg-light">
+                <h3>Ditt personliga brev:</h3>
+                <p>Här kan du lägga till eller ändra brevet om du vill.</p>
+                <p>När du är klar kan du klicka på knappen för att generera en ny PDF av brevet.</p>
+                <button class="btn btn-primary mt-2" @onclick="GeneratePersonalLetterPdf">Uppdatera PDF efter ändringar</button>
+
+                <textarea class="form-control" rows="30" @bind="generatedLetter"></textarea>
+            </div>
+        }
+    </div>
+
+    <div class="pdf-container">
+
+        @if (PdfData != null)
+        {
+            <h1>Din PDF</h1>
+            <div class="pdf-viewer-container">
+                <iframe class="pdf-viewer" src="@PdfData" width="100%" height="900px"></iframe>
+                <a class="btn-download" href="@PdfData" download="PersonalLetter.pdf">Download PDF</a>
+            </div>
+            <button class="btn btn-success mt-3" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
+            <button class="btn btn-secondary mt-3" @onclick="ShowFormAgain">Redigera igen</button>
+        }
+    </div>     
+
+</div>
+
+@if (isLoadingLetter)
+{
+    <div class="overlay-spinner">
+        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;"></div>
+        <p class="text-light mt-2">Genererar personligt brev...</p>
+    </div>
+}
+
+
+
+
+
+
+@code {
+
+    // private List<ReferenceModel> referenceList = new List<ReferenceModel>();
+    // private List<EducationModel> educationList = new List<EducationModel>();
+    // private List<ExperienceModel> experienceList = new List<ExperienceModel>();
+    //private PersonalLetterModel personalLetter = new PersonalLetterModel();
+
+    private string? PdfData { get; set; }
+    private bool hasExtraInfo = false;
+    private bool hasAnyHobby = false;
+    private bool isLoadingLetter = false;
+    private bool isFormVisible = true;
+
+    string generatedLetter = "";
+
+    private async Task GenerateLetterFromApi()
+    {
+        isLoadingLetter = true;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:7068/api/PersonalLetter", personalLetter);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                generatedLetter = result;
+                isFormVisible = false;
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                generatedLetter = $"Något gick fel med API-anropet. Statuskod: {response.StatusCode}. Felmeddelande: {errorMessage}";
+            }
+        }
+        finally
+        {
+            isLoadingLetter = false;
+        }
+    }
+
+
+
+    private PersonalLetterModel personalLetter = new PersonalLetterModel
+    {
+            Name = "Emil",
+            ProfessionalTitle = "Systemutvecklare inom .NET",
+            CompanyName = "Microsoft",
+            AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
+            Weaknesses = "",
+            Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
+            CareerGoals = "",
+            Hobbies ="Spela tv-spel, dator-spel, kolla film och serier",           
+
+            BusinessOverview = "",
+            ExtraInfo = ""
+    };
+
+    private string GetMotivationPlaceholder()
+    {       
+        if (!string.IsNullOrEmpty(personalLetter.CompanyName))
+        {
+            return $"Varför vill du jobba hos {personalLetter.CompanyName}?";
+        }        
+        return "Varför vill du jobba hos detta företag?";
+    }
+
+    private string GetContributionPlaceholder()
+    {
+        if (!string.IsNullOrEmpty(personalLetter.CompanyName))
+        {
+            return $"Vad kan du bidra till hos {personalLetter.CompanyName}?";
+        }
+        return $"Vad kan du bidra till hos detta företag?";
+    }
+
+    private async Task GeneratePersonalLetterPdf()
+    {
+        var document = Document.Create(container =>
+        {
+            CreatePersonalLetterPdfService.Compose(container, generatedLetter, personalLetter);
+        });
+
+        using (var memoryStream = new MemoryStream())
+        {
+            document.GeneratePdf(memoryStream);
+            var pdfBytes = memoryStream.ToArray();
+            PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+        }
+    }
+
+    private async Task GenerateLetterAndPdf()
+    {
+        isLoadingLetter = true;     
+        
+        await GenerateLetterFromApi();
+        
+        await GeneratePersonalLetterPdf();
+
+        isLoadingLetter = false;
+
+    }
+    private void ShowFormAgain()
+    {
+        isFormVisible = true;
+    }
+}

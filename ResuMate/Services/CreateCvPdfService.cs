@@ -1,27 +1,26 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using ResuMate.Components.Models;
-using System.Security.Cryptography.Xml;
+using ResuMate.Shared.Models;
 
 namespace ResuMate.Services
 {
-    public class CreatePdfService
+    public class CreateCvPdfService
     {
-        public CvDto CvDto { get; set; }
-        public EducationDto EducationDto { get; set; }
-        public ExperienceDto ExperienceDto { get; set; }
-        public ReferenceDto ReferenceDto { get; set; }
+        public CvModel CvModel { get; set; }
+        public EducationModel EducationModel { get; set; }
+        public ExperienceModel ExperienceModel { get; set; }
+        public ReferenceModel ReferenceModel { get; set; }
 
-        public CreatePdfService(CvDto cvDto, EducationDto educationDto, ExperienceDto experienceDto, ReferenceDto referenceDto)
+        public CreateCvPdfService(CvModel cvDto, EducationModel educationDto, ExperienceModel experienceDto, ReferenceModel referenceDto)
         {
-            CvDto = cvDto;
-            EducationDto = educationDto;
-            ExperienceDto = experienceDto;
-            ReferenceDto = referenceDto;
+            CvModel = cvDto;
+            EducationModel = educationDto;
+            ExperienceModel = experienceDto;
+            ReferenceModel = referenceDto;
         }
 
-        public void Template1(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template1(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -37,17 +36,17 @@ namespace ResuMate.Services
                         col.Item().AlignCenter().Height(150).Image(imageBytes).FitWidth().FitHeight();
 
                         col.Item().Text(cvDto.Name).FontSize(22).Bold().FontColor(Colors.White).AlignCenter();
-                        col.Item().PaddingBottom(15).Text(cvDto.Yrkestitel).FontSize(14).Italic().FontColor(Colors.White).AlignCenter();
+                        col.Item().PaddingBottom(15).Text(cvDto.ProfessionalTitle).FontSize(14).Italic().FontColor(Colors.White).AlignCenter();
 
                         col.Item().Text("KONTAKTINFO").FontSize(16).Bold().FontColor(Colors.White).Underline();
                         col.Item().PaddingTop(8).Text($"{cvDto.PhoneNumber}").FontSize(14).FontColor(Colors.White);
                         col.Item().Text($"{cvDto.Email}").FontSize(14).FontColor(Colors.White);
-                        col.Item().Text($"{cvDto.Adress}, ").FontSize(14).FontColor(Colors.White);
+                        col.Item().Text($"{cvDto.Address}, ").FontSize(14).FontColor(Colors.White);
                         col.Item().Text($"{cvDto.PostalCode} {cvDto.City}").FontSize(12).FontColor(Colors.White);
 
                         col.Item().PaddingTop(20).PaddingBottom(8).Text("MIN BAKGRUND").FontSize(16).Bold().FontColor(Colors.White).Underline();
                         col.Item().Text(cvDto.AboutMe).FontSize(14).FontColor(Colors.White).LineHeight(1.4f);
-                      
+
                     });
 
                     row.RelativeItem(0.6f).ExtendVertical().Background(Colors.White).Padding(20).Column(col =>
@@ -58,9 +57,10 @@ namespace ResuMate.Services
 
                             foreach (var exp in experienceList)
                             {
-                                expCol.Item().PaddingTop(8).Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
-                                    .FontSize(13).Bold().FontColor(Colors.Black);
+                                expCol.Item().PaddingTop(8).Text($"{exp.JobTitle} - {exp.Company}").FontSize(13).Bold().FontColor(Colors.Black);
+                                expCol.Item().Text($"({exp.StartYear} - {exp.EndYear})").FontSize(13).Bold().FontColor(Colors.Black);
                                 expCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f).FontColor(Colors.Black);
+                            
                             }
                         });
 
@@ -78,7 +78,7 @@ namespace ResuMate.Services
 
                         col.Item().Column(skillCol =>
                         {
-                            skillCol.Item().PaddingTop(30).PaddingBottom(10).Text("ÖVRIGA KOMPETENSER").FontSize(16).Bold().FontColor(Colors.Black).Underline() ;
+                            skillCol.Item().PaddingTop(30).PaddingBottom(10).Text("ÖVRIGA KOMPETENSER").FontSize(16).Bold().FontColor(Colors.Black).Underline();
 
                             foreach (var skill in cvDto.Skills)
                             {
@@ -92,31 +92,31 @@ namespace ResuMate.Services
 
                             foreach (var reference in referenceList)
                             {
-                               referencesCol.Item().Text($"• {reference.Name} - {reference.Relation} - {reference.PhoneNumber}").FontSize(12).FontColor(Colors.Black);
+                                referencesCol.Item().Text($"• {reference.Name} - {reference.Relation} - {reference.PhoneNumber}").FontSize(12).FontColor(Colors.Black);
                             }
 
                         });
                     });
                 });
             });
-        
+
         }
-        public void Template2(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template2(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
 
             container.Page(page =>
             {
-               
+
                 page.Size(PageSizes.A4);
-                
+
                 page.Margin(20);
 
                 page.Content().Row(row =>
                 {
-                    
+
                     row.RelativeItem(0.4f).Padding(5).Background(Colors.Grey.Lighten3).Column(col =>
                     {
-                        
+
                         col.Item().AlignCenter().Column(imageCol =>
                         {
                             var imagePath = "wwwroot/Images/img1.jpg";
@@ -127,27 +127,27 @@ namespace ResuMate.Services
                                 .FitHeight();
 
 
-                            imageCol.Item().Height(10); 
+                            imageCol.Item().Height(10);
                         });
 
-                        
-                        col.Item().AlignCenter().Text(cvDto.Name).FontSize(26).Bold().FontColor(Colors.Red.Darken1);
-                        col.Item().AlignCenter().Text(cvDto.Yrkestitel).FontSize(16).Italic();
 
-                        
+                        col.Item().AlignCenter().Text(cvDto.Name).FontSize(26).Bold().FontColor(Colors.Red.Darken1);
+                        col.Item().AlignCenter().Text(cvDto.ProfessionalTitle).FontSize(16).Italic();
+
+
                         col.Item().PaddingLeft(5).Text("MIN BAKGRUND").FontSize(16).Bold().FontColor(Colors.Grey.Darken2);
                         col.Item().PaddingLeft(5).Text(cvDto.AboutMe).FontSize(12).LineHeight(1.5f);
 
                         col.Item().PaddingVertical(10).LineHorizontal(1);
-                        
-                        col.Spacing(10); 
+
+                        col.Spacing(10);
 
                         col.Item().AlignBottom().Column(contactCol =>
                         {
                             contactCol.Item().PaddingLeft(5).PaddingBottom(5).Text("KONTAKTA MIG PÅ:").FontSize(16).Bold().FontColor(Colors.Grey.Darken2);
                             contactCol.Item().PaddingLeft(5).Text($"📧 {cvDto.Email}").FontSize(12);
                             contactCol.Item().PaddingLeft(5).Text($"📞 {cvDto.PhoneNumber}").FontSize(12);
-                            contactCol.Item().PaddingLeft(5).Text($"📍 {cvDto.Adress}").FontSize(12);
+                            contactCol.Item().PaddingLeft(5).Text($"📍 {cvDto.Address}").FontSize(12);
                             contactCol.Item().PaddingLeft(22).Text($" {cvDto.PostalCode}, {cvDto.City}").FontSize(12);
                         });
 
@@ -156,28 +156,28 @@ namespace ResuMate.Services
                         col.Item().PaddingLeft(5).Text("KOMPETENSER").FontSize(15).Bold().FontColor(Colors.Grey.Darken2);
 
                         var skillText = string.Join("\n", cvDto.Skills.Select(skill => $"• {skill}"));
-                        col.Item().PaddingLeft(5).Text(skillText).FontSize(10);                        
+                        col.Item().PaddingLeft(5).Text(skillText).FontSize(10);
 
                     });
 
-                    
+
                     row.RelativeItem(0.6f).Column(col =>
                     {
-                        
+
                         col.Item().Text("ARBETSLIVSERFARENHET").FontSize(20).Bold().FontColor(Colors.Red.Darken1);
                         col.Item().PaddingVertical(5).LineHorizontal(1);
-                        
+
                         foreach (var exp in experienceList)
                         {
                             col.Item().PaddingTop(10).Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
                                 .FontSize(13).Bold();
                             col.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f);
-                        }                      
-                       
+                        }
+
                         col.Item().PaddingTop(20).Text("UTBILDNING").FontSize(20).Bold().FontColor(Colors.Red.Darken1);
                         col.Item().PaddingVertical(5).LineHorizontal(1);
 
-                        
+
                         foreach (var edu in educationList)
                         {
                             col.Item().PaddingTop(10).Text($"{edu.Specialization} - {edu.School} ({edu.StartYear} - {edu.EndYear}) ").FontSize(13).Bold();
@@ -186,10 +186,10 @@ namespace ResuMate.Services
                     });
                 });
 
-                
+
             });
         }
-        public void Template3(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template3(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -197,15 +197,15 @@ namespace ResuMate.Services
                 page.Margin(0);
 
                 page.Content().Column(mainCol =>
-                {              
+                {
                     mainCol.Item().Height(80).Background(Colors.Green.Darken2).AlignCenter().AlignMiddle().Text(cvDto.Name)
                         .FontSize(28).Bold().FontColor(Colors.White);
 
-                    mainCol.Item().Height(40).Background(Colors.Green.Lighten1).AlignCenter().AlignMiddle().Text(cvDto.Yrkestitel)
+                    mainCol.Item().Height(40).Background(Colors.Green.Lighten1).AlignCenter().AlignMiddle().Text(cvDto.ProfessionalTitle)
                         .FontSize(18).FontColor(Colors.White);
 
                     mainCol.Item().Row(row =>
-                    {                        
+                    {
                         row.RelativeItem(0.4f).ExtendVertical().Background(Colors.Grey.Lighten3).Column(col =>
                         {
 
@@ -218,7 +218,7 @@ namespace ResuMate.Services
 
                             col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.PhoneNumber}").FontSize(14);
                             col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Email}").FontSize(14);
-                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Adress},").FontSize(14);
+                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Address},").FontSize(14);
                             col.Item().PaddingLeft(20).PaddingRight(10).PaddingBottom(10).Text($"{cvDto.PostalCode}, {cvDto.City}").FontSize(14);
 
                             col.Item().PaddingLeft(20).PaddingBottom(10).Text("KORT OM MIG").FontColor(Colors.Green.Darken2).FontSize(16).Bold().Underline();
@@ -242,10 +242,10 @@ namespace ResuMate.Services
 
 
                         });
-                        
+
                         row.RelativeItem(0.65f).Padding(20).Column(col =>
-                        {                            
-                            col.Item().Text("ERFARENHET").FontSize(18).Bold().FontColor(Colors.Green.Darken2).Underline();                           
+                        {
+                            col.Item().Text("ERFARENHET").FontSize(18).Bold().FontColor(Colors.Green.Darken2).Underline();
 
                             foreach (var exp in experienceList)
                             {
@@ -253,9 +253,9 @@ namespace ResuMate.Services
                                     .FontSize(13).Bold();
                                 col.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f);
                             }
-                           
-                            col.Item().PaddingTop(10).Text("UTBILDNING").FontSize(18).Bold().FontColor(Colors.Green.Darken2).Underline();       
-                            
+
+                            col.Item().PaddingTop(10).Text("UTBILDNING").FontSize(18).Bold().FontColor(Colors.Green.Darken2).Underline();
+
                             foreach (var edu in educationList)
                             {
                                 col.Item().PaddingTop(10).Text($"{edu.Specialization} - {edu.School} ({edu.StartYear} - {edu.EndYear})")
@@ -268,12 +268,12 @@ namespace ResuMate.Services
                             if (cvDto.Skills != null && cvDto.Skills.Any())
                             {
                                 if (cvDto.Skills.Count <= 6)
-                                {                                    
+                                {
                                     var skillText = string.Join("\n", cvDto.Skills.Select(skill => $"• {skill}"));
                                     col.Item().PaddingLeft(5).Text(skillText).FontSize(12);
                                 }
                                 else
-                                {                                   
+                                {
                                     var mid = (int)Math.Ceiling(cvDto.Skills.Count / 2.0);
                                     var leftSkills = cvDto.Skills.Take(mid);
                                     var rightSkills = cvDto.Skills.Skip(mid);
@@ -299,7 +299,7 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template4(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template4(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -314,7 +314,7 @@ namespace ResuMate.Services
                         row.RelativeItem().Column(leftCol =>
                         {
                             leftCol.Item().AlignLeft().Text($"{cvDto.Name}").FontSize(12);
-                            leftCol.Item().AlignLeft().Text($"{cvDto.Adress}").FontSize(12);
+                            leftCol.Item().AlignLeft().Text($"{cvDto.Address}").FontSize(12);
                             leftCol.Item().AlignLeft().Text($"{cvDto.PostalCode} {cvDto.City}").FontSize(12);
                         });
 
@@ -396,17 +396,17 @@ namespace ResuMate.Services
                             });
 
                             row.RelativeItem(2).Column(midCol =>
-                            {                                
-                                var skills = cvDto.Skills; 
-                                
+                            {
+                                var skills = cvDto.Skills;
+
                                 if (skills.Count > 6)
                                 {
                                     int mid = skills.Count / 2;
-                                   
+
                                     midCol.Item().Row(row =>
                                     {
                                         row.RelativeItem().Column(left =>
-                                        {                                            
+                                        {
                                             for (int i = 0; i < mid; i++)
                                             {
                                                 left.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.4f);
@@ -414,7 +414,7 @@ namespace ResuMate.Services
                                         });
 
                                         row.RelativeItem().Column(right =>
-                                        {                                            
+                                        {
                                             for (int i = mid; i < skills.Count; i++)
                                             {
                                                 right.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.4f);
@@ -423,7 +423,7 @@ namespace ResuMate.Services
                                     });
                                 }
                                 else
-                                {                                   
+                                {
                                     var skillText = string.Join("\n", skills.Select(skill => $"• {skill}"));
                                     midCol.Item().Text(skillText).FontSize(12).LineHeight(1.4f);
                                 }
@@ -459,7 +459,7 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template5(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template5(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -467,24 +467,23 @@ namespace ResuMate.Services
                 page.Margin(0);
 
                 page.Content().Column(mainCol =>
-                {
-                    // Header med namn och titel
+                {                  
                     mainCol.Item().Height(100).Background(Colors.Blue.Darken2).AlignCenter().AlignMiddle().Column(header =>
                     {
                         header.Item().Text(cvDto.Name).FontSize(28).Bold().FontColor(Colors.White);
-                        header.Item().Text(cvDto.Yrkestitel).FontSize(14).FontColor(Colors.White);
+                        header.Item().Text(cvDto.ProfessionalTitle).FontSize(14).FontColor(Colors.White);
                     });
 
                     mainCol.Item().Row(row =>
                     {
-                        // Vänsterkolumn - Personlig information & kompetenser
+                        
                         row.RelativeItem(0.35f).Padding(20).Background(Colors.Grey.Lighten3).Column(leftCol =>
                         {
                             leftCol.Item().AlignCenter().Image("wwwroot/Images/img1.jpg").FitWidth();
                             leftCol.Item().PaddingTop(10).Text("Kontakt").FontSize(14).Bold();
                             leftCol.Item().Text($"📞 {cvDto.PhoneNumber}").FontSize(10);
                             leftCol.Item().Text($"📧 {cvDto.Email}").FontSize(10);
-                            leftCol.Item().Text($"📍 {cvDto.Adress}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
+                            leftCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
 
                             leftCol.Item().PaddingTop(10).LineHorizontal(1);
 
@@ -498,10 +497,10 @@ namespace ResuMate.Services
                             leftCol.Item().Text(skills).FontSize(10);
                         });
 
-                        // Högerkolumn - Erfarenhet & utbildning
+                        
                         row.RelativeItem(0.65f).Padding(20).Column(rightCol =>
                         {
-                            // Arbetslivserfarenhet
+                            
                             rightCol.Item().Text("Erfarenhet").FontSize(18).Bold().FontColor(Colors.Blue.Darken2);
                             rightCol.Item().PaddingVertical(10).LineHorizontal(1);
                             foreach (var exp in experienceList)
@@ -511,7 +510,7 @@ namespace ResuMate.Services
                                 rightCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f);
                             }
 
-                            // Utbildning
+                            
                             rightCol.Item().PaddingTop(20).Text("Utbildning").FontSize(18).Bold().FontColor(Colors.Blue.Darken2);
                             rightCol.Item().PaddingVertical(10).LineHorizontal(1);
                             foreach (var edu in educationList)
@@ -521,12 +520,12 @@ namespace ResuMate.Services
                                 rightCol.Item().Text(edu.Degree).FontSize(12);
                             }
 
-                            // Språkkunskaper
+                            
                             rightCol.Item().PaddingTop(20).Text("Språkkunskaper").FontSize(18).Bold().FontColor(Colors.Blue.Darken2);
                             rightCol.Item().PaddingVertical(10).LineHorizontal(1);
                             rightCol.Item().PaddingTop(10).Text(cvDto.Languages).FontSize(12);
 
-                            // Referenser
+                            
                             rightCol.Item().PaddingTop(20).Text("Referenser").FontSize(18).Bold().FontColor(Colors.Blue.Darken2);
                             rightCol.Item().PaddingVertical(10).LineHorizontal(1);
                             rightCol.Item().PaddingTop(10).Text("Lämnas gärna vid ett personligt möte.").FontSize(12);
@@ -535,7 +534,7 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template6(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
+        public void Template6(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
@@ -543,15 +542,14 @@ namespace ResuMate.Services
                 page.Margin(0);
 
                 page.Content().Row(row =>
-                {
-                    // SIDOPANEL - Kontakt, Kompetenser, Om mig
+                {                    
                     row.ConstantItem(180).Background(Colors.Black).Padding(20).Column(leftCol =>
                     {
                         leftCol.Item().AlignCenter().Image("wwwroot/Images/img1.jpg").FitWidth();
 
                         leftCol.Item().PaddingTop(15).Text(cvDto.Name)
                             .FontSize(18).Bold().FontColor(Colors.White).AlignCenter();
-                        leftCol.Item().Text(cvDto.Yrkestitel)
+                        leftCol.Item().Text(cvDto.ProfessionalTitle)
                             .FontSize(12).FontColor(Colors.White).AlignCenter();
 
                         leftCol.Item().PaddingTop(10).LineHorizontal(1);
@@ -559,7 +557,7 @@ namespace ResuMate.Services
                         leftCol.Item().PaddingTop(10).PaddingBottom(8).Text("Kontakt").FontSize(14).Bold().FontColor(Colors.White).Underline();
                         leftCol.Item().Text($"{cvDto.PhoneNumber}").FontSize(12).FontColor(Colors.White);
                         leftCol.Item().Text($"{cvDto.Email}").FontSize(12).FontColor(Colors.White);
-                        leftCol.Item().Text($"{cvDto.Adress}, {cvDto.PostalCode} {cvDto.City}").FontSize(12).FontColor(Colors.White);
+                        leftCol.Item().Text($"{cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(12).FontColor(Colors.White);
 
                         leftCol.Item().PaddingTop(15).LineHorizontal(1);
 
@@ -568,7 +566,7 @@ namespace ResuMate.Services
                         leftCol.Item().Text(skills).FontSize(12).FontColor(Colors.White);
                     });
 
-                    // HUVUDSEKTION - Erfarenhet, Utbildning, Övriga meriter
+                   
                     row.RelativeItem().Padding(30).Column(rightCol =>
                     {
                         rightCol.Item().Text("Profil").FontSize(18).Bold().FontColor(Colors.Black).Underline();
@@ -609,7 +607,7 @@ namespace ResuMate.Services
                                 rightCol.Item().Text($"{reference.Relation} - {reference.PhoneNumber}").FontSize(12);
                             }
                         }
-                        // Om inga referenser finns
+                        
                         else
                         {
                             rightCol.Item().PaddingTop(10).Text("Lämnas gärna vid ett personligt möte.").FontSize(12);
@@ -619,119 +617,143 @@ namespace ResuMate.Services
                 });
             });
         }
-        public void Template7(IDocumentContainer container, CvDto cvDto, List<EducationDto> educationList, List<ExperienceDto> experienceList, List<ReferenceDto> referenceList)
-{
-    container.Page(page =>
-    {
-        page.Size(PageSizes.A4);
-        page.Margin(20);
-        
-        page.Content().Column(column =>
+        public void Template7(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
-            // HEADER - Namn och titel
-            column.Item().Height(80).Background(Colors.Blue.Medium)
-                .AlignCenter().AlignMiddle().Column(header =>
-                {
-                    header.Item().Text(cvDto.Name)
-                        .FontSize(24).Bold().FontColor(Colors.White).AlignCenter();
-                    header.Item().Text(cvDto.Yrkestitel)
-                        .FontSize(14).FontColor(Colors.White).AlignCenter();
-                });
-
-            column.Item().PaddingTop(10).Row(row =>
+            container.Page(page =>
             {
-                // Vänster sektion - Kontaktuppgifter
-                row.RelativeItem(0.4f).PaddingRight(10).Column(leftCol =>
+                page.Size(PageSizes.A4);
+                page.Margin(20);
+
+                page.Content().Column(column =>
                 {
-                    leftCol.Item().Text("Kontakt").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
-                    leftCol.Item().Text($"📞 {cvDto.PhoneNumber}").FontSize(10);
-                    leftCol.Item().Text($"📧 {cvDto.Email}").FontSize(10);
-                    leftCol.Item().Text($"📍 {cvDto.Adress}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
-                });
-
-                // Höger sektion - Om mig
-                row.RelativeItem(0.6f).Column(rightCol =>
-                {
-                    rightCol.Item().Text("Om Mig").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
-                    rightCol.Item().Text(cvDto.AboutMe).FontSize(10).LineHeight(1.3f);
-                });
-            });
-
-            column.Item().PaddingTop(10).LineHorizontal(1);
-
-            // Kompetenser i fullbredd med två kolumner
-            column.Item().PaddingTop(10).Text("Kompetenser").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
-            column.Item().PaddingTop(5).Row(skillRow =>
-            {
-                int columns = 2;
-                int skillsPerColumn = (int)Math.Ceiling(cvDto.Skills.Count / (double)columns);
-
-                for (int i = 0; i < columns; i++)
-                {
-                    skillRow.RelativeItem(1f / columns).Column(col =>
-                    {
-                        foreach (var skill in cvDto.Skills.Skip(i * skillsPerColumn).Take(skillsPerColumn))
+                    
+                    column.Item().Height(100).Background(Colors.Blue.Medium)
+                        .AlignCenter().AlignMiddle().Column(header =>
                         {
-                            col.Item().Text($"• {skill}").FontSize(10);
+                            header.Item().Text(cvDto.Name)
+                                .FontSize(28).Bold().FontColor(Colors.White).AlignCenter();
+                            header.Item().Text(cvDto.ProfessionalTitle)
+                                .FontSize(18).FontColor(Colors.White).AlignCenter();
+                        });
+
+                    column.Item().PaddingTop(10).Row(row =>
+                    {
+                        
+                        row.RelativeItem(0.4f).PaddingRight(10).Column(leftCol =>
+                        {
+                            leftCol.Item().PaddingBottom(5).Text("Kontakt").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
+                            leftCol.Item().Text($"📞 {cvDto.PhoneNumber}").FontSize(10);
+                            leftCol.Item().Text($"📧 {cvDto.Email}").FontSize(10);
+                            leftCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
+                        });
+
+                        // Höger sektion - Om mig
+                        row.RelativeItem(0.6f).Column(rightCol =>
+                        {
+                            rightCol.Item().PaddingBottom(5).Text("Kort om mig").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
+                            rightCol.Item().Text(cvDto.AboutMe).FontSize(10).LineHeight(1.3f);
+                        });
+                    });
+
+
+
+                    column.Item().PaddingTop(10).LineHorizontal(1);
+
+                    
+                    column.Item().PaddingTop(10).Text("Tidigare erfarenheter").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
+                    column.Item().Column(expCol =>
+                    {
+                        foreach (var exp in experienceList)
+                        {
+                            expCol.Item().PaddingTop(5).Row(row =>
+                            {
+                                row.ConstantItem(8).Background(Colors.Blue.Medium).Height(8).Width(8).AlignMiddle();
+                                row.RelativeItem().PaddingLeft(8).Column(col =>
+                                {
+                                    col.Item().Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
+                                        .FontSize(12).Bold();
+                                    col.Item().Text(exp.JobDescription).FontSize(10).LineHeight(1.3f);
+                                });
+                            });
                         }
                     });
-                }
-            });
 
-            column.Item().PaddingTop(10).LineHorizontal(1);
+                    column.Item().PaddingTop(10).LineHorizontal(1);
 
-            // Erfarenhet i tidslinjeformat
-            column.Item().PaddingTop(10).Text("Erfarenhet").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
-            column.Item().Column(expCol =>
-            {
-                foreach (var exp in experienceList)
-                {
-                    expCol.Item().PaddingTop(5).Row(row =>
+                    column.Item().PaddingTop(10).Text("Utbildningar").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
+                    column.Item().Column(eduCol =>
                     {
-                        row.ConstantItem(8).Background(Colors.Blue.Medium).Height(8).Width(8).AlignMiddle();
-                        row.RelativeItem().PaddingLeft(8).Column(col =>
+                        foreach (var edu in educationList)
                         {
-                            col.Item().Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
-                                .FontSize(12).Bold();
-                            col.Item().Text(exp.JobDescription).FontSize(10).LineHeight(1.3f);
-                        });
+                            eduCol.Item().PaddingTop(5).Row(row =>
+                            {
+                                row.ConstantItem(8).Background(Colors.Blue.Medium).Height(8).Width(8).AlignMiddle();
+                                row.RelativeItem().PaddingLeft(8).Column(col =>
+                                {
+                                    col.Item().Text($"{edu.Specialization} - {edu.School} ({edu.StartYear} - {edu.EndYear})")
+                                        .FontSize(12).Bold();
+                                    col.Item().Text(edu.Degree).FontSize(10);
+                                });
+                            });
+                        }
                     });
-                }
-            });
 
-            column.Item().PaddingTop(10).LineHorizontal(1);
+                    column.Item().PaddingTop(10).LineHorizontal(1);
 
-            column.Item().PaddingTop(10).Text("Utbildning").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
-            column.Item().Column(eduCol =>
-            {
-                foreach (var edu in educationList)
-                {
-                    eduCol.Item().PaddingTop(5).Row(row =>
+
+
+                    
+                    column.Item().PaddingTop(10).Text("Övriga kompetenser och meriter").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
+                    column.Item().PaddingTop(5).Row(skillRow =>
                     {
-                        row.ConstantItem(8).Background(Colors.Blue.Medium).Height(8).Width(8).AlignMiddle();
-                        row.RelativeItem().PaddingLeft(8).Column(col =>
+                        int columns = 2;
+                        int skillsPerColumn = (int)Math.Ceiling(cvDto.Skills.Count / (double)columns);
+
+                        for (int i = 0; i < columns; i++)
                         {
-                            col.Item().Text($"{edu.Specialization} - {edu.School} ({edu.StartYear} - {edu.EndYear})")
-                                .FontSize(12).Bold();
-                            col.Item().Text(edu.Degree).FontSize(10);
-                        });
+                            skillRow.RelativeItem(1f / columns).Column(col =>
+                            {
+                                foreach (var skill in cvDto.Skills.Skip(i * skillsPerColumn).Take(skillsPerColumn))
+                                {
+                                    col.Item().Text($"•  {skill}").FontSize(10);
+                                }
+                            });
+                        }
                     });
-                }
+
+                    column.Item().PaddingTop(10).LineHorizontal(1);
+
+                             
+
+                    column.Item().PaddingTop(10).Text("Referenser").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
+                    column.Item().Column(expCol =>
+                    {
+                        foreach (var reference in referenceList)
+                        {
+                            expCol.Item().PaddingTop(5).Row(row =>
+                            {
+                                row.ConstantItem(8).Background(Colors.Blue.Medium).Height(8).Width(8).AlignMiddle();
+                                row.RelativeItem().PaddingLeft(8).Column(col =>
+                                {
+                                    col.Item().Text(text =>
+                                    {
+                                        text.Span(reference.Name).Bold(); // Namnet i bold
+                                        text.Span($" - {reference.Relation} - {reference.PhoneNumber}").FontSize(10); // Resten i vanlig stil
+                                    });
+                                });
+                            });
+                        }
+                    });
+
+                });
             });
+        }
 
-            column.Item().PaddingTop(10).LineHorizontal(1);
-
-            // Referenser
-            column.Item().PaddingTop(10).Text("Referenser").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
-            column.Item().PaddingTop(5).Text("Lämnas gärna vid ett personligt möte.").FontSize(10);
-        });
-    });
-}
 
     }
 }
 
-        
+
 
 
 

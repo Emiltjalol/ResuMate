@@ -1,6 +1,6 @@
-namespace ResuMate.Components.Models
+namespace ResuMate.Shared.Models
 {
-    public class EducationDto
+    public class EducationModel
     {
         public string? School { get; set; }
         public string? Degree { get; set; }

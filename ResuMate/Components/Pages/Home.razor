@@ -16,7 +16,7 @@
 <div class="form-group d-flex gap-2">
     <div class="form-group label" style="flex: 2;">
         <label>Address</label>
-        <input @bind="cv.Adress" class="form-control" />
+        <input @bind="cv.Address" class="form-control" />
     </div>
     <div class="form-group label" style="flex: 1;">
         <label>Postkod</label>
@@ -133,12 +133,12 @@
 <p>@summary</p>
 
 @code {
-    CvDto cv = new CvDto
+    CvModel cv = new CvModel
         {
             Name = "Emil Öhrström",
             Email = "Emil.ohrstrom@hotmail.com",
             BirthYear = 1993,
-            Adress = "Bränntorp Björnmossen",
+            Address = "Bränntorp Björnmossen",
             PostalCode = "61892",
             City = "Kolmården",
             PhoneNumber = "073-123 45 67",
@@ -148,9 +148,9 @@
             Languages = "Svenska och engelska",
             CareerGoals = "Att bli världens bästa programmerare",
             References = "Finns vid behov",
-            Educations = new List<EducationDto>()
+            Educations = new List<EducationModel>()
             {
-                new EducationDto()
+                new EducationModel()
                 {
                     School = "Campus Nyköping",
                     Degree = "YH examen",
@@ -159,9 +159,9 @@
                     EndYear = 2025
                 }
             },
-            Experiences = new List<ExperienceDto>()
+            Experiences = new List<ExperienceModel>()
             {
-                new ExperienceDto()
+                new ExperienceModel()
                 {
                     JobTitle = "Idrottsplatsvaktmästare",
                     Company = "Pema Partner",
@@ -177,7 +177,7 @@
 
     private void GenerateSummary()
     {
-       summary = $"Hej, mitt namn är {cv.Name}. Jag bor på {cv.Adress}, {cv.PostalCode}, {cv.City}. " +
+       summary = $"Hej, mitt namn är {cv.Name}. Jag bor på {cv.Address}, {cv.PostalCode}, {cv.City}. " +
                  $"Du kan kontakta mig på {cv.PhoneNumber} eller via e-post på {cv.Email}. " +
                  $"Jag är född år {cv.BirthYear}. " +
                  $"Lite om mig: {cv.AboutMe}. " +
