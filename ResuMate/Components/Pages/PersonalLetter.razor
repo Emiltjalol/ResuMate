@@ -8,7 +8,7 @@
 @rendermode InteractiveServer
 @if(isFormVisible)
 {
-    
+
     <h1 class="section-title">Personligt brev</h1>
 
 
@@ -121,7 +121,7 @@
             <textarea id="extraDetails" @bind="personalLetter.ExtraInfo" class="form-control" placeholder="Skriv mer här..."></textarea>
         </div>
     }
-    
+
 
 
     <button class="btn btn-success mt-3" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
@@ -146,7 +146,7 @@
     </div>
 
     <div class="pdf-container">
-        
+
         @if (PdfData != null)
         {
             <h1>Din PDF</h1>
@@ -165,7 +165,7 @@
 {
     <div class="overlay-spinner">
         <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="text-light mt-2">Genererar personligt brev...</p>
+        <p class="text-light mt-2">@loadingMessage</p>
     </div>
 }
 
@@ -176,23 +176,49 @@
 
 @code {
 
-    // private List<ReferenceModel> referenceList = new List<ReferenceModel>();
-    // private List<EducationModel> educationList = new List<EducationModel>();
-    // private List<ExperienceModel> experienceList = new List<ExperienceModel>();
-    //private PersonalLetterModel personalLetter = new PersonalLetterModel();
-
     private string? PdfData { get; set; }
     private bool hasExtraInfo = false;
     private bool hasAnyHobby = false;
     private bool isLoadingLetter = false;
     private bool isFormVisible = true;
+    private string loadingMessage = "";
 
     string generatedLetter = "";
 
+    private PersonalLetterModel personalLetter = new PersonalLetterModel
+        {
+            Name = "Emil",
+            ProfessionalTitle = "Systemutvecklare inom .NET",
+            CompanyName = "Microsoft",
+            AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
+            Weaknesses = "",
+            Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
+            CareerGoals = "",
+            Hobbies = "Spela tv-spel, dator-spel, kolla film och serier",
+            BusinessOverview = "",
+            ExtraInfo = ""
+        };
+
+    private string GetMotivationPlaceholder()
+    {
+        if (!string.IsNullOrEmpty(personalLetter.CompanyName))
+        {
+            return $"Varför vill du jobba hos {personalLetter.CompanyName}?";
+        }
+        return "Varför vill du jobba hos detta företag?";
+    }
+
+    private string GetContributionPlaceholder()
+    {
+        if (!string.IsNullOrEmpty(personalLetter.CompanyName))
+        {
+            return $"Vad kan du bidra till hos {personalLetter.CompanyName}?";
+        }
+        return $"Vad kan du bidra till hos detta företag?";
+    }
+
     private async Task GenerateLetterFromApi()
     {
-        isLoadingLetter = true;
-
         try
         {
             var response = await Http.PostAsJsonAsync("https://localhost:7068/api/PersonalLetter", personalLetter);
@@ -209,77 +235,60 @@
                 generatedLetter = $"Något gick fel med API-anropet. Statuskod: {response.StatusCode}. Felmeddelande: {errorMessage}";
             }
         }
-        finally
+        catch (Exception ex)
         {
-            isLoadingLetter = false;
+            generatedLetter = $"Ett oväntat fel inträffade: {ex.Message}";            
         }
-    }
-
-
-
-    private PersonalLetterModel personalLetter = new PersonalLetterModel
-    {
-            Name = "Emil",
-            ProfessionalTitle = "Systemutvecklare inom .NET",
-            CompanyName = "Microsoft",
-            AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
-            Weaknesses = "",
-            Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
-            CareerGoals = "",
-            Hobbies ="Spela tv-spel, dator-spel, kolla film och serier",           
-
-            BusinessOverview = "",
-            ExtraInfo = ""
-    };
-
-    private string GetMotivationPlaceholder()
-    {       
-        if (!string.IsNullOrEmpty(personalLetter.CompanyName))
-        {
-            return $"Varför vill du jobba hos {personalLetter.CompanyName}?";
-        }        
-        return "Varför vill du jobba hos detta företag?";
-    }
-
-    private string GetContributionPlaceholder()
-    {
-        if (!string.IsNullOrEmpty(personalLetter.CompanyName))
-        {
-            return $"Vad kan du bidra till hos {personalLetter.CompanyName}?";
-        }
-        return $"Vad kan du bidra till hos detta företag?";
     }
 
     private async Task GeneratePersonalLetterPdf()
     {
-       await Task.Run(() =>
-       {
-           var document = Document.Create(container =>
-           {
-               CreatePersonalLetterPdfService.Compose(container, generatedLetter, personalLetter);
-           });
+        isLoadingLetter = true;
+        await SetLoadingMessage("Uppdaterar PDF...", 3000);
 
-           using (var memoryStream = new MemoryStream())
-           {
-               document.GeneratePdf(memoryStream);
-               var pdfBytes = memoryStream.ToArray();
-               PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
-           }
-       });
-    }       
-    
+        await Task.Run(() =>
+        {
+            var document = Document.Create(container =>
+            {
+                CreatePersonalLetterPdfService.Compose(container, generatedLetter, personalLetter);
+            });
+
+            using (var memoryStream = new MemoryStream())
+            {
+                document.GeneratePdf(memoryStream);
+                var pdfBytes = memoryStream.ToArray();
+                PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+            }
+        });
+
+        isLoadingLetter = false;
+        loadingMessage = "";        
+    }
+
+
+    private async Task SetLoadingMessage(string message, int delayMs = 500)
+    {
+        loadingMessage = message;
+        StateHasChanged();
+        await Task.Delay(delayMs);
+    }
 
     private async Task GenerateLetterAndPdf()
     {
-        isLoadingLetter = true;     
-        
+        isLoadingLetter = true;
+        await SetLoadingMessage("Genererar personligt brev...");
+
         await GenerateLetterFromApi();
-        
+
+        await SetLoadingMessage("Genererar PDF...", 3000);
+
         await GeneratePersonalLetterPdf();
 
         isLoadingLetter = false;
-
+        loadingMessage = "";
+        StateHasChanged();
     }
+
     private void ShowFormAgain()
     {
         isFormVisible = true;
