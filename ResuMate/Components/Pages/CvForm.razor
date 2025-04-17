@@ -16,7 +16,7 @@
 </div>
 
 <div class="form-group label">
-    <label for="yrkestitel">ProfessionalTitle</label>
+    <label for="yrkestitel">Yrkestitel</label>
     <input id="yrkestitel" @bind="cv.ProfessionalTitle" class="form-control" placeholder="Din yrkestitel" />
 </div>
 
@@ -190,22 +190,25 @@
 <button class="btn btn-secondary" @onclick="AddSkill">Lägg till</button>
 
 <div class="skills-container">
-    @foreach (var skill in cv.Skills)
-    {
-        <div class="skill-card">
-            <span class="skill-name">@skill</span>
-            <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
-        </div>
-    }
+   @if (cv.Skills != null)
+   {
+       @foreach (var skill in cv.Skills)
+       {
+           <div class="skill-card">
+               <span class="skill-name">@skill</span>
+               <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+           </div>
+       }
+   }
 </div>
 
 
 
 @if (PdfData != null)
 {
-    <div class="pdf-container">
-        <iframe class="pdf-viewer" src="@PdfData" width="100%" height="600px"></iframe>
-        <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>
+    <div class="pdf-container">  
+       <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>  
+       <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>  
     </div>
 }
 
@@ -261,13 +264,13 @@
             referenceList.Remove(reference);       
     }
     private void AddSkill()
-    {
-        if (!string.IsNullOrWhiteSpace(newSkill) && !cv.Skills.Contains(newSkill))
-        {
-            cv.Skills.Add(newSkill);
-            newSkill = "";
-        }
-    }
+       {
+           if (!string.IsNullOrWhiteSpace(newSkill) && cv.Skills != null && !cv.Skills.Contains(newSkill))
+           {
+               cv.Skills.Add(newSkill);
+               newSkill = "";
+           }
+       }
 
     private void RemoveSkill(string skill)
     {
@@ -382,26 +385,26 @@
     
     private async Task GenerateCvPdf()
     {
-        var document = Document.Create(container =>
+       await Task.Run(() =>
+       {
+           var document = Document.Create(container =>
            {
-            CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template8(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template9(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template10(container, cv, educationList, experienceList, referenceList);
-        });
-        
-        using (var memoryStream = new MemoryStream())
-        {
-            document.GeneratePdf(memoryStream);
-            var pdfBytes = memoryStream.ToArray();
-            PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
-        }
+               CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList);
+               CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList);
+               CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList);
+               CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList);
+               CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList);
+               CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList);
+               CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList);
+           });
+
+           using (var memoryStream = new MemoryStream())
+           {
+               document.GeneratePdf(memoryStream);
+               var pdfBytes = memoryStream.ToArray();
+               PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+           }
+       });
     }
 
 }
