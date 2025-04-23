@@ -16,7 +16,10 @@
         public List <string>? Skills { get; set; }
         public List<EducationModel>? Educations { get; set; }
         public List<ExperienceModel>? Experiences { get; set; }
-        public List<string>? Certifications { get; set; }              
+        public List<string>? Certifications { get; set; }  
+        
+        
+        
         
     }
 }
