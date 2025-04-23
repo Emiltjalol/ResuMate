@@ -12,7 +12,7 @@ using ResuMate.Data;
 namespace ResuMate.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250422112956_added_generatedCv_table")]
+    [Migration("20250422125934_added_generatedCv_table")]
     partial class added_generatedCv_table
     {
         /// <inheritdoc />
@@ -231,15 +231,17 @@ namespace ResuMate.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Base64CvData")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FilePath")
+                    b.Property<byte[]>("CvData")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
+                    b.Property<string>("FileName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")

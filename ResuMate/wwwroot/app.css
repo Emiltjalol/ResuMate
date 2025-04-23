@@ -668,6 +668,30 @@ button.btn {
     margin-right: auto;
 }
 
+.cv-thumbnails {
+    display: flex;
+    flex-wrap: wrap; /* Gör så att korten går på flera rader */
+    gap: 20px; /* Avstånd mellan korten */
+    justify-content: space-evenly; /* Jämn fördelning av utrymme */
+}
+
+.cv-thumbnail-card {
+    width: 30%; /* Gör att 3 kort får plats per rad (100% / 3 = 33.33%, men vi använder 30% för att lämna lite utrymme) */
+    background-color: #f4f4f4; /* Bakgrundsfärg för varje card */
+    border-radius: 8px; /* Rundade hörn */
+    padding: 10px; /* Inre marginal för korten */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lätt skugga för korten */
+    text-align: center; /* Centrera innehållet */
+}
+
+    .cv-thumbnail-card iframe {
+        width: 100%;
+        height: 300px; /* Anpassa höjden på iframe */
+        border: none;
+    }
+
+
+
 /* ======= Mobile Friendly ======= */
 @media (max-width: 768px) {
     .d-flex {
