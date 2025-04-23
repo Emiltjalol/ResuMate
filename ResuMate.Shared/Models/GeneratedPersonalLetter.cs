@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ResuMate.Shared.Models
 {
-    public class GeneratedCv
+    public class GeneratedPersonalLetter
     {
         public int Id { get; set; }
 
@@ -14,11 +14,10 @@ namespace ResuMate.Shared.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public byte[] CvData { get; set; } = Array.Empty<byte>();
+        public byte[] PersonalLetterData { get; set; } = Array.Empty<byte>();
 
         public string? FileName { get; set; }
 
         public string? Base64CvData { get; set; }
     }
 }
-

@@ -1,0 +1,80 @@
+﻿@page "/user-personal-letters"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApplicationDbContext DbContext
+@inject CreateCvPdfService CreateCvPdfService
+
+<h3 class="section-title">Dina personliga brev</h3>
+
+@if(generatedPersonalLetters == null)
+{
+    <p>Läser in dina personliga brev...</p>
+}
+else if (generatedPersonalLetters.Count == 0)
+{
+    <p>Du har inga sparade personliga brev</p>
+}
+else
+{
+    <div class="cv-thumbnails">
+        @foreach (var letter in generatedPersonalLetters)
+        {
+            <div class="cv-thumbnail-card">
+                <p>@letter.FileName</p>
+
+
+                @if (!string.IsNullOrEmpty(letter.Base64CvData))
+                {
+                    <iframe src="data:application/pdf;base64,@letter.Base64CvData" style="width: 100%; height: 450px; border: none;" />
+                }
+                else
+                {
+                    <p>Ingen förhandsvisning tillgänglig</p>
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<GeneratedPersonalLetter> generatedPersonalLetters;
+
+
+    private async Task<List<GeneratedPersonalLetter>> GetUserPersonalLetters()
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId != null)
+        {
+            var generatedletters = await DbContext.GeneratedPersonalLetters
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+
+            foreach (var letter in generatedletters)
+            {
+                if (letter.PersonalLetterData != null)
+                {
+                    letter.Base64CvData = Convert.ToBase64String(letter.PersonalLetterData);
+                }
+            }
+
+            return generatedletters;
+        }
+
+        return new List<GeneratedPersonalLetter>();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        generatedPersonalLetters = await GetUserPersonalLetters();
+    }
+
+    private async Task<string?> GetCurrentUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        return user.Identity?.IsAuthenticated == true
+            ? user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            : null;
+    }
+}
