@@ -1,28 +1,14 @@
 ﻿@page "/Personal-letter"
 @inject HttpClient Http
 @inject CreatePersonalLetterPdfService CreatePersonalLetterPdfService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApplicationDbContext DbContext
 @rendermode InteractiveServer
 @if(isFormVisible)
 {
 
     <h1 class="section-title">Personligt brev</h1>
 
-
-    @* <div class="form-group d-flex gap-2">
-    <div class="form-group label" style="flex: 2;">
-        <label for="address">Address</label>
-        <input id="address" @bind="cv.Address" class="form-control" placeholder="Din adress" />
-    </div>
-    <div class="form-group label" style="flex: 1;">
-        <label for="postalcode">Postkod</label>
-        <input id="postalcode" @bind="cv.PostalCode" class="form-control" placeholder="Postkod" />
-    </div>
-    <div class="form-group label" style="flex: 1;">
-        <label for="city">Stad</label>
-        <input id="city" @bind="cv.City" class="form-control" placeholder="Stad" />
-    </div>
-    </div>
-     *@
     <h1>Om dig själv</h1>
     <div class="form-group d-flex gap-2">
         <div class="form-group label" style="flex: 1;">
@@ -124,11 +110,6 @@
             <textarea id="extraDetails" @bind="personalLetter.ExtraInfo" class="form-control" placeholder="Skriv mer här..."></textarea>
         </div>
     }
-
-
-
-    <button class="btn btn-success mt-3" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
-    <button class="btn btn-primary mt-2" @onclick="GeneratePersonalLetterPdf">Uppdatera PDF efter ändringar</button>
 }
 
 
@@ -141,7 +122,6 @@
                 <h3>Ditt personliga brev:</h3>
                 <p>Här kan du lägga till eller ändra brevet om du vill.</p>
                 <p>När du är klar kan du klicka på knappen för att generera en ny PDF av brevet.</p>
-                <button class="btn btn-primary mt-2" @onclick="GeneratePersonalLetterPdf">Uppdatera PDF efter ändringar</button>
 
                 <textarea class="form-control" rows="30" @bind="generatedLetter"></textarea>
             </div>
@@ -149,20 +129,30 @@
     </div>
 
     <div class="pdf-container">
-
-        @if (PdfData != null)
+        @if (!string.IsNullOrWhiteSpace(generatedLetter) && PdfData != null)
         {
             <h1>Din PDF</h1>
             <div class="pdf-viewer-container">
-                <iframe class="pdf-viewer" src="@PdfData"style= "width:100%; height:900px"></iframe>
+                <iframe class="pdf-viewer" src="@PdfData" style="width:100%; height:900px"></iframe>
                 <a class="btn-download" href="@PdfData" download="PersonalLetter.pdf">Download PDF</a>
             </div>
-            <button class="btn btn-success mt-3" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
-            <button class="btn btn-secondary mt-3" @onclick="ShowFormAgain">Redigera igen</button>
-        }
-    </div>     
 
+            <div class="mt-3 d-flex flex-wrap gap-2">
+                <button class="btn btn-primary" @onclick="UpdatePdf">Uppdatera PDF efter ändringar</button>
+                <button class="btn btn-secondary" @onclick="ShowFormAgain">Redigera igen</button>
+                <button class="btn btn-success" @onclick="SaveGeneratedPdfToDatabase">Spara brevet</button>
+            </div>
+        }
+        else
+        {
+            <div class="mt-3">
+                <button class="btn btn-success" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
+            </div>
+        }
+    </div>
 </div>
+
+
 
 @if (isLoadingLetter)
 {
@@ -184,7 +174,9 @@
     private bool hasAnyHobby = false;
     private bool isLoadingLetter = false;
     private bool isFormVisible = true;
-    private List<string> experienceOptions = new();
+    private byte[]? generatedPdfBytes;
+    private string loadingMessage = "";
+    private bool HasGeneratedPdf => generatedPdfBytes != null && generatedPdfBytes.Length > 0;
 
     string generatedLetter = "";
 
@@ -290,9 +282,6 @@
 
     private async Task GeneratePersonalLetterPdf()
     {
-        isLoadingLetter = true;
-        await SetLoadingMessage("Uppdaterar PDF...", 3000);
-
         await Task.Run(() =>
         {
             var document = Document.Create(container =>
@@ -303,8 +292,8 @@
             using (var memoryStream = new MemoryStream())
             {
                 document.GeneratePdf(memoryStream);
-                var pdfBytes = memoryStream.ToArray();
-                PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+                generatedPdfBytes = memoryStream.ToArray();
+                PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(generatedPdfBytes)}";
             }
         });
 
@@ -335,6 +324,72 @@
         loadingMessage = "";
         StateHasChanged();
     }
+
+    private async Task UpdatePdf()
+    {
+        isLoadingLetter = true;
+        await SetLoadingMessage("Uppdaterar pdf...", 2000);
+        await GeneratePersonalLetterPdf();
+
+        isLoadingLetter = false;
+        loadingMessage = "";
+        StateHasChanged();
+    }
+
+    private async Task<string?> GetCurrentUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        return user.Identity?.IsAuthenticated == true
+            ? user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            : null;
+    } 
+
+    private async Task SaveGeneratedPdfToDatabase()
+    {        
+        if (generatedPdfBytes == null || generatedPdfBytes.Length == 0)
+        {
+            loadingMessage = "Ingen PDF har genererats än!";
+            return;
+        }
+
+        isLoadingLetter = true;
+        await SetLoadingMessage("Sparar personligt brev...", 2000);
+
+        try
+        {            
+            var userId = await GetCurrentUserIdAsync();
+            if (userId == null)
+            {
+                loadingMessage = "Kunde inte hitta användaren.";
+                return;
+            }
+
+           
+            var generatedPersonalLetter = new GeneratedPersonalLetter
+                {
+                    UserId = userId,
+                    PersonalLetterData = generatedPdfBytes,
+                    FileName = $"Personligt_brev_{personalLetter.CompanyName}.pdf",
+                    CreatedAt = DateTime.Now
+                };
+           
+            await DbContext.GeneratedPersonalLetters.AddAsync(generatedPersonalLetter);
+            await DbContext.SaveChangesAsync();
+
+            loadingMessage = "Personligt brev sparat i databasen!";
+        }
+        catch (Exception ex)        {
+            
+            loadingMessage = $"Fel vid sparande: {ex.Message}";
+            Console.Error.WriteLine(ex);
+        }
+
+        isLoadingLetter = false;
+        StateHasChanged();
+    }
+
 
     private void ShowFormAgain()
     {

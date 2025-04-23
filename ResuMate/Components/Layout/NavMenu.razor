@@ -1,6 +1,9 @@
-﻿@implements IDisposable
+﻿@using Microsoft.AspNetCore.Identity
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -12,37 +15,54 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Skapa CV
-            </NavLink>
-        </div>
+     
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="personal-letter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Personligt brev
-            </NavLink>
-        </div>        
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auth">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
-            </NavLink>
-        </div>
-
-         <AuthorizeView>
+        <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>
+                        @if (user != null)
+                        {
+                            @($"{user.FirstName} {user.LastName}")
+                        }
+                        else
+                        {
+                            <em>Laddar...</em>
+                        }
                     </NavLink>
                 </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Nytt CV
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="personal-letter">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Nytt personligt brev
+                    </NavLink>
+                </div>
+
+            @*     <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="auth">
+                        <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
+                    </NavLink>
+                </div> *@
 
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="user-cvs" Match="NavLinkMatch.All">
                         <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Mina cvn
                     </NavLink>
                 </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="user-personal-letters" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Mina cvn
+                    </NavLink>
+                </div>
+
                 <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
@@ -65,17 +85,26 @@
                     </NavLink>
                 </div>
             </NotAuthorized>
-        </AuthorizeView> 
+        </AuthorizeView>
     </nav>
 </div>
 
 @code {
     private string? currentUrl;
+    private ApplicationUser? user;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var currentUser = authState.User;
+
+        if (currentUser.Identity is { IsAuthenticated: true })
+        {
+            user = await UserManager.GetUserAsync(currentUser);
+        }
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
@@ -89,4 +118,3 @@
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }
-

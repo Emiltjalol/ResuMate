@@ -2,12 +2,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApplicationDbContext DbContext
 @inject CreateCvPdfService CreateCvPdfService
-@using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims
-@using Microsoft.EntityFrameworkCore
-@using ResuMate.Data
-@using ResuMate.Services
-@using ResuMate.Shared.Models
+
 
 <h3 class="section-title">Dina CV:n</h3>
 
@@ -25,7 +20,8 @@ else
         @foreach (var cv in generatedCvs)
         {
             <div class="cv-thumbnail-card">
-                <p>@cv.FileName</p>
+                <p>@cv.FileName.Substring(0, Math.Min(15, cv.FileName.Length))...</p>
+
 
                 @if (!string.IsNullOrEmpty(cv.Base64CvData))
                 {

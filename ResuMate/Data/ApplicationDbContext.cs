@@ -8,6 +8,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<GeneratedCv> GeneratedCvs { get; set; } = default!;
+    public DbSet<GeneratedPersonalLetter> GeneratedPersonalLetters { get; set; } = default!;
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -18,6 +20,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasKey(c => c.Id);
 
         builder.Entity<GeneratedCv>()
+            .Property(c => c.UserId)
+            .IsRequired();
+
+        builder.Entity<GeneratedPersonalLetter>()
+            .HasKey(c => c.Id);
+
+        builder.Entity<GeneratedPersonalLetter>()
             .Property(c => c.UserId)
             .IsRequired();
     }
