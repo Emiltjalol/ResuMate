@@ -1,10 +1,6 @@
 ﻿@page "/Personal-letter"
 @inject HttpClient Http
 @inject CreatePersonalLetterPdfService CreatePersonalLetterPdfService
-@using QuestPDF.Fluent
-@using QuestPDF.Infrastructure
-@using ResuMate.Components.Models
-@using ResuMate.Services
 @rendermode InteractiveServer
 @if(isFormVisible)
 {
@@ -158,7 +154,7 @@
         {
             <h1>Din PDF</h1>
             <div class="pdf-viewer-container">
-                <iframe class="pdf-viewer" src="@PdfData" width="100%" height="900px"></iframe>
+                <iframe class="pdf-viewer" src="@PdfData"style= "width:100%; height:900px"></iframe>
                 <a class="btn-download" href="@PdfData" download="PersonalLetter.pdf">Download PDF</a>
             </div>
             <button class="btn btn-success mt-3" @onclick="GenerateLetterAndPdf">Generera brev och PDF</button>
@@ -172,7 +168,7 @@
 {
     <div class="overlay-spinner">
         <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="text-light mt-2">Genererar personligt brev...</p>
+        <p class="text-light mt-2">@loadingMessage</p>
     </div>
 }
 
@@ -182,11 +178,6 @@
 
 
 @code {
-
-    // private List<ReferenceModel> referenceList = new List<ReferenceModel>();
-    // private List<EducationModel> educationList = new List<EducationModel>();
-    // private List<ExperienceModel> experienceList = new List<ExperienceModel>();
-    //private PersonalLetterModel personalLetter = new PersonalLetterModel();
 
     private string? PdfData { get; set; }
     private bool hasExtraInfo = false;
@@ -242,7 +233,7 @@
 
 
     private PersonalLetterModel personalLetter = new PersonalLetterModel
-    {
+        {
             Name = "Emil",
             ProfessionalTitle = "Systemutvecklare inom .NET",
             CompanyName = "Microsoft",
@@ -250,18 +241,17 @@
             Weaknesses = "",
             Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
             CareerGoals = "",
-            Hobbies ="Spela tv-spel, dator-spel, kolla film och serier",           
-
+            Hobbies = "Spela tv-spel, dator-spel, kolla film och serier",
             BusinessOverview = "",
             ExtraInfo = ""
-    };
+        };
 
     private string GetMotivationPlaceholder()
-    {       
+    {
         if (!string.IsNullOrEmpty(personalLetter.CompanyName))
         {
             return $"Varför vill du jobba hos {personalLetter.CompanyName}?";
-        }        
+        }
         return "Varför vill du jobba hos detta företag?";
     }
 
@@ -274,32 +264,78 @@
         return $"Vad kan du bidra till hos detta företag?";
     }
 
+    private async Task GenerateLetterFromApi()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:7068/api/PersonalLetter", personalLetter);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                generatedLetter = result;
+                isFormVisible = false;
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                generatedLetter = $"Något gick fel med API-anropet. Statuskod: {response.StatusCode}. Felmeddelande: {errorMessage}";
+            }
+        }
+        catch (Exception ex)
+        {
+            generatedLetter = $"Ett oväntat fel inträffade: {ex.Message}";            
+        }
+    }
+
     private async Task GeneratePersonalLetterPdf()
     {
-        var document = Document.Create(container =>
+        isLoadingLetter = true;
+        await SetLoadingMessage("Uppdaterar PDF...", 3000);
+
+        await Task.Run(() =>
         {
-            CreatePersonalLetterPdfService.Compose(container, generatedLetter, personalLetter);
+            var document = Document.Create(container =>
+            {
+                CreatePersonalLetterPdfService.Compose(container, generatedLetter, personalLetter);
+            });
+
+            using (var memoryStream = new MemoryStream())
+            {
+                document.GeneratePdf(memoryStream);
+                var pdfBytes = memoryStream.ToArray();
+                PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+            }
         });
 
-        using (var memoryStream = new MemoryStream())
-        {
-            document.GeneratePdf(memoryStream);
-            var pdfBytes = memoryStream.ToArray();
-            PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
-        }
+        isLoadingLetter = false;
+        loadingMessage = "";        
+    }
+
+
+    private async Task SetLoadingMessage(string message, int delayMs = 500)
+    {
+        loadingMessage = message;
+        StateHasChanged();
+        await Task.Delay(delayMs);
     }
 
     private async Task GenerateLetterAndPdf()
     {
-        isLoadingLetter = true;     
-        
+        isLoadingLetter = true;
+        await SetLoadingMessage("Genererar personligt brev...");
+
         await GenerateLetterFromApi();
-        
+
+        await SetLoadingMessage("Genererar PDF...", 3000);
+
         await GeneratePersonalLetterPdf();
 
         isLoadingLetter = false;
-
+        loadingMessage = "";
+        StateHasChanged();
     }
+
     private void ShowFormAgain()
     {
         isFormVisible = true;

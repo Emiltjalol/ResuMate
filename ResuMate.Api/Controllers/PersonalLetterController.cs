@@ -58,7 +58,7 @@ namespace ResuMate.Api.Controllers
 
             var body = new
             {
-                model = "gpt-4o-mini",
+                model = "gpt-4.1-mini",
                 messages = new[] { new { role = "user", content = prompt } }
             };
 

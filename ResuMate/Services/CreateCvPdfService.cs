@@ -79,11 +79,14 @@ namespace ResuMate.Services
                         col.Item().Column(skillCol =>
                         {
                             skillCol.Item().PaddingTop(30).PaddingBottom(10).Text("ÖVRIGA KOMPETENSER").FontSize(16).Bold().FontColor(Colors.Black).Underline();
-
-                            foreach (var skill in cvDto.Skills)
+                            if (cvDto.Skills != null)
                             {
-                                skillCol.Item().Text($"• {skill}").FontSize(12).FontColor(Colors.Black);
+                                foreach (var skill in cvDto.Skills)
+                                {
+                                    skillCol.Item().Text($"• {skill}").FontSize(12).FontColor(Colors.Black);
+                                }
                             }
+                           
                         });
 
                         col.Item().Column(referencesCol =>
@@ -399,7 +402,7 @@ namespace ResuMate.Services
                             {
                                 var skills = cvDto.Skills;
 
-                                if (skills.Count > 6)
+                                if (skills != null && skills.Count > 6 )
                                 {
                                     int mid = skills.Count / 2;
 
@@ -704,22 +707,26 @@ namespace ResuMate.Services
 
                     
                     column.Item().PaddingTop(10).Text("Övriga kompetenser och meriter").FontSize(16).Bold().FontColor(Colors.Blue.Darken2);
-                    column.Item().PaddingTop(5).Row(skillRow =>
+                    if (cvDto.Skills != null && cvDto.Skills.Count > 0)
                     {
-                        int columns = 2;
-                        int skillsPerColumn = (int)Math.Ceiling(cvDto.Skills.Count / (double)columns);
-
-                        for (int i = 0; i < columns; i++)
+                        column.Item().PaddingTop(5).Row(skillRow =>
                         {
-                            skillRow.RelativeItem(1f / columns).Column(col =>
+                            int columns = 2;
+                            int skillsPerColumn = (int)Math.Ceiling(cvDto.Skills.Count / (double)columns);
+
+                            for (int i = 0; i < columns; i++)
                             {
-                                foreach (var skill in cvDto.Skills.Skip(i * skillsPerColumn).Take(skillsPerColumn))
+                                skillRow.RelativeItem(1f / columns).Column(col =>
                                 {
-                                    col.Item().Text($"•  {skill}").FontSize(10);
-                                }
-                            });
-                        }
-                    });
+                                    foreach (var skill in cvDto.Skills.Skip(i * skillsPerColumn).Take(skillsPerColumn))
+                                    {
+                                        col.Item().Text($"•  {skill}").FontSize(10);
+                                    }
+                                });
+                            }
+                        });
+                    }
+
 
                     column.Item().PaddingTop(10).LineHorizontal(1);
 

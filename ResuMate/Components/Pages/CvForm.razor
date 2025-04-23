@@ -1,10 +1,9 @@
 ﻿@page "/"
-@using QuestPDF.Fluent
-@using ResuMate.Services
-@using ResuMate.Components.Models
-@using ResuMate.Shared.Models
-@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApplicationDbContext DbContext
 @inject CreateCvPdfService CreateCvPdfService
+@rendermode InteractiveServer
+
 
 <h3 class="section-title">Fyll i dina uppgifter</h3>
 
@@ -16,7 +15,7 @@
 </div>
 
 <div class="form-group label">
-    <label for="yrkestitel">ProfessionalTitle</label>
+    <label for="yrkestitel">Yrkestitel</label>
     <input id="yrkestitel" @bind="cv.ProfessionalTitle" class="form-control" placeholder="Din yrkestitel" />
 </div>
 
@@ -190,22 +189,25 @@
 <button class="btn btn-secondary" @onclick="AddSkill">Lägg till</button>
 
 <div class="skills-container">
-    @foreach (var skill in cv.Skills)
-    {
-        <div class="skill-card">
-            <span class="skill-name">@skill</span>
-            <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
-        </div>
-    }
+   @if (cv.Skills != null)
+   {
+       @foreach (var skill in cv.Skills)
+       {
+           <div class="skill-card">
+               <span class="skill-name">@skill</span>
+               <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+           </div>
+       }
+   }
 </div>
 
 
 
 @if (PdfData != null)
 {
-    <div class="pdf-container">
-        <iframe class="pdf-viewer" src="@PdfData" width="100%" height="600px"></iframe>
-        <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>
+    <div class="pdf-container">  
+       <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>  
+       <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>  
     </div>
 }
 
@@ -261,13 +263,13 @@
             referenceList.Remove(reference);       
     }
     private void AddSkill()
-    {
-        if (!string.IsNullOrWhiteSpace(newSkill) && !cv.Skills.Contains(newSkill))
-        {
-            cv.Skills.Add(newSkill);
-            newSkill = "";
-        }
-    }
+       {
+           if (!string.IsNullOrWhiteSpace(newSkill) && cv.Skills != null && !cv.Skills.Contains(newSkill))
+           {
+               cv.Skills.Add(newSkill);
+               newSkill = "";
+           }
+       }
 
     private void RemoveSkill(string skill)
     {
@@ -379,30 +381,104 @@
         experienceList.Remove(experiences);
     }
 
-    
-    private async Task GenerateCvPdf()
+    private async Task<string?> GetCurrentUserIdAsync()
     {
-        var document = Document.Create(container =>
-           {
-            CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList);
-            CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template8(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template9(container, cv, educationList, experienceList, referenceList);
-            // CreatePdfService.Template10(container, cv, educationList, experienceList, referenceList);
-        });
-        
-        using (var memoryStream = new MemoryStream())
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        return user.Identity?.IsAuthenticated == true
+            ? user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            : null;
+    }
+
+    private async Task SaveCvToDatabase(byte[] pdfBytes, string fileName)
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId != null)
         {
-            document.GeneratePdf(memoryStream);
-            var pdfBytes = memoryStream.ToArray();
-            PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+            var generatedCv = new GeneratedCv
+                {
+                    UserId = userId,
+                    CvData = pdfBytes,
+                    FileName = fileName,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+            // Spara den nya CV:n i databasen
+            DbContext.GeneratedCvs.Add(generatedCv);
+            await DbContext.SaveChangesAsync();
         }
     }
+
+
+    
+    // private async Task GenerateCvPdf()
+    // {
+    //     var document = Document.Create(container =>
+    //     {
+            
+    //         CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList);
+    //         CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList);
+    //         CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList);
+    //         CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList);
+    //         CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList);
+    //         CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList);
+    //         CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList);
+    //     });
+
+    //     using (var memoryStream = new MemoryStream())
+    //     {
+    //         document.GeneratePdf(memoryStream);
+    //         var pdfBytes = memoryStream.ToArray();
+    //         PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+
+    //         await SaveCvToDatabase(pdfBytes);
+    //     }
+    // }
+
+    private async Task GenerateCvPdf()
+    {
+        // Skapa en lista med templates
+        var templates = new List<Action<IDocumentContainer>>()
+    {
+        (container) => CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList),
+        // (container) => CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList),
+        // (container) => CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList),
+        // (container) => CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList),
+        // (container) => CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList),
+        // (container) => CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList),
+        (container) => CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList)
+    };
+
+        // Loopa igenom templates och generera en PDF för varje template
+        foreach (var templateAction in templates)
+        {
+            var document = Document.Create(container =>
+            {
+                // Här använder vi rätt container
+                templateAction(container);
+            });
+
+            using (var memoryStream = new MemoryStream())
+            {
+                // Generera PDF för nuvarande template
+                document.GeneratePdf(memoryStream);
+                var pdfBytes = memoryStream.ToArray();
+
+                // Skapa ett unikt filnamn för varje template
+                var fileName = $"Cv_Template_{Guid.NewGuid()}.pdf";
+
+                // Här kan du lagra PDF:n i databasen eller spara den på servern
+                await SaveCvToDatabase(pdfBytes, fileName);
+
+                // Om du vill skapa en base64-sträng för att visa PDF:n i UI
+                PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+            }
+        }
+    }
+
+
+
 
 }
 
