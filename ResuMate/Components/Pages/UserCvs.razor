@@ -1,6 +1,8 @@
 ﻿@page "/user-cvs"
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject Services.CvServices.GetCvService CvService
+@inject Services.CvServices.DeleteCvService DeleteCvService
+@rendermode InteractiveServer
 
 
 
@@ -30,11 +32,15 @@ else
                 else
                 {
                     <p>Ingen förhandsvisning tillgänglig</p>
-                }               
+                }
+
+                <button class="btn btn-danger" @onclick="() => DeleteCv(cv)">Ta bort</button>                
+
             </div>
         }
     </div>
 }
+
 
 @code {
     private List<GeneratedCv> generatedCvs;       
@@ -47,6 +53,17 @@ else
             generatedCvs = await CvService.GetUserGeneratedCvsAsync(userId);
         }
     }
+
+    private async Task DeleteCv(GeneratedCv cv)
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId != null)
+        {
+            var success = await DeleteCvService.DeleteCvAsync(cv.Id, userId);
+        }
+    }
+
+
 
     private async Task<string?> GetCurrentUserIdAsync()
     {
