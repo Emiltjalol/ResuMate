@@ -42,7 +42,7 @@ else
 }
 
 @code {
-    private List<GeneratedPersonalLetter> generatedPersonalLetters;
+    private List<GeneratedPersonalLetter>? generatedPersonalLetters;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,9 +59,16 @@ else
         if (userId != null)
         {
             var success = await DeleteLetterService.DeleteLetterAsync(letter.Id, userId);
-
+            if (success && generatedPersonalLetters != null)
+            {         
+                generatedPersonalLetters.Remove(letter);
+                StateHasChanged();
+            }
         }
     }
+
+
+
 
     private async Task<string?> GetCurrentUserIdAsync()
     {
