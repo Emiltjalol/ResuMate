@@ -1,7 +1,7 @@
 ﻿@page "/user-personal-letters"
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ApplicationDbContext DbContext
-@inject CreateCvPdfService CreateCvPdfService
+@inject Services.PersonalLetterServices.GetPersonalLetterService getPersonalLetterService
+
 
 <h3 class="section-title">Dina personliga brev</h3>
 
@@ -39,33 +39,37 @@ else
     private List<GeneratedPersonalLetter> generatedPersonalLetters;
 
 
-    private async Task<List<GeneratedPersonalLetter>> GetUserPersonalLetters()
+    // private async Task<List<GeneratedPersonalLetter>> GetUserPersonalLetters()
+    // {
+    //     var userId = await GetCurrentUserIdAsync();
+    //     if (userId != null)
+    //     {
+    //         var generatedletters = await DbContext.GeneratedPersonalLetters
+    //             .Where(c => c.UserId == userId)
+    //             .OrderByDescending(c => c.CreatedAt)
+    //             .ToListAsync();
+
+    //         foreach (var letter in generatedletters)
+    //         {
+    //             if (letter.PersonalLetterData != null)
+    //             {
+    //                 letter.Base64CvData = Convert.ToBase64String(letter.PersonalLetterData);
+    //             }
+    //         }
+
+    //         return generatedletters;
+    //     }
+
+    //     return new List<GeneratedPersonalLetter>();
+    // }
+
+    protected override async Task OnInitializedAsync()
     {
         var userId = await GetCurrentUserIdAsync();
         if (userId != null)
         {
-            var generatedletters = await DbContext.GeneratedPersonalLetters
-                .Where(c => c.UserId == userId)
-                .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
-
-            foreach (var letter in generatedletters)
-            {
-                if (letter.PersonalLetterData != null)
-                {
-                    letter.Base64CvData = Convert.ToBase64String(letter.PersonalLetterData);
-                }
-            }
-
-            return generatedletters;
+            generatedPersonalLetters = await getPersonalLetterService.GetUserPersonalLettersAsync(userId);
         }
-
-        return new List<GeneratedPersonalLetter>();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        generatedPersonalLetters = await GetUserPersonalLetters();
     }
 
     private async Task<string?> GetCurrentUserIdAsync()

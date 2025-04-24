@@ -1,0 +1,21 @@
+﻿@page "/select-template"
+@inject NavigationManager Navigation
+
+<h3>Välj en mall</h3>
+
+<p>Välj en mall som passar dig bäst. Du kan alltid ändra mallen senare.</p>
+
+<div class="template-list">
+    <button class="template-button" @onclick="() => OnTemplateSelected(1)">Mall 1</button>
+    <button class="template-button" @onclick="() => OnTemplateSelected(2)">Mall 2</button>
+    <button class="template-button" @onclick="() => OnTemplateSelected(3)">Mall 3</button>
+    <button class="template-button" @onclick="() => OnTemplateSelected(4)">Mall 4</button>
+    <button class="template-button" @onclick="() => OnTemplateSelected(5)">Mall 5</button>
+</div>
+
+@code {
+    private void OnTemplateSelected(int templateNumber)
+    {       
+        Navigation.NavigateTo($"/cvform?template={templateNumber}");
+    }
+}

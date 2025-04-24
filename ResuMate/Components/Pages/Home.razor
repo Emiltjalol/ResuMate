@@ -1,0 +1,61 @@
+﻿@page "/"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@if (isAuthenticated)
+{
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold">Välkommen till <span class="text-primary">ResuMate</span></h1>
+            <p class="lead text-muted">Bygg ditt CV med stil eller skapa ett AI-genererat personligt brev på nolltid.</p>
+        </div>
+
+        <div class="row justify-content-center g-4">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="card-title text-primary">📝 Skapa ditt CV</h3>
+                        <p class="card-text text-muted">Fyll i dina uppgifter och välj bland stilrena mallar. Skapa ett proffsigt CV snabbt och enkelt.</p>
+                        <NavLink href="/cvform" class="btn btn-primary mt-auto">Starta CV-byggaren</NavLink>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="card-title text-success">🤖 Personligt brev med AI</h3>
+                        <p class="card-text text-muted">Svara på några frågor och låt vår AI skapa ett personligt, övertygande brev åt dig.</p>
+                        <NavLink href="/personal-letter" class="btn btn-success mt-auto">Skapa personligt brev</NavLink>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container py-5">
+        <div class="text-center">
+            <h1 class="display-4 fw-bold text-primary">ResuMate</h1>
+            <p class="lead text-muted">Bygg ditt CV och personliga brev snabbt och enkelt med hjälp av AI.</p>
+            <p class="fs-5">Skapa ett konto helt gratis och sätt igång direkt – det tar bara några sekunder!</p>
+            <NavLink class="btn btn-primary btn-lg mt-3" href="/Account/register">Skapa konto</NavLink>
+            <p class="mt-3 small text-muted">Har du redan ett konto? <NavLink href="/Account/Login">Logga in här</NavLink>.</p>
+        </div>
+    </div>
+}
+
+<footer class="text-center mt-5 text-muted small">
+    © @DateTime.Now.Year ResuMate – En del av din framtid.
+</footer>
+
+@code {
+    private bool isAuthenticated = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAuthenticated = user.Identity?.IsAuthenticated == true;
+    }
+}

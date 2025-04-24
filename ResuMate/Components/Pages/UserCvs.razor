@@ -1,7 +1,7 @@
 ﻿@page "/user-cvs"
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ApplicationDbContext DbContext
-@inject CreateCvPdfService CreateCvPdfService
+@inject Services.CvServices.GetCvService CvService
+
 
 
 <h3 class="section-title">Dina CV:n</h3>
@@ -37,35 +37,15 @@ else
 }
 
 @code {
-    private List<GeneratedCv> generatedCvs;
+    private List<GeneratedCv> generatedCvs;       
 
-    private async Task<List<GeneratedCv>> GetUserGeneratedCvs()
+    protected override async Task OnInitializedAsync()
     {
         var userId = await GetCurrentUserIdAsync();
         if (userId != null)
         {
-            var generatedCvs = await DbContext.GeneratedCvs
-                .Where(c => c.UserId == userId)
-                .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
-
-            foreach (var cv in generatedCvs)
-            {
-                if (cv.CvData != null)
-                {
-                    cv.Base64CvData = Convert.ToBase64String(cv.CvData);
-                }
-            }
-
-            return generatedCvs;
+            generatedCvs = await CvService.GetUserGeneratedCvsAsync(userId);
         }
-
-        return new List<GeneratedCv>();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        generatedCvs = await GetUserGeneratedCvs();
     }
 
     private async Task<string?> GetCurrentUserIdAsync()
