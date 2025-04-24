@@ -6,6 +6,8 @@ using ResuMate.Components;
 using ResuMate.Components.Account;
 using ResuMate.Data;
 using ResuMate.Services;
+using ResuMate.Services.CvServices;
+using ResuMate.Services.PersonalLetterServices;
 using ResuMate.Shared.Models;
 
 namespace ResuMate;
@@ -24,12 +26,12 @@ public class Program
         builder.Services.AddScoped<IdentityUserAccessor>();
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-        
+
         builder.Services.AddHttpClient();
 
         builder.Services.AddScoped(sp => new HttpClient
         {
-            BaseAddress = new Uri("https://localhost:7068/api/")
+            BaseAddress = new Uri("https://localhost:7068/api/") // Example API URL
         });
 
         QuestPDF.Settings.License = LicenseType.Community;
@@ -38,30 +40,38 @@ public class Program
         builder.Services.AddSingleton<EducationModel>();
         builder.Services.AddSingleton<ExperienceModel>();
         builder.Services.AddSingleton<ReferenceModel>();
+
         builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
+        {
+            options.DefaultScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+        })
             .AddIdentityCookies();
 
-        builder.Services.AddSingleton<CreateCvPdfService>();
-        builder.Services.AddSingleton<CreatePersonalLetterPdfService>();
-
-
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+        // Register DbContext with scoped factory
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
+
+        // Register DbContextFactory with scoped lifetime
+        builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+        builder.Services.AddScoped<CreateCvPdfService>();
+        builder.Services.AddScoped<CreatePersonalLetterPdfService>();
+        builder.Services.AddScoped<GetCvService>();
+        builder.Services.AddScoped<GetPersonalLetterService>();
+
+        builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+        // Ensure UserManager is available to resolve dependencies
         builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
-
-        builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-        
-
 
         var app = builder.Build();
 
@@ -73,19 +83,13 @@ public class Program
         else
         {
             app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
         app.UseHttpsRedirection();
-
         app.UseAntiforgery();
-
         app.MapStaticAssets();
-        app.MapRazorComponents<App>()
-            .AddInteractiveServerRenderMode();
-
-        // Add additional endpoints required by the Identity /Account Razor components.
+        app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
         app.MapAdditionalIdentityEndpoints();
 
         app.Run();

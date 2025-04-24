@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/cvform"
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApplicationDbContext DbContext
 @inject CreateCvPdfService CreateCvPdfService
@@ -403,38 +403,11 @@
                     FileName = fileName,
                     CreatedAt = DateTime.UtcNow
                 };
-
-            // Spara den nya CV:n i databasen
+            
             DbContext.GeneratedCvs.Add(generatedCv);
             await DbContext.SaveChangesAsync();
         }
     }
-
-
-    
-    // private async Task GenerateCvPdf()
-    // {
-    //     var document = Document.Create(container =>
-    //     {
-            
-    //         CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList);
-    //         CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList);
-    //         CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList);
-    //         CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList);
-    //         CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList);
-    //         CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList);
-    //         CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList);
-    //     });
-
-    //     using (var memoryStream = new MemoryStream())
-    //     {
-    //         document.GeneratePdf(memoryStream);
-    //         var pdfBytes = memoryStream.ToArray();
-    //         PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
-
-    //         await SaveCvToDatabase(pdfBytes);
-    //     }
-    // }
 
     private async Task GenerateCvPdf()
     {
@@ -449,29 +422,24 @@
         // (container) => CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList),
         (container) => CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList)
     };
-
-        // Loopa igenom templates och generera en PDF för varje template
+       
         foreach (var templateAction in templates)
         {
             var document = Document.Create(container =>
-            {
-                // Här använder vi rätt container
+            {                
                 templateAction(container);
             });
 
             using (var memoryStream = new MemoryStream())
             {
-                // Generera PDF för nuvarande template
+               
                 document.GeneratePdf(memoryStream);
                 var pdfBytes = memoryStream.ToArray();
-
-                // Skapa ett unikt filnamn för varje template
+                
                 var fileName = $"Cv_Template_{Guid.NewGuid()}.pdf";
-
-                // Här kan du lagra PDF:n i databasen eller spara den på servern
+                
                 await SaveCvToDatabase(pdfBytes, fileName);
-
-                // Om du vill skapa en base64-sträng för att visa PDF:n i UI
+              
                 PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
             }
         }
