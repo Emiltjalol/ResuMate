@@ -21,6 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ResuMate.Api\ResuMate.Api.csproj" />
     <ProjectReference Include="..\ResuMate.Shared\ResuMate.Shared.csproj" />	  
-  </ItemGroup>
+  </ItemGroup>	
 
 </Project>

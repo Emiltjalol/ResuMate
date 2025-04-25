@@ -3,6 +3,8 @@
 @inject CreatePersonalLetterPdfService CreatePersonalLetterPdfService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApplicationDbContext DbContext
+@inject IConfiguration Configuration
+
 @rendermode InteractiveServer
 @if(isFormVisible)
 {
@@ -89,7 +91,7 @@
 
     <div class="form-group label">
         <label for="aboutMe">Vad kan du bidra med i detta arbete?</label>
-        <textarea id="aboutMe" @bind="personalLetter.AboutMe" class="form-control" placeholder="@GetContributionPlaceholder()"></textarea>
+        <textarea id="aboutMe" @bind="personalLetter.YourValueToUs" class="form-control" placeholder="@GetContributionPlaceholder()"></textarea>
     </div>
 
 
@@ -202,16 +204,30 @@
 
     private PersonalLetterModel personalLetter = new PersonalLetterModel
         {
-            Name = "Emil",
-            ProfessionalTitle = "Systemutvecklare inom .NET",
-            CompanyName = "Microsoft",
-            AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
+            Name = "",
+            ProfessionalTitle = "",
+            CompanyName = "",
+            AboutMe = "",
             Weaknesses = "",
-            Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
+            Strenghts = "",
             CareerGoals = "",
-            Hobbies = "Spela tv-spel, dator-spel, kolla film och serier",
+            Hobbies = "",
             BusinessOverview = "",
             ExtraInfo = ""
+
+
+
+
+            // Name = "Emil",
+            // ProfessionalTitle = "Systemutvecklare inom .NET",
+            // CompanyName = "Microsoft",
+            // AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
+            // Weaknesses = "",
+            // Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
+            // CareerGoals = "",
+            // Hobbies = "Spela tv-spel, dator-spel, kolla film och serier",
+            // BusinessOverview = "",
+            // ExtraInfo = ""
         };
 
     private string GetMotivationPlaceholder()
@@ -236,7 +252,9 @@
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("https://localhost:7068/api/PersonalLetter", personalLetter);
+            
+            var apiBaseUrl = Configuration["ApiBaseUrl"];
+            var response = await Http.PostAsJsonAsync($"{apiBaseUrl}PersonalLetter", personalLetter);
 
             if (response.IsSuccessStatusCode)
             {
@@ -252,7 +270,7 @@
         }
         catch (Exception ex)
         {
-            generatedLetter = $"Ett oväntat fel inträffade: {ex.Message}";            
+            generatedLetter = $"Ett oväntat fel inträffade: {ex.Message}";
         }
     }
 

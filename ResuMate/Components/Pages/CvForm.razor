@@ -189,16 +189,16 @@
 <button class="btn btn-secondary" @onclick="AddSkill">Lägg till</button>
 
 <div class="skills-container">
-   @if (cv.Skills != null)
-   {
-       @foreach (var skill in cv.Skills)
-       {
-           <div class="skill-card">
-               <span class="skill-name">@skill</span>
-               <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
-           </div>
-       }
-   }
+    @if (cv.Skills != null)
+    {
+        @foreach (var skill in cv.Skills)
+        {
+            <div class="skill-card">
+                <span class="skill-name">@skill</span>
+                <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+            </div>
+        }
+    }
 </div>
 
 
@@ -206,8 +206,8 @@
 @if (PdfData != null)
 {
     <div class="pdf-container">  
-       <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>  
-       <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>  
+        <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>  
+        <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>  
     </div>
 }
 
@@ -222,27 +222,27 @@
 
     private string newSkill = "";
 
-    private CvModel cv = new CvModel
-        {           
-            Name = "Johan Andersson",
-            ProfessionalTitle = "Fullstackutvecklare",
-            Email = "Johan.andersson@hotmail.com",
-            Address = "Tallvägen 12",
-            PostalCode = "12345",
-            City = "Stockholm",
-            PhoneNumber = "070-1234567",
-            AboutMe = "Jag är en driven och lösningsorienterad utvecklare med erfarenhet inom både frontend och backend. Jag älskar att skapa moderna, responsiva webbapplikationer och automatisera processer för att förbättra arbetsflöden.",
-            Languages = "Svenska, engelska, tyska",         
-            Skills = new List<string>
-        {
-            "C#, .NET Core, ASP.NET",
-            "JavaScript, TypeScript, React, Angular",
-            "SQL, PostgreSQL, MongoDB",
-            "Azure DevOps, Docker, Kubernetes",
-            "Microservices & REST API-design",
-            "CI/CD, Jenkins, GitHub Actions",
-            "Testdriven utveckling (TDD), enhetstester & integrationstester"
-        }};  
+    private CvModel cv = new CvModel();
+    // {           
+        //     Name = "Johan Andersson",
+        //     ProfessionalTitle = "Fullstackutvecklare",
+        //     Email = "Johan.andersson@hotmail.com",
+        //     Address = "Tallvägen 12",
+        //     PostalCode = "12345",
+        //     City = "Stockholm",
+        //     PhoneNumber = "070-1234567",
+        //     AboutMe = "Jag är en driven och lösningsorienterad utvecklare med erfarenhet inom både frontend och backend. Jag älskar att skapa moderna, responsiva webbapplikationer och automatisera processer för att förbättra arbetsflöden.",
+        //     Languages = "Svenska, engelska, tyska",         
+        //     Skills = new List<string>
+        // {
+        //     "C#, .NET Core, ASP.NET",
+        //     "JavaScript, TypeScript, React, Angular",
+        //     "SQL, PostgreSQL, MongoDB",
+        //     "Azure DevOps, Docker, Kubernetes",
+        //     "Microservices & REST API-design",
+        //     "CI/CD, Jenkins, GitHub Actions",
+        //     "Testdriven utveckling (TDD), enhetstester & integrationstester"
+        // }};  
 
 
     private void AddReference()
@@ -285,50 +285,50 @@
         {
             experienceList.Add(new ExperienceModel
             {
-                // JobTitle = "",
-                // Company = "",
-                // JobDescription = "",
-                // StartYear = null,
-                // EndYear = null
+                JobTitle = "",
+                Company = "",
+                JobDescription = "",
+                StartYear = null,
+                EndYear = null
 
                 //För att fylla på med random fakta till för testning
-                    JobTitle = "Fullstackutvecklare",
-                    Company = "Digital Solutions AB",
-                    JobDescription = "Utvecklade och underhöll webbapplikationer i .NET och React, samt implementerade CI/CD-pipelines för automatiserad deployment.",
-                    StartYear = "2019",
-                    EndYear = "2022"
+                    // JobTitle = "Fullstackutvecklare",
+                    // Company = "Digital Solutions AB",
+                    // JobDescription = "Utvecklade och underhöll webbapplikationer i .NET och React, samt implementerade CI/CD-pipelines för automatiserad deployment.",
+                    // StartYear = "2019",
+                    // EndYear = "2022"
             });         
 
-            experienceList.Add(new ExperienceModel
-                {
-                    JobTitle = "Systemutvecklare .NET",
-                    Company = "Tech Solutions AB",
-                    JobDescription = "Utvecklade och underhöll webbaserade applikationer i .NET och React.",
-                    StartYear = "2021",
-                    EndYear = "2023"
-                });
+            // experienceList.Add(new ExperienceModel
+            //     {
+            //         JobTitle = "Systemutvecklare .NET",
+            //         Company = "Tech Solutions AB",
+            //         JobDescription = "Utvecklade och underhöll webbaserade applikationer i .NET och React.",
+            //         StartYear = "2021",
+            //         EndYear = "2023"
+            //     });
 
-            experienceList.Add(new ExperienceModel
-                {
-                    JobTitle = "Junior Systemutvecklare",
-                    Company = "Innovate IT",
-                    JobDescription = "Arbetade med backend-utveckling och databashantering i SQL Server och Entity Framework.",
-                    StartYear = "2018",
-                    EndYear = "2021"
-                });
+            // experienceList.Add(new ExperienceModel
+            //     {
+            //         JobTitle = "Junior Systemutvecklare",
+            //         Company = "Innovate IT",
+            //         JobDescription = "Arbetade med backend-utveckling och databashantering i SQL Server och Entity Framework.",
+            //         StartYear = "2018",
+            //         EndYear = "2021"
+            //     });
 
-            referenceList.Add(new ReferenceModel
-            {
-                Name = "Gunilla Persson",
-                Relation = "Tidigare kollega",
-                PhoneNumber = "0798459283"
-            });
-            referenceList.Add(new ReferenceModel
-                {
-                    Name = "Tommy Tran",
-                    Relation = "Framtida kollega och partner på Tommy och Emil AB",
-                    PhoneNumber = "0798459283"
-                });
+            // referenceList.Add(new ReferenceModel
+            // {
+            //     Name = "Gunilla Persson",
+            //     Relation = "Tidigare kollega",
+            //     PhoneNumber = "0798459283"
+            // });
+            // referenceList.Add(new ReferenceModel
+            //     {
+            //         Name = "Tommy Tran",
+            //         Relation = "Framtida kollega och partner på Tommy och Emil AB",
+            //         PhoneNumber = "0798459283"
+            //     });
         }
     }
     
@@ -345,29 +345,29 @@
                     // EndYear = null
 
                 //För att fylla på med random fakta till för testning
-                    School = "KTH - Kungliga Tekniska Högskolan",
-                    Degree = "Civilingenjör i Datateknik",
-                    Specialization = "Mjukvaruutveckling & AI",
-                    StartYear = "2023",
-                    EndYear = "2025"
+                    // School = "KTH - Kungliga Tekniska Högskolan",
+                    // Degree = "Civilingenjör i Datateknik",
+                    // Specialization = "Mjukvaruutveckling & AI",
+                    // StartYear = "2023",
+                    // EndYear = "2025"
             });
-            educationList.Add(new EducationModel
-                {
-                    School = "Linnéuniversitetet",
-                    Degree = "Kandidatexamen i Datavetenskap",
-                    Specialization = "Programvaruteknik",
-                    StartYear = "2022",
-                    EndYear = "2023"
-                });
+            // educationList.Add(new EducationModel
+            //     {
+            //         School = "Linnéuniversitetet",
+            //         Degree = "Kandidatexamen i Datavetenskap",
+            //         Specialization = "Programvaruteknik",
+            //         StartYear = "2022",
+            //         EndYear = "2023"
+            //     });
 
-            educationList.Add(new EducationModel
-                {
-                    School = "Chalmers Tekniska Högskola",
-                    Degree = "Masterexamen i Programvaruutveckling",
-                    Specialization = "AI och maskininlärning",
-                    StartYear = "2021",
-                    EndYear = "2022"
-                });
+            // educationList.Add(new EducationModel
+            //     {
+            //         School = "Chalmers Tekniska Högskola",
+            //         Degree = "Masterexamen i Programvaruutveckling",
+            //         Specialization = "AI och maskininlärning",
+            //         StartYear = "2021",
+            //         EndYear = "2022"
+            //     });
         }
     }
 
@@ -414,13 +414,13 @@
         // Skapa en lista med templates
         var templates = new List<Action<IDocumentContainer>>()
     {
-        (container) => CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList),
+        //(container) => CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList),
         // (container) => CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList),
         // (container) => CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList),
         // (container) => CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList),
         // (container) => CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList),
         // (container) => CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList),
-        (container) => CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList)
+         (container) => CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList)
     };
        
         foreach (var templateAction in templates)
