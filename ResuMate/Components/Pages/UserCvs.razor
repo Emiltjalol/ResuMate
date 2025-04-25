@@ -1,6 +1,8 @@
 ﻿@page "/user-cvs"
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject Services.CvServices.GetCvService CvService
+@inject Services.CvServices.DeleteCvService DeleteCvService
+@rendermode InteractiveServer
 
 
 
@@ -20,7 +22,7 @@ else
         @foreach (var cv in generatedCvs)
         {
             <div class="cv-thumbnail-card">
-                <p>@cv.FileName.Substring(0, Math.Min(15, cv.FileName.Length))...</p>
+                @* <p>@cv.FileName.Substring(0, Math.Min(15, cv.FileName.Length))...</p> *@
 
 
                 @if (!string.IsNullOrEmpty(cv.Base64CvData))
@@ -30,14 +32,18 @@ else
                 else
                 {
                     <p>Ingen förhandsvisning tillgänglig</p>
-                }               
+                }
+
+                <button class="btn btn-danger" @onclick="() => DeleteCv(cv)">Ta bort</button>                
+
             </div>
         }
     </div>
 }
 
+
 @code {
-    private List<GeneratedCv> generatedCvs;       
+    private List<GeneratedCv>? generatedCvs;       
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,6 +53,22 @@ else
             generatedCvs = await CvService.GetUserGeneratedCvsAsync(userId);
         }
     }
+    private async Task DeleteCv(GeneratedCv cv)
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId != null)
+        {
+            var success = await DeleteCvService.DeleteCvAsync(cv.Id, userId);
+            if (success && generatedCvs != null)
+            {               
+                generatedCvs.Remove(cv);
+                StateHasChanged();
+            }
+        }
+    }
+
+
+
 
     private async Task<string?> GetCurrentUserIdAsync()
     {

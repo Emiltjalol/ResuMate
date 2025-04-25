@@ -1,6 +1,10 @@
 ﻿@page "/user-personal-letters"
+@using ResuMate.Services.PersonalLetterServices
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject Services.PersonalLetterServices.GetPersonalLetterService getPersonalLetterService
+@inject ResuMate.Services.PersonalLetterServices.DeletePersonalLetterService DeleteLetterService
+@rendermode InteractiveServer
+
 
 
 <h3 class="section-title">Dina personliga brev</h3>
@@ -30,38 +34,15 @@ else
                 {
                     <p>Ingen förhandsvisning tillgänglig</p>
                 }
+                <button class="btn btn-danger" @onclick="() => DeleteLetter(letter)">Ta bort</button>
             </div>
+            
         }
     </div>
 }
 
 @code {
-    private List<GeneratedPersonalLetter> generatedPersonalLetters;
-
-
-    // private async Task<List<GeneratedPersonalLetter>> GetUserPersonalLetters()
-    // {
-    //     var userId = await GetCurrentUserIdAsync();
-    //     if (userId != null)
-    //     {
-    //         var generatedletters = await DbContext.GeneratedPersonalLetters
-    //             .Where(c => c.UserId == userId)
-    //             .OrderByDescending(c => c.CreatedAt)
-    //             .ToListAsync();
-
-    //         foreach (var letter in generatedletters)
-    //         {
-    //             if (letter.PersonalLetterData != null)
-    //             {
-    //                 letter.Base64CvData = Convert.ToBase64String(letter.PersonalLetterData);
-    //             }
-    //         }
-
-    //         return generatedletters;
-    //     }
-
-    //     return new List<GeneratedPersonalLetter>();
-    // }
+    private List<GeneratedPersonalLetter>? generatedPersonalLetters;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +52,23 @@ else
             generatedPersonalLetters = await getPersonalLetterService.GetUserPersonalLettersAsync(userId);
         }
     }
+
+    private async Task DeleteLetter(GeneratedPersonalLetter letter)
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId != null)
+        {
+            var success = await DeleteLetterService.DeleteLetterAsync(letter.Id, userId);
+            if (success && generatedPersonalLetters != null)
+            {         
+                generatedPersonalLetters.Remove(letter);
+                StateHasChanged();
+            }
+        }
+    }
+
+
+
 
     private async Task<string?> GetCurrentUserIdAsync()
     {

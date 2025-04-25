@@ -64,6 +64,8 @@ public class Program
         builder.Services.AddScoped<CreatePersonalLetterPdfService>();
         builder.Services.AddScoped<GetCvService>();
         builder.Services.AddScoped<GetPersonalLetterService>();
+        builder.Services.AddScoped<DeleteCvService>();
+        builder.Services.AddScoped<DeletePersonalLetterService>();
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
