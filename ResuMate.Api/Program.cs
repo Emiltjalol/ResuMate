@@ -9,6 +9,12 @@ namespace ResuMate.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Configuration
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("api.appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"api.appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -76,3 +82,4 @@ namespace ResuMate.Api
         }
     }
 }
+

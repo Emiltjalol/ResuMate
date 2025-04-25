@@ -3,6 +3,8 @@
 @inject CreatePersonalLetterPdfService CreatePersonalLetterPdfService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApplicationDbContext DbContext
+@inject IConfiguration Configuration
+
 @rendermode InteractiveServer
 @if(isFormVisible)
 {
@@ -236,7 +238,9 @@
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("https://localhost:7068/api/PersonalLetter", personalLetter);
+            
+            var apiBaseUrl = Configuration["ApiBaseUrl"];
+            var response = await Http.PostAsJsonAsync($"{apiBaseUrl}PersonalLetter", personalLetter);
 
             if (response.IsSuccessStatusCode)
             {
@@ -252,7 +256,7 @@
         }
         catch (Exception ex)
         {
-            generatedLetter = $"Ett oväntat fel inträffade: {ex.Message}";            
+            generatedLetter = $"Ett oväntat fel inträffade: {ex.Message}";
         }
     }
 

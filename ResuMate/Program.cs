@@ -29,9 +29,10 @@ public class Program
 
         builder.Services.AddHttpClient();
 
+        var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
         builder.Services.AddScoped(sp => new HttpClient
         {
-            BaseAddress = new Uri("https://localhost:7068/api/") // Example API URL
+            BaseAddress = new Uri(apiBaseUrl)
         });
 
         QuestPDF.Settings.License = LicenseType.Community;
@@ -94,6 +95,14 @@ public class Program
         app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
         app.MapAdditionalIdentityEndpoints();
 
-        app.Run();
+        try
+        {
+            app.Run();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Application failed to start: {ex.Message}");
+            throw;
+        }
     }
 }
