@@ -709,4 +709,46 @@ button.btn {
     }
 }
 
+/*CV MALLAR*/
+.template-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Avstånd mellan mallarna */
+    justify-content: space-evenly; /* Jämn fördelning av mallarna */
+}
+
+.template-item {
+    text-align: center;
+    width: 300px; /* Storleken på varje mall */
+    padding: 10px;
+    border: 1px solid #ccc; /* Lägg till en kant runt varje mall */
+    border-radius: 8px; /* Rundade hörn */
+    background-color: #f9f9f9; /* Ljus bakgrundsfärg */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lägg till en skugga */
+}
+
+.template-preview {
+    width: 100%; /* Gör bilden responsiv för att passa bredden */
+    height: auto; /* Bevara bildens proportioner */
+    border-radius: 5px;
+    margin-bottom: 10px; /* Lite utrymme under bilden */
+}
+
+.template-button {
+    background-color: #4CAF50; /* Grön bakgrund på knappen */
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.template-button:hover {
+    background-color: #45a049; /* Mörkare grön när man hovrar över knappen */
+}
+
+
+
 

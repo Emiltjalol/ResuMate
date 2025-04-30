@@ -4,15 +4,39 @@
 
 <h3>Välj en mall</h3>
 
-<p>Välj en mall som passar dig bäst. Du kan alltid ändra mallen senare.</p>
+<p>Välj en mall som passar dig bäst.</p>
 
 <div class="template-list">
-    <button class="template-button" @onclick="() => OnTemplateSelected(1)">Mall 1</button>
-    <button class="template-button" @onclick="() => OnTemplateSelected(2)">Mall 2</button>
-    <button class="template-button" @onclick="() => OnTemplateSelected(3)">Mall 3</button>
-    <button class="template-button" @onclick="() => OnTemplateSelected(4)">Mall 4</button>
-    <button class="template-button" @onclick="() => OnTemplateSelected(5)">Mall 5</button>
+    <div class="template-item">
+        <img src="../Images/Template1.jpg" alt="Mall 1 Preview" class="template-preview" />
+        <button class="template-button" @onclick="() => OnTemplateSelected(1)">Välj</button>
+    </div>
+    <div class="template-item">
+        <img src="../images/Template2.jpg" alt="Mall 2 Preview" class="template-preview" />
+        <button class="template-button" @onclick="() => OnTemplateSelected(2)">Välj</button>
+    </div>
+    <div class="template-item">
+        <img src="../Images/Template3.jpg" alt="Mall 3 Preview" class="template-preview" />
+        <button class="template-button" @onclick="() => OnTemplateSelected(3)">Välj</button>
+    </div>
+    <div class="template-item">
+        <img src="../images/template4.jpg" alt="Mall 4 Preview" class="template-preview" />
+        <button class="template-button" @onclick="() => OnTemplateSelected(4)">Välj</button>
+    </div>
+    <div class="template-item">
+        <img src="../Images/Template5.jpg" alt="Mall 5 Preview" class="template-preview" />
+        <button class="template-button" @onclick="() => OnTemplateSelected(5)">Välj</button>
+    </div>
+    <div class="template-item">
+        <img src="../Images/Template6.jpg" alt="Mall 5 Preview" class="template-preview" />
+        <button class="template-button" @onclick="() => OnTemplateSelected(6)">Välj</button>
+    </div>
+    <div class="template-item">
+        <img src="../Images/Template7.jpg" alt="Mall 5 Preview" class="template-preview" />
+        <button class="template-button" @onclick="() => OnTemplateSelected(7)">Välj</button>
+    </div>
 </div>
+
 
 @code {
     private void OnTemplateSelected(int templateNumber)
