@@ -235,240 +235,8 @@ namespace ResuMate.Services
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(30);
                 page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri"));
-                page.Content().Column(column =>
-                {
-                    column.Item().Row(row =>
-                    {
-                        row.RelativeItem().Column(leftCol =>
-                        {
-                            leftCol.Item().AlignLeft().Text($"{cvDto.Name}").FontSize(12);
-                            leftCol.Item().AlignLeft().Text($"{cvDto.Address}").FontSize(12);
-                            leftCol.Item().AlignLeft().Text($"{cvDto.PostalCode} {cvDto.City}").FontSize(12);
-                        });
 
-                        row.RelativeItem().Column(rightCol =>
-                        {
-                            rightCol.Item().AlignRight().Text($"{cvDto.Email}").FontSize(12);
-                            rightCol.Item().AlignRight().Text($"{cvDto.PhoneNumber}").FontSize(12);
-                        });
-                    });
-                    column.Item().PaddingTop(20).Text("Profil").FontSize(16).Bold();
-                    column.Item().Text(cvDto.AboutMe).FontSize(12).LineHeight(1.3f);
-
-                    column.Item().PaddingVertical(15).LineHorizontal(1);
-
-                    column.Item().Row(row =>
-                    {
-                        row.RelativeItem(1).Column(leftCol =>
-                        {
-                            leftCol.Item().Text("Arbetslivserfarenheter").FontSize(16).Bold();
-                        });
-                        row.RelativeItem(2).Column(midCol =>
-                        {
-                            foreach (var exp in experienceList)
-                            {
-                                midCol.Item().Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})").FontSize(14).Bold();
-                                midCol.Item().PaddingBottom(5).Text(exp.JobDescription).FontSize(12).LineHeight(1.3f);
-                            }
-                        });
-
-                    });
-
-                    column.Item().PaddingVertical(15).LineHorizontal(1);
-
-                    column.Item().Row(row =>
-                    {
-                        row.RelativeItem(1).Column(leftCol =>
-                        {
-                            leftCol.Item().Text("Utbildningar").FontSize(16).Bold();
-                        });
-                        row.RelativeItem(2).Column(midCol =>
-                        {
-                            foreach (var edu in educationList)
-                            {
-                                midCol.Item().Text($"{edu.School} ({edu.StartYear} - {edu.EndYear})").FontSize(14).Bold();
-                                midCol.Item().PaddingBottom(5).Text($"{edu.Degree}").FontSize(12).LineHeight(1.3f);
-                            }
-                        });
-
-                    });
-
-                    column.Item().PaddingVertical(15).LineHorizontal(1);
-
-
-                    column.Item().Row(row =>
-                    {
-                        column.Item().Row(row =>
-                        {
-                            row.RelativeItem(1).Column(leftCol =>
-                            {
-                                leftCol.Item().Text("Övriga meriter").FontSize(16).Bold();
-                            });
-
-                            row.RelativeItem(2).Column(midCol =>
-                            {
-                                var skills = cvDto.Skills;
-
-                                if (skills != null && skills.Count > 7)
-                                {
-                                    int mid = skills.Count / 2;
-
-                                    midCol.Item().Row(row =>
-                                    {
-                                        row.RelativeItem().Column(left =>
-                                        {
-                                            for (int i = 0; i < mid; i++)
-                                            {
-                                                left.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.3f);
-                                            }
-                                        });
-
-                                        row.RelativeItem().Column(right =>
-                                        {
-                                            for (int i = mid; i < skills.Count; i++)
-                                            {
-                                                right.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.3f);
-                                            }
-                                        });
-                                    });
-                                }
-                                else
-                                {
-                                    if (skills != null)
-                                    {
-                                        var skillText = string.Join("\n", skills.Select(skill => $"• {skill}"));
-                                        midCol.Item().Text(skillText).FontSize(12).LineHeight(1.3f);
-                                    }
-                                }
-                            });
-                        });
-
-                        column.Item().PaddingVertical(15).LineHorizontal(1);
-
-                        column.Item().Row(row =>
-                        {
-                            row.RelativeItem(1).Column(leftCol =>
-                            {
-                                leftCol.Item().PaddingTop(10).Text("Referenser").FontSize(16).Bold();
-                            });
-
-                            row.RelativeItem(2).Column(midCol =>
-                            {
-                                if (referenceList.Count == 0)
-                                {
-                                    midCol.Item().PaddingTop(10).Text("Lämnas på begäran").FontSize(14).FontColor(Colors.Black);
-                                }
-                                else
-                                {
-                                    foreach (var reference in referenceList)
-                                    {
-                                        midCol.Item().Text($"{reference.Name}").FontSize(14).Bold();
-                                        midCol.Item().PaddingBottom(5).Text($"{reference.Relation}  {reference.PhoneNumber}").FontSize(12);
-                                    }
-                                }
-                            });
-                        });
-                    });
-                });
-            });
-        }
-        public void Template4(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
-        {
-            container.Page(page =>
-            {
-                page.Size(PageSizes.A4);
-                page.Margin(0);
-
-                page.Content().Column(mainCol =>
-                {
-                    mainCol.Item().Height(100).Background(Colors.BlueGrey.Darken3).AlignCenter().AlignMiddle().Column(header =>
-                    {
-                        header.Item().Text(cvDto.Name).FontSize(28).Bold().FontColor(Colors.White);
-                        header.Item().Text(cvDto.ProfessionalTitle).FontSize(14).FontColor(Colors.White);
-                    });
-
-                    mainCol.Item().ExtendVertical().Row(row =>
-                    {
-                        row.RelativeItem(0.35f).Extend().Background(Colors.Grey.Lighten3).Padding(20).Column(leftCol =>
-                        {                            
-                            if (!string.IsNullOrEmpty(cvDto.ProfileImage))
-                            {
-                                var imageBytes = Convert.FromBase64String(cvDto.ProfileImage.Split(',')[1]);
-                                leftCol.Item().AlignCenter().Image(imageBytes).FitWidth();
-                            }                            
-
-                            leftCol.Item().PaddingTop(10).PaddingBottom(10).Text("Kontakt").FontSize(14).Bold().FontColor(Colors.Black);
-                            leftCol.Item().Text($"📞 {cvDto.PhoneNumber}").FontSize(10);
-                            leftCol.Item().Text($"📧 {cvDto.Email}").FontSize(10);
-                            leftCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
-
-                            leftCol.Item().PaddingTop(10).LineHorizontal(1);
-
-                            leftCol.Item().PaddingTop(10).Text("Om Mig").FontSize(14).Bold().FontColor(Colors.Black);
-                            leftCol.Item().PaddingTop(10).Text(cvDto.AboutMe).FontSize(12).LineHeight(1.3f);
-
-                            if (cvDto.Skills != null && cvDto.Skills.Count > 0)
-                            {
-                                leftCol.Item().PaddingTop(10).LineHorizontal(1);
-                                leftCol.Item().PaddingTop(10).PaddingBottom(10).Text("Kompetenser").FontSize(14).Bold().FontColor(Colors.Black);
-                                var skills = string.Join("\n", cvDto.Skills.Select(skill => $"• {skill}"));
-                                leftCol.Item().Text(skills).FontSize(10);
-                            }
-                        });
-
-                        row.RelativeItem(0.65f).Extend().Padding(20).Column(rightCol =>
-                        {
-                            rightCol.Item().Text("Erfarenhet").FontSize(18).Bold().FontColor(Colors.BlueGrey.Darken3);
-                            rightCol.Item().PaddingVertical(10).LineHorizontal(1);
-                            foreach (var exp in experienceList)
-                            {
-                                rightCol.Item().PaddingTop(10).Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
-                                    .FontSize(13).Bold();
-                                rightCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.3f);
-                            }
-
-                            rightCol.Item().PaddingTop(20).Text("Utbildning").FontSize(18).Bold().FontColor(Colors.BlueGrey.Darken3);
-                            rightCol.Item().PaddingVertical(10).LineHorizontal(1);
-                            foreach (var edu in educationList)
-                            {
-                                rightCol.Item().PaddingTop(10).Text($"{edu.Specialization} - {edu.School} ({edu.StartYear} - {edu.EndYear})")
-                                    .FontSize(13).Bold();
-                                rightCol.Item().Text(edu.Degree).FontSize(12);
-                            }
-
-                            rightCol.Item().Column(referencesCol =>
-                            {
-                                referencesCol.Item().PaddingTop(20).Text("Referenser").FontSize(18).Bold().FontColor(Colors.BlueGrey.Darken3);
-                                referencesCol.Item().PaddingVertical(10).LineHorizontal(1);
-
-                                if (referenceList == null || !referenceList.Any())
-                                {
-                                    referencesCol.Item().PaddingTop(8).Text("Lämnas gärna vid förfrågan.").FontSize(12).FontColor(Colors.Black);
-                                }
-                                else
-                                {
-                                    foreach (var reference in referenceList)
-                                    {
-                                        referencesCol.Item().PaddingTop(8).Text(text =>
-                                        {
-                                            text.Span(reference.Name).FontSize(12).FontColor(Colors.Black).Bold();
-                                            text.Span($" - {reference.Relation} - {reference.PhoneNumber}").FontSize(12).FontColor(Colors.Black);
-                                        });
-                                    }
-                                }
-                            });
-                        });
-                    });
-                });
-            });
-        }
-        public void Template5(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
-        {
-            container.Page(page =>
-            {
-                page.Size(PageSizes.A4);
                 page.Margin(20);
 
                 page.Content().Column(column =>
@@ -598,107 +366,105 @@ namespace ResuMate.Services
                 });
             });
         }
-
-        public void Template6(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
+      
+        public void Template4(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(20);
-                page.DefaultTextStyle(x => x.FontSize(9).FontColor(Colors.Grey.Darken3));
+                page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri"));
+                page.Margin(0);
 
-                page.Content().Element(e => e.Column(col =>
+                page.Content().Column(mainCol =>
                 {
-
-                    col.Item().Row(row =>
+                    mainCol.Item().Height(100).Background(Colors.BlueGrey.Darken3).AlignCenter().AlignMiddle().Column(header =>
                     {
-                        row.RelativeItem(0.7f).PaddingBottom(10).Column(headerCol =>
-                        {
-                            headerCol.Item().Text(cvDto.Name).FontSize(30).Bold();
-                            headerCol.Item().Text(cvDto.ProfessionalTitle).FontSize(16).Italic().FontColor(Colors.Grey.Darken2);
-                        });
+                        header.Item().Text(cvDto.Name).FontSize(28).Bold().FontColor(Colors.White);
+                        header.Item().Text(cvDto.ProfessionalTitle).FontSize(14).FontColor(Colors.White);
                     });
 
-
-                    col.Item().PaddingVertical(5).Border(1).Background(Colors.White).Padding(10).Column(contactCol =>
+                    mainCol.Item().ExtendVertical().Row(row =>
                     {
-                        contactCol.Item().Text("Kontakt").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
-                        contactCol.Item().PaddingTop(3).Text($"📞 {cvDto.PhoneNumber}");
-                        contactCol.Item().Text($"📧 {cvDto.Email}");
-                        contactCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}");
-                    });
-
-
-                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(aboutCol =>
-                    {
-                        aboutCol.Item().Text("Om Mig").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
-                        aboutCol.Item().PaddingTop(3).Text(cvDto.AboutMe).LineHeight(1.2f);
-                    });
-
-
-                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(expCol =>
-                    {
-                        expCol.Item().Text("Erfarenhet").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
-
-                        foreach (var exp in experienceList)
-                        {
-                            expCol.Item().PaddingTop(5).Text($"{exp.JobTitle} – {exp.Company} ({exp.StartYear} - {exp.EndYear})").Bold();
-                            expCol.Item().Text(exp.JobDescription).LineHeight(1.2f);
-                        }
-                    });
-
-
-                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(eduCol =>
-                    {
-                        eduCol.Item().Text("Utbildning").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
-
-                        foreach (var edu in educationList)
-                        {
-                            eduCol.Item().PaddingTop(5).Text($"{edu.Specialization} – {edu.School} ({edu.StartYear} - {edu.EndYear})").Bold();
-                            eduCol.Item().Text(edu.Degree);
-                        }
-                    });
-
-
-                    if (cvDto.Skills != null && cvDto.Skills.Any())
-                    {
-                        col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(skillCol =>
-                        {
-                            skillCol.Item().Text("Kompetenser").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
-                            foreach (var skill in cvDto.Skills)
+                        row.RelativeItem(0.35f).Extend().Background(Colors.Grey.Lighten3).Padding(20).Column(leftCol =>
+                        {                            
+                            if (!string.IsNullOrEmpty(cvDto.ProfileImage))
                             {
-                                skillCol.Item().Text($"• {skill}");
+                                var imageBytes = Convert.FromBase64String(cvDto.ProfileImage.Split(',')[1]);
+                                leftCol.Item().AlignCenter().Image(imageBytes).FitWidth();
+                            }                            
+
+                            leftCol.Item().PaddingTop(10).PaddingBottom(10).Text("Kontakt").FontSize(14).Bold().FontColor(Colors.Black);
+                            leftCol.Item().Text($"📞 {cvDto.PhoneNumber}").FontSize(10);
+                            leftCol.Item().Text($"📧 {cvDto.Email}").FontSize(10);
+                            leftCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}").FontSize(10);
+
+                            leftCol.Item().PaddingTop(10).LineHorizontal(1);
+
+                            leftCol.Item().PaddingTop(10).Text("Om Mig").FontSize(14).Bold().FontColor(Colors.Black);
+                            leftCol.Item().PaddingTop(10).Text(cvDto.AboutMe).FontSize(12).LineHeight(1.3f);
+
+                            if (cvDto.Skills != null && cvDto.Skills.Count > 0)
+                            {
+                                leftCol.Item().PaddingTop(10).LineHorizontal(1);
+                                leftCol.Item().PaddingTop(10).PaddingBottom(10).Text("Kompetenser").FontSize(14).Bold().FontColor(Colors.Black);
+                                var skills = string.Join("\n", cvDto.Skills.Select(skill => $"• {skill}"));
+                                leftCol.Item().Text(skills).FontSize(10);
                             }
                         });
-                    }
 
-                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(refCol =>
-                    {
-                        refCol.Item().Text("Referenser").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
-
-                        if (referenceList != null && referenceList.Any())
+                        row.RelativeItem(0.65f).Extend().Padding(20).Column(rightCol =>
                         {
-                            foreach (var reference in referenceList)
+                            rightCol.Item().Text("Erfarenhet").FontSize(18).Bold().FontColor(Colors.BlueGrey.Darken3);
+                            rightCol.Item().PaddingVertical(10).LineHorizontal(1);
+                            foreach (var exp in experienceList)
                             {
-                                refCol.Item().PaddingTop(3).Text($"{reference.Name} – {reference.Relation} – {reference.PhoneNumber}");
+                                rightCol.Item().PaddingTop(10).Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
+                                    .FontSize(13).Bold();
+                                rightCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.3f);
                             }
-                        }
-                        else
-                        {
-                            refCol.Item().PaddingTop(3).Text("Lämnas gärna vid begäran.");
-                        }
+
+                            rightCol.Item().PaddingTop(20).Text("Utbildning").FontSize(18).Bold().FontColor(Colors.BlueGrey.Darken3);
+                            rightCol.Item().PaddingVertical(10).LineHorizontal(1);
+                            foreach (var edu in educationList)
+                            {
+                                rightCol.Item().PaddingTop(10).Text($"{edu.Specialization} - {edu.School} ({edu.StartYear} - {edu.EndYear})")
+                                    .FontSize(13).Bold();
+                                rightCol.Item().Text(edu.Degree).FontSize(12);
+                            }
+
+                            rightCol.Item().Column(referencesCol =>
+                            {
+                                referencesCol.Item().PaddingTop(20).Text("Referenser").FontSize(18).Bold().FontColor(Colors.BlueGrey.Darken3);
+                                referencesCol.Item().PaddingVertical(10).LineHorizontal(1);
+
+                                if (referenceList == null || !referenceList.Any())
+                                {
+                                    referencesCol.Item().PaddingTop(8).Text("Lämnas gärna vid förfrågan.").FontSize(12).FontColor(Colors.Black);
+                                }
+                                else
+                                {
+                                    foreach (var reference in referenceList)
+                                    {
+                                        referencesCol.Item().PaddingTop(8).Text(text =>
+                                        {
+                                            text.Span(reference.Name).FontSize(12).FontColor(Colors.Black).Bold();
+                                            text.Span($" - {reference.Relation} - {reference.PhoneNumber}").FontSize(12).FontColor(Colors.Black);
+                                        });
+                                    }
+                                }
+                            });
+                        });
                     });
-                }));
+                });
             });
         }
-
-        public void Template7(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
+        public void Template5(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
                 page.Margin(25);
-                page.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.Grey.Darken4));
+                page.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.Grey.Darken4).FontFamily("Calibri"));
 
                 page.Content().Element(e => e.Column(col =>
                 {
@@ -710,8 +476,6 @@ namespace ResuMate.Services
                             headerCol.Item().Text(cvDto.Name).FontSize(28).Bold().FontColor(Colors.Black);
                             headerCol.Item().Text(cvDto.ProfessionalTitle).FontSize(14).Italic().FontColor(Colors.Grey.Darken2);
                         });
-
-                        row.RelativeItem(0.4f).Height(100).AlignRight().Image("wwwroot/Images/GenericImg.jpg").FitHeight();
 
                     });
 
@@ -786,6 +550,243 @@ namespace ResuMate.Services
                         });
                     }
                 }));
+            });
+        }
+        public void Template6(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(20);
+                page.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.Grey.Darken3).FontFamily("Calibri"));
+
+
+                page.Content().Element(e => e.Column(col =>
+                {
+
+                    col.Item().Row(row =>
+                    {
+                        row.RelativeItem(0.7f).PaddingBottom(10).Column(headerCol =>
+                        {
+                            headerCol.Item().Text(cvDto.Name).FontSize(30).Bold();
+                            headerCol.Item().Text(cvDto.ProfessionalTitle).FontSize(16).Italic().FontColor(Colors.Grey.Darken2);
+                        });
+                    });
+
+
+                    col.Item().PaddingVertical(5).Border(1).Background(Colors.White).Padding(10).Column(contactCol =>
+                    {
+                        contactCol.Item().Text("Kontakt").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
+                        contactCol.Item().PaddingTop(3).Text($"📞 {cvDto.PhoneNumber}");
+                        contactCol.Item().Text($"📧 {cvDto.Email}");
+                        contactCol.Item().Text($"📍 {cvDto.Address}, {cvDto.PostalCode} {cvDto.City}");
+                    });
+
+
+                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(aboutCol =>
+                    {
+                        aboutCol.Item().Text("Om Mig").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
+                        aboutCol.Item().PaddingTop(3).Text(cvDto.AboutMe).LineHeight(1.3f);
+                    });
+
+
+                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(expCol =>
+                    {
+                        expCol.Item().Text("Erfarenhet").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
+
+                        foreach (var exp in experienceList)
+                        {
+                            expCol.Item().PaddingTop(5).Text($"{exp.JobTitle} – {exp.Company} ({exp.StartYear} - {exp.EndYear})").Bold();
+                            expCol.Item().Text(exp.JobDescription).LineHeight(1.3f);
+                        }
+                    });
+
+
+                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(eduCol =>
+                    {
+                        eduCol.Item().Text("Utbildning").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
+
+                        foreach (var edu in educationList)
+                        {
+                            eduCol.Item().PaddingTop(5).Text($"{edu.Specialization} – {edu.School} ({edu.StartYear} - {edu.EndYear})").Bold();
+                            eduCol.Item().Text(edu.Degree);
+                        }
+                    });
+
+
+                    if (cvDto.Skills != null && cvDto.Skills.Any())
+                    {
+                        col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(skillCol =>
+                        {
+                            skillCol.Item().PaddingBottom(8).Text("Kompetenser").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
+                            foreach (var skill in cvDto.Skills)
+                            {
+                                skillCol.Item().PaddingBottom(1).Text($"• {skill}");
+                            }
+                        });
+                    }
+
+                    col.Item().PaddingTop(8).Border(1).Background(Colors.White).Padding(10).Column(refCol =>
+                    {
+                        refCol.Item().Text("Referenser").FontSize(12).Bold().FontColor(Colors.Blue.Darken2);
+
+                        if (referenceList != null && referenceList.Any())
+                        {
+                            foreach (var reference in referenceList)
+                            {
+                                refCol.Item().PaddingTop(3).Text($"{reference.Name} – {reference.Relation} – {reference.PhoneNumber}");
+                            }
+                        }
+                        else
+                        {
+                            refCol.Item().PaddingTop(3).Text("Lämnas gärna vid begäran.");
+                        }
+                    });
+                }));
+            });
+        }
+        public void Template7(IDocumentContainer container, CvModel cvDto, List<EducationModel> educationList, List<ExperienceModel> experienceList, List<ReferenceModel> referenceList)
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(30);
+                page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri"));
+                page.Content().Column(column =>
+                {
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem().Column(leftCol =>
+                        {
+                            leftCol.Item().AlignLeft().Text($"{cvDto.Name}").FontSize(12);
+                            leftCol.Item().AlignLeft().Text($"{cvDto.Address}").FontSize(12);
+                            leftCol.Item().AlignLeft().Text($"{cvDto.PostalCode} {cvDto.City}").FontSize(12);
+                        });
+
+                        row.RelativeItem().Column(rightCol =>
+                        {
+                            rightCol.Item().AlignRight().Text($"{cvDto.Email}").FontSize(12);
+                            rightCol.Item().AlignRight().Text($"{cvDto.PhoneNumber}").FontSize(12);
+                        });
+                    });
+                    column.Item().PaddingTop(20).Text("Profil").FontSize(16).Bold();
+                    column.Item().Text(cvDto.AboutMe).FontSize(12).LineHeight(1.3f);
+
+                    column.Item().PaddingVertical(15).LineHorizontal(1);
+
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem(1).Column(leftCol =>
+                        {
+                            leftCol.Item().Text("Arbetslivserfarenheter").FontSize(16).Bold();
+                        });
+                        row.RelativeItem(2).Column(midCol =>
+                        {
+                            foreach (var exp in experienceList)
+                            {
+                                midCol.Item().Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})").FontSize(14).Bold();
+                                midCol.Item().PaddingBottom(5).Text(exp.JobDescription).FontSize(12).LineHeight(1.3f);
+                            }
+                        });
+
+                    });
+
+                    column.Item().PaddingVertical(15).LineHorizontal(1);
+
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem(1).Column(leftCol =>
+                        {
+                            leftCol.Item().Text("Utbildningar").FontSize(16).Bold();
+                        });
+                        row.RelativeItem(2).Column(midCol =>
+                        {
+                            foreach (var edu in educationList)
+                            {
+                                midCol.Item().Text($"{edu.School} ({edu.StartYear} - {edu.EndYear})").FontSize(14).Bold();
+                                midCol.Item().PaddingBottom(5).Text($"{edu.Degree}").FontSize(12).LineHeight(1.3f);
+                            }
+                        });
+
+                    });
+
+                    column.Item().PaddingVertical(15).LineHorizontal(1);
+
+
+                    column.Item().Row(row =>
+                    {
+                        column.Item().Row(row =>
+                        {
+                            row.RelativeItem(1).Column(leftCol =>
+                            {
+                                leftCol.Item().Text("Övriga meriter").FontSize(16).Bold();
+                            });
+
+                            row.RelativeItem(2).Column(midCol =>
+                            {
+                                var skills = cvDto.Skills;
+
+                                if (skills != null && skills.Count > 7)
+                                {
+                                    int mid = skills.Count / 2;
+
+                                    midCol.Item().PaddingRight(5).Row(row =>
+                                    {
+                                        row.RelativeItem().Column(left =>
+                                        {
+                                            for (int i = 0; i < mid; i++)
+                                            {
+                                                left.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.3f);
+                                            }
+                                        });
+
+                                        row.RelativeItem().Column(right =>
+                                        {
+                                            for (int i = mid; i < skills.Count; i++)
+                                            {
+                                                right.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.3f);
+                                            }
+                                        });
+                                    });
+                                }
+                                else
+                                {
+                                    if (skills != null)
+                                    {
+                                        var skillText = string.Join("\n", skills.Select(skill => $"• {skill}"));
+                                        midCol.Item().Text(skillText).FontSize(12).LineHeight(1.3f);
+                                    }
+                                }
+                            });
+                        });
+
+                        column.Item().PaddingVertical(15).LineHorizontal(1);
+
+                        column.Item().Row(row =>
+                        {
+                            row.RelativeItem(1).Column(leftCol =>
+                            {
+                                leftCol.Item().PaddingTop(10).Text("Referenser").FontSize(16).Bold();
+                            });
+
+                            row.RelativeItem(2).Column(midCol =>
+                            {
+                                if (referenceList.Count == 0)
+                                {
+                                    midCol.Item().PaddingTop(10).Text("Lämnas på begäran").FontSize(14).FontColor(Colors.Black);
+                                }
+                                else
+                                {
+                                    foreach (var reference in referenceList)
+                                    {
+                                        midCol.Item().Text($"{reference.Name}").FontSize(14).Bold();
+                                        midCol.Item().PaddingBottom(5).Text($"{reference.Relation}  {reference.PhoneNumber}").FontSize(12);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                });
             });
         }
 
