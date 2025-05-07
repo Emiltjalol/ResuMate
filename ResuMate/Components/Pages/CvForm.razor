@@ -25,6 +25,29 @@
     <input id="email" @bind="cv.Email" class="form-control" placeholder="Din e-postadress" />
 </div>
 
+@if (DoesTemplateSupportProfileImage(selectedTemplate))
+{
+    <p>Vill du lägga till en profilbild?</p>
+
+    <div>
+        <input type="radio" id="yes" name="uploadImage" @onchange="@(() => UserUploadedImage = true)" checked="@UserUploadedImage" />
+        <label for="yes">Ja</label>
+
+        <input type="radio" id="no" name="UploadImage" @onchange="@(() => UserUploadedImage = false)" checked="@(!UserUploadedImage)" />
+        <label for="no">Nej</label>
+    </div>
+
+    @if(UserUploadedImage){
+        <div class="form-group label">
+            <label for="profileImage">Profilbild</label>
+            <InputFile OnChange="HandleImageUpload" />
+            @if (!string.IsNullOrEmpty(cv.ProfileImage))
+            {
+                <img src="@cv.ProfileImage" alt="Profilbild" style="max-width: 150px; max-height: 150px; margin-top: 10px;" />
+            }
+        </div>
+    }    
+}
 <div class="form-group d-flex gap-2">
     <div class="form-group label" style="flex: 2;">
         <label for="address">Address</label>
@@ -221,6 +244,7 @@
     private List<EducationModel> educationList = new List<EducationModel>();
     private List<ExperienceModel> experienceList = new List<ExperienceModel>();
     private int selectedTemplate = 1;
+    private bool UserUploadedImage = false;
 
     private string newSkill = "";
 
@@ -275,14 +299,15 @@
     {        
             referenceList.Remove(reference);       
     }
+
     private void AddSkill()
-       {
-           if (!string.IsNullOrWhiteSpace(newSkill) && cv.Skills != null && !cv.Skills.Contains(newSkill))
-           {
-               cv.Skills.Add(newSkill);
-               newSkill = "";
-           }
-       }
+    {
+        if (!string.IsNullOrWhiteSpace(newSkill) && cv.Skills != null && !cv.Skills.Contains(newSkill))
+        {
+            cv.Skills.Add(newSkill);
+            newSkill = "";
+        }
+    }
 
     private void RemoveSkill(string skill)
     {
@@ -389,6 +414,27 @@
                 });
         }
     }
+    private bool DoesTemplateSupportProfileImage(int templateId)
+    {
+        // Lista över templates som stöder profilbilder
+        var templatesWithProfileImageSupport = new HashSet<int> { 1, 4, 7 }; // Lägg till de templates som stöder profilbilder
+        return templatesWithProfileImageSupport.Contains(templateId);
+    }
+
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        if (file != null)
+        {            
+            using var stream = new MemoryStream();
+            await file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).CopyToAsync(stream);
+            var imageBytes = stream.ToArray();
+            cv.ProfileImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(imageBytes)}";
+        }
+    }
+
 
     private void RemoveEducation(EducationModel education)
     {
