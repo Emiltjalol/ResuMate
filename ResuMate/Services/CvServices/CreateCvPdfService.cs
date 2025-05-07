@@ -27,15 +27,18 @@ namespace ResuMate.Services
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
+                page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri"));
                 page.Margin(0);
 
                 page.Content().Row(row =>
                 {
                     row.RelativeItem(0.4f).Background(Colors.Grey.Darken3).Padding(15).Column(col =>
                     {
-                        var imagePath = "wwwroot/Images/GenericImg.jpg";
-                        var imageBytes = File.ReadAllBytes(imagePath);
-                        col.Item().PaddingBottom(10).PaddingTop(15).AlignCenter().Height(200).Image(imageBytes).FitWidth().FitHeight();
+                        if (!string.IsNullOrEmpty(cvDto.ProfileImage))
+                        {
+                            var imageBytes = Convert.FromBase64String(cvDto.ProfileImage.Split(',')[1]);
+                            col.Item().PaddingBottom(10).PaddingTop(15).AlignCenter().Height(200).Image(imageBytes).FitWidth().FitHeight();
+                        }                        
 
                         col.Item().Text(cvDto.Name).FontSize(22).Bold().FontColor(Colors.White).AlignCenter();
                         col.Item().PaddingBottom(40).Text(cvDto.ProfessionalTitle).FontSize(16).Italic().FontColor(Colors.White).AlignCenter();
@@ -118,6 +121,7 @@ namespace ResuMate.Services
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
+                page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri"));
                 page.Margin(0);
 
                 page.Content().Column(mainCol =>
@@ -133,20 +137,23 @@ namespace ResuMate.Services
                         row.RelativeItem(0.4f).ExtendVertical().Background(Colors.Grey.Lighten3).Column(col =>
                         {
 
-                            var imagePath = "wwwroot/Images/GenericImg.jpg";
-                            var imageBytes = File.ReadAllBytes(imagePath);
-                            col.Item().PaddingTop(30).AlignCenter().Height(150).Image(imageBytes).FitWidth().FitHeight();
+                            if (!string.IsNullOrEmpty(cvDto.ProfileImage))
+                            {
+                                var imageBytes = Convert.FromBase64String(cvDto.ProfileImage.Split(',')[1]);
+                                col.Item().PaddingTop(30).AlignCenter().Height(150).Image(imageBytes).FitWidth().FitHeight();
+                            }
+                            
 
 
                             col.Item().PaddingLeft(20).PaddingBottom(10).PaddingTop(30).Text("KONTAKTA MIG").FontSize(16).FontColor(Colors.Green.Darken2).Bold().Underline();
 
-                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.PhoneNumber}").FontSize(14);
-                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Email}").FontSize(14);
-                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Address},").FontSize(14);
-                            col.Item().PaddingLeft(20).PaddingRight(10).PaddingBottom(10).Text($"{cvDto.PostalCode}, {cvDto.City}").FontSize(14);
+                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.PhoneNumber}").FontSize(12);
+                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Email}").FontSize(12);
+                            col.Item().PaddingLeft(20).PaddingRight(10).Text($"{cvDto.Address},").FontSize(12);
+                            col.Item().PaddingLeft(20).PaddingRight(10).PaddingBottom(10).Text($"{cvDto.PostalCode}, {cvDto.City}").FontSize(12);
 
                             col.Item().PaddingLeft(20).PaddingBottom(10).Text("KORT OM MIG").FontColor(Colors.Green.Darken2).FontSize(16).Bold().Underline();
-                            col.Item().PaddingLeft(20).PaddingRight(10).PaddingBottom(10).Text(cvDto.AboutMe).FontSize(14).LineHeight(1.4f);
+                            col.Item().PaddingLeft(20).PaddingRight(10).PaddingBottom(10).Text(cvDto.AboutMe).FontSize(12).LineHeight(1.3f);
 
                             col.Item().PaddingLeft(20).Text("REFERENSER").FontColor(Colors.Green.Darken2).FontSize(16).Bold().Underline();
 
@@ -158,8 +165,8 @@ namespace ResuMate.Services
                             {
                                 foreach (var reference in referenceList)
                                 {
-                                    col.Item().PaddingLeft(20).PaddingRight(10).PaddingTop(10).Text($"{reference.Name}").FontSize(14).Bold();
-                                    col.Item().PaddingLeft(20).PaddingRight(10).Text($"{reference.Relation}  {reference.PhoneNumber}").FontSize(14);
+                                    col.Item().PaddingLeft(20).PaddingRight(10).PaddingTop(10).Text($"{reference.Name}").FontSize(12).Bold();
+                                    col.Item().PaddingLeft(20).PaddingRight(10).Text($"{reference.Relation}  {reference.PhoneNumber}").FontSize(12);
                                 }
                             }
 
@@ -175,7 +182,7 @@ namespace ResuMate.Services
                             {
                                 col.Item().PaddingTop(10).Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
                                     .FontSize(13).Bold();
-                                col.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f);
+                                col.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.3f);
                             }
 
                             col.Item().PaddingTop(10).Text("UTBILDNING").FontSize(18).Bold().FontColor(Colors.Green.Darken2).Underline();
@@ -229,7 +236,7 @@ namespace ResuMate.Services
             {
                 page.Size(PageSizes.A4);
                 page.Margin(30);
-                page.DefaultTextStyle(TextStyle.Default.FontFamily("Times new Roman"));
+                page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri"));
                 page.Content().Column(column =>
                 {
                     column.Item().Row(row =>
@@ -248,7 +255,7 @@ namespace ResuMate.Services
                         });
                     });
                     column.Item().PaddingTop(20).Text("Profil").FontSize(16).Bold();
-                    column.Item().Text(cvDto.AboutMe).FontSize(12).LineHeight(1.4f);
+                    column.Item().Text(cvDto.AboutMe).FontSize(12).LineHeight(1.3f);
 
                     column.Item().PaddingVertical(15).LineHorizontal(1);
 
@@ -263,7 +270,7 @@ namespace ResuMate.Services
                             foreach (var exp in experienceList)
                             {
                                 midCol.Item().Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})").FontSize(14).Bold();
-                                midCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f);
+                                midCol.Item().PaddingBottom(5).Text(exp.JobDescription).FontSize(12).LineHeight(1.3f);
                             }
                         });
 
@@ -282,7 +289,7 @@ namespace ResuMate.Services
                             foreach (var edu in educationList)
                             {
                                 midCol.Item().Text($"{edu.School} ({edu.StartYear} - {edu.EndYear})").FontSize(14).Bold();
-                                midCol.Item().Text($"{edu.Degree}").FontSize(12).LineHeight(1.4f);
+                                midCol.Item().PaddingBottom(5).Text($"{edu.Degree}").FontSize(12).LineHeight(1.3f);
                             }
                         });
 
@@ -304,7 +311,7 @@ namespace ResuMate.Services
                             {
                                 var skills = cvDto.Skills;
 
-                                if (skills != null && skills.Count > 6)
+                                if (skills != null && skills.Count > 7)
                                 {
                                     int mid = skills.Count / 2;
 
@@ -314,7 +321,7 @@ namespace ResuMate.Services
                                         {
                                             for (int i = 0; i < mid; i++)
                                             {
-                                                left.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.4f);
+                                                left.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.3f);
                                             }
                                         });
 
@@ -322,7 +329,7 @@ namespace ResuMate.Services
                                         {
                                             for (int i = mid; i < skills.Count; i++)
                                             {
-                                                right.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.4f);
+                                                right.Item().Text($"• {skills[i]}").FontSize(12).LineHeight(1.3f);
                                             }
                                         });
                                     });
@@ -332,7 +339,7 @@ namespace ResuMate.Services
                                     if (skills != null)
                                     {
                                         var skillText = string.Join("\n", skills.Select(skill => $"• {skill}"));
-                                        midCol.Item().Text(skillText).FontSize(12).LineHeight(1.4f);
+                                        midCol.Item().Text(skillText).FontSize(12).LineHeight(1.3f);
                                     }
                                 }
                             });
@@ -344,7 +351,7 @@ namespace ResuMate.Services
                         {
                             row.RelativeItem(1).Column(leftCol =>
                             {
-                                leftCol.Item().PaddingLeft(20).PaddingTop(10).Text("Referenser").FontSize(16).Bold();
+                                leftCol.Item().PaddingTop(10).Text("Referenser").FontSize(16).Bold();
                             });
 
                             row.RelativeItem(2).Column(midCol =>
@@ -358,7 +365,7 @@ namespace ResuMate.Services
                                     foreach (var reference in referenceList)
                                     {
                                         midCol.Item().Text($"{reference.Name}").FontSize(14).Bold();
-                                        midCol.Item().Text($"{reference.Relation}  {reference.PhoneNumber}").FontSize(12);
+                                        midCol.Item().PaddingBottom(5).Text($"{reference.Relation}  {reference.PhoneNumber}").FontSize(12);
                                     }
                                 }
                             });
@@ -385,8 +392,7 @@ namespace ResuMate.Services
                     mainCol.Item().ExtendVertical().Row(row =>
                     {
                         row.RelativeItem(0.35f).Extend().Background(Colors.Grey.Lighten3).Padding(20).Column(leftCol =>
-                        {
-                            // Use the uploaded image if available, otherwise fallback to a placeholder
+                        {                            
                             if (!string.IsNullOrEmpty(cvDto.ProfileImage))
                             {
                                 var imageBytes = Convert.FromBase64String(cvDto.ProfileImage.Split(',')[1]);
@@ -401,7 +407,7 @@ namespace ResuMate.Services
                             leftCol.Item().PaddingTop(10).LineHorizontal(1);
 
                             leftCol.Item().PaddingTop(10).Text("Om Mig").FontSize(14).Bold().FontColor(Colors.Black);
-                            leftCol.Item().PaddingTop(10).Text(cvDto.AboutMe).FontSize(12).LineHeight(1.4f);
+                            leftCol.Item().PaddingTop(10).Text(cvDto.AboutMe).FontSize(12).LineHeight(1.3f);
 
                             if (cvDto.Skills != null && cvDto.Skills.Count > 0)
                             {
@@ -420,7 +426,7 @@ namespace ResuMate.Services
                             {
                                 rightCol.Item().PaddingTop(10).Text($"{exp.JobTitle} - {exp.Company} ({exp.StartYear} - {exp.EndYear})")
                                     .FontSize(13).Bold();
-                                rightCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.4f);
+                                rightCol.Item().Text(exp.JobDescription).FontSize(12).LineHeight(1.3f);
                             }
 
                             rightCol.Item().PaddingTop(20).Text("Utbildning").FontSize(18).Bold().FontColor(Colors.BlueGrey.Darken3);

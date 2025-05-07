@@ -44,7 +44,10 @@
             @if (!string.IsNullOrEmpty(cv.ProfileImage))
             {
                 <img src="@cv.ProfileImage" alt="Profilbild" style="max-width: 150px; max-height: 150px; margin-top: 10px;" />
+                <br />
+                <button class="btn btn-danger" @onclick="RemoveProfileImage">Ta bort bild</button>
             }
+
         </div>
     }    
 }
@@ -362,6 +365,11 @@
             cv.ProfileImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(imageBytes)}";
         }
     }
+    private void RemoveProfileImage()
+    {
+        cv.ProfileImage = null;
+    }
+
 
     private async Task<string?> GetCurrentUserIdAsync()
     {
