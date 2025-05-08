@@ -4,8 +4,12 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApplicationDbContext DbContext
 @inject IConfiguration Configuration
+@attribute [Authorize]
+
 
 @rendermode InteractiveServer
+
+
 @if(isFormVisible)
 {
 

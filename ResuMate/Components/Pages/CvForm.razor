@@ -2,11 +2,13 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApplicationDbContext DbContext
 @inject CreateCvPdfService CreateCvPdfService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
 @rendermode InteractiveServer
 
 
 <h3 class="section-title">Fyll i dina uppgifter</h3>
-
+<button class="btn btn-secondary" @onclick="AddTestData">Lägg till Testdata</button>
 <h3 class="section-title">CV detaljer</h3>
 
 <div class="form-group label">
@@ -24,6 +26,33 @@
     <input id="email" @bind="cv.Email" class="form-control" placeholder="Din e-postadress" />
 </div>
 
+@if (DoesTemplateSupportProfileImage(selectedTemplate))
+{
+    <p>Vill du lägga till en profilbild?</p>
+
+    <div>
+        <input type="radio" id="yes" name="uploadImage" @onchange="@(() => UserUploadedImage = true)" checked="@UserUploadedImage" />
+        <label for="yes">Ja</label>
+
+        <input type="radio" id="no" name="UploadImage" @onchange="@(() => UserUploadedImage = false)" checked="@(!UserUploadedImage)" />
+        <label for="no">Nej</label>
+    </div>
+
+    @if (UserUploadedImage)
+    {
+        <div class="form-group label">
+            <label for="profileImage">Profilbild</label>
+            <InputFile OnChange="HandleImageUpload" />
+            @if (!string.IsNullOrEmpty(cv.ProfileImage))
+            {
+                <img src="@cv.ProfileImage" alt="Profilbild" style="max-width: 150px; max-height: 150px; margin-top: 10px;" />
+                <br />
+                <button class="btn btn-danger" @onclick="RemoveProfileImage">Ta bort bild</button>
+            }
+
+        </div>
+    }
+}
 <div class="form-group d-flex gap-2">
     <div class="form-group label" style="flex: 2;">
         <label for="address">Address</label>
@@ -47,11 +76,6 @@
 <div class="form-group label">
     <label for="aboutMe">Kort om mig</label>
     <textarea id="aboutMe" @bind="cv.AboutMe" class="form-control" placeholder="Skriv kort om dig själv"></textarea>
-</div>
-
-<div class="form-group label">
-    <label for="languages">Språk</label>
-    <input id="languages" @bind="cv.Languages" class="form-control" placeholder="Språk du talar" />
 </div>
 
 <hr class="section-divider">
@@ -205,9 +229,9 @@
 
 @if (PdfData != null)
 {
-    <div class="pdf-container">  
-        <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>  
-        <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>  
+    <div class="pdf-container">
+        <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>
+        <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>
     </div>
 }
 
@@ -219,31 +243,34 @@
     private List<ReferenceModel> referenceList = new List<ReferenceModel>();
     private List<EducationModel> educationList = new List<EducationModel>();
     private List<ExperienceModel> experienceList = new List<ExperienceModel>();
-
+    private int selectedTemplate = 1;
+    private bool UserUploadedImage = false;
     private string newSkill = "";
 
-    private CvModel cv = new CvModel();
-    // {           
-        //     Name = "Johan Andersson",
-        //     ProfessionalTitle = "Fullstackutvecklare",
-        //     Email = "Johan.andersson@hotmail.com",
-        //     Address = "Tallvägen 12",
-        //     PostalCode = "12345",
-        //     City = "Stockholm",
-        //     PhoneNumber = "070-1234567",
-        //     AboutMe = "Jag är en driven och lösningsorienterad utvecklare med erfarenhet inom både frontend och backend. Jag älskar att skapa moderna, responsiva webbapplikationer och automatisera processer för att förbättra arbetsflöden.",
-        //     Languages = "Svenska, engelska, tyska",         
-        //     Skills = new List<string>
-        // {
-        //     "C#, .NET Core, ASP.NET",
-        //     "JavaScript, TypeScript, React, Angular",
-        //     "SQL, PostgreSQL, MongoDB",
-        //     "Azure DevOps, Docker, Kubernetes",
-        //     "Microservices & REST API-design",
-        //     "CI/CD, Jenkins, GitHub Actions",
-        //     "Testdriven utveckling (TDD), enhetstester & integrationstester"
-        // }};  
+    private CvModel cv = new CvModel
+    {
+        Name = "",
+        ProfessionalTitle = "",
+        Email = "",
+        Address = "",
+        PostalCode = "",
+        City = "",
+        PhoneNumber = "",
+        AboutMe = "",
+        Languages = "",
+        Skills = new List<string>()
+    };
 
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        if (query.TryGetValue("template", out var templateValue) && int.TryParse(templateValue, out var templateNum))
+        {
+            selectedTemplate = templateNum;
+        }
+    }
 
     private void AddReference()
     {
@@ -259,24 +286,25 @@
     }
 
     private void RemoveReference(ReferenceModel reference)
-    {        
-            referenceList.Remove(reference);       
+    {
+        referenceList.Remove(reference);
     }
+
     private void AddSkill()
-       {
-           if (!string.IsNullOrWhiteSpace(newSkill) && cv.Skills != null && !cv.Skills.Contains(newSkill))
-           {
-               cv.Skills.Add(newSkill);
-               newSkill = "";
-           }
-       }
+    {
+        if (!string.IsNullOrWhiteSpace(newSkill) && cv.Skills != null && !cv.Skills.Contains(newSkill))
+        {
+            cv.Skills.Add(newSkill);
+            newSkill = "";
+        }
+    }
 
     private void RemoveSkill(string skill)
     {
         if (cv.Skills != null)
         {
             cv.Skills.Remove(skill);
-        }        
+        }
     }
 
     private void AddExperience()
@@ -284,90 +312,28 @@
         if (experienceList.Count < 3)
         {
             experienceList.Add(new ExperienceModel
-            {
-                JobTitle = "",
-                Company = "",
-                JobDescription = "",
-                StartYear = null,
-                EndYear = null
-
-                //För att fylla på med random fakta till för testning
-                    // JobTitle = "Fullstackutvecklare",
-                    // Company = "Digital Solutions AB",
-                    // JobDescription = "Utvecklade och underhöll webbapplikationer i .NET och React, samt implementerade CI/CD-pipelines för automatiserad deployment.",
-                    // StartYear = "2019",
-                    // EndYear = "2022"
-            });         
-
-            // experienceList.Add(new ExperienceModel
-            //     {
-            //         JobTitle = "Systemutvecklare .NET",
-            //         Company = "Tech Solutions AB",
-            //         JobDescription = "Utvecklade och underhöll webbaserade applikationer i .NET och React.",
-            //         StartYear = "2021",
-            //         EndYear = "2023"
-            //     });
-
-            // experienceList.Add(new ExperienceModel
-            //     {
-            //         JobTitle = "Junior Systemutvecklare",
-            //         Company = "Innovate IT",
-            //         JobDescription = "Arbetade med backend-utveckling och databashantering i SQL Server och Entity Framework.",
-            //         StartYear = "2018",
-            //         EndYear = "2021"
-            //     });
-
-            // referenceList.Add(new ReferenceModel
-            // {
-            //     Name = "Gunilla Persson",
-            //     Relation = "Tidigare kollega",
-            //     PhoneNumber = "0798459283"
-            // });
-            // referenceList.Add(new ReferenceModel
-            //     {
-            //         Name = "Tommy Tran",
-            //         Relation = "Framtida kollega och partner på Tommy och Emil AB",
-            //         PhoneNumber = "0798459283"
-            //     });
+                {
+                    JobTitle = "",
+                    Company = "",
+                    JobDescription = "",
+                    StartYear = null,
+                    EndYear = null
+                });
         }
     }
-    
+
     private void AddEducation()
     {
         if (educationList.Count < 3)
         {
             educationList.Add(new EducationModel
-            {
-                    // School = "",
-                    // Degree = "",
-                    // Specialization = "",
-                    // StartYear = null,
-                    // EndYear = null
-
-                //För att fylla på med random fakta till för testning
-                    // School = "KTH - Kungliga Tekniska Högskolan",
-                    // Degree = "Civilingenjör i Datateknik",
-                    // Specialization = "Mjukvaruutveckling & AI",
-                    // StartYear = "2023",
-                    // EndYear = "2025"
-            });
-            // educationList.Add(new EducationModel
-            //     {
-            //         School = "Linnéuniversitetet",
-            //         Degree = "Kandidatexamen i Datavetenskap",
-            //         Specialization = "Programvaruteknik",
-            //         StartYear = "2022",
-            //         EndYear = "2023"
-            //     });
-
-            // educationList.Add(new EducationModel
-            //     {
-            //         School = "Chalmers Tekniska Högskola",
-            //         Degree = "Masterexamen i Programvaruutveckling",
-            //         Specialization = "AI och maskininlärning",
-            //         StartYear = "2021",
-            //         EndYear = "2022"
-            //     });
+                {
+                    School = "",
+                    Degree = "",
+                    Specialization = "",
+                    StartYear = null,
+                    EndYear = null
+                });
         }
     }
 
@@ -380,6 +346,30 @@
     {
         experienceList.Remove(experiences);
     }
+
+    private bool DoesTemplateSupportProfileImage(int templateId)
+    {
+        var templatesWithProfileImageSupport = new HashSet<int> { 1, 2, 4 };
+        return templatesWithProfileImageSupport.Contains(templateId);
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        if (file != null)
+        {
+            using var stream = new MemoryStream();
+            await file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).CopyToAsync(stream);
+            var imageBytes = stream.ToArray();
+            cv.ProfileImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(imageBytes)}";
+        }
+    }
+    private void RemoveProfileImage()
+    {
+        cv.ProfileImage = null;
+    }
+
 
     private async Task<string?> GetCurrentUserIdAsync()
     {
@@ -403,7 +393,7 @@
                     FileName = fileName,
                     CreatedAt = DateTime.UtcNow
                 };
-            
+
             DbContext.GeneratedCvs.Add(generatedCv);
             await DbContext.SaveChangesAsync();
         }
@@ -411,43 +401,134 @@
 
     private async Task GenerateCvPdf()
     {
-        // Skapa en lista med templates
-        var templates = new List<Action<IDocumentContainer>>()
-    {
-        //(container) => CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList),
-        // (container) => CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList),
-        // (container) => CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList),
-        // (container) => CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList),
-        // (container) => CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList),
-        // (container) => CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList),
-         (container) => CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList)
-    };
-       
-        foreach (var templateAction in templates)
+        Action<IDocumentContainer>? templateAction = selectedTemplate switch
         {
-            var document = Document.Create(container =>
-            {                
-                templateAction(container);
-            });
+            1 => (container) => CreateCvPdfService.Template1(container, cv, educationList, experienceList, referenceList),
+            2 => (container) => CreateCvPdfService.Template2(container, cv, educationList, experienceList, referenceList),
+            3 => (container) => CreateCvPdfService.Template3(container, cv, educationList, experienceList, referenceList),
+            4 => (container) => CreateCvPdfService.Template4(container, cv, educationList, experienceList, referenceList),
+            5 => (container) => CreateCvPdfService.Template5(container, cv, educationList, experienceList, referenceList),
+            6 => (container) => CreateCvPdfService.Template6(container, cv, educationList, experienceList, referenceList),
+            7 => (container) => CreateCvPdfService.Template7(container, cv, educationList, experienceList, referenceList),
+            _ => null
+        };
 
-            using (var memoryStream = new MemoryStream())
-            {
-               
-                document.GeneratePdf(memoryStream);
-                var pdfBytes = memoryStream.ToArray();
-                
-                var fileName = $"Cv_Template_{Guid.NewGuid()}.pdf";
-                
-                await SaveCvToDatabase(pdfBytes, fileName);
-              
-                PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
-            }
+        if (templateAction != null)
+        {
+            var document = Document.Create(container => templateAction(container));
+
+            using var memoryStream = new MemoryStream();
+            document.GeneratePdf(memoryStream);
+            var pdfBytes = memoryStream.ToArray();
+
+            var fileName = $"Cv_Template_{Guid.NewGuid()}.pdf";
+
+            await SaveCvToDatabase(pdfBytes, fileName);
+            PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
         }
     }
 
+    private void AddTestData()
+    {
+        cv = new CvModel
+        {
+            Name = "Johan Andersson",
+            ProfessionalTitle = "Fullstackutvecklare",
+            Email = "Johan.andersson@hotmail.com",
+            Address = "Tallvägen 12",
+            PostalCode = "12345",
+            City = "Stockholm",
+            PhoneNumber = "070-1234567",
+            AboutMe = "Jag är en driven och lösningsorienterad utvecklare med erfarenhet inom både frontend och backend. Jag älskar att skapa moderna, responsiva webbapplikationer och automatisera processer för att förbättra arbetsflöden.",
+            Skills = new List<string>
+            {
+                "C#, .NET Core, ASP.NET",
+                "JavaScript, TypeScript, React, Angular",
+                "SQL, PostgreSQL, MongoDB",
+                "Azure DevOps, Docker, Kubernetes",
+                "Microservices & REST API-design",
+                "CI/CD, Jenkins, GitHub Actions",
+                "Testdriven utveckling (TDD), enhetstester & integrationstester"
+             }
+        };
 
+        educationList = new List<EducationModel>
+        {
+            new EducationModel
+            {
+                School = "KTH - Kungliga Tekniska Högskolan",
+                Degree = "Civilingenjör i Datateknik",
+                Specialization = "Mjukvaruutveckling & AI",
+                StartYear = "2023",
+                EndYear = "2025"
+            },
+            new EducationModel
+            {
+                School = "Linnéuniversitetet",
+                Degree = "Kandidatexamen i Datavetenskap",
+                Specialization = "Programvaruteknik",
+                StartYear = "2022",
+                EndYear = "2023"
+            },
+            new EducationModel
+            {
+                School = "Chalmers Tekniska Högskola",
+                Degree = "Masterexamen i Programvaruutveckling",
+                Specialization = "AI och maskininlärning",
+                StartYear = "2021",
+                EndYear = "2022"
+            }
+        };
 
+        experienceList = new List<ExperienceModel>
+        {
+            new ExperienceModel
+            {
+                JobTitle = "Fullstackutvecklare",
+                Company = "Digital Solutions AB",
+                JobDescription = "Utvecklade och underhöll webbapplikationer i .NET och React, samt implementerade CI/CD-pipelines för automatiserad deployment.",
+                StartYear = "2019",
+                EndYear = "2022"
+            },
+            new ExperienceModel
+            {
+                JobTitle = "Systemutvecklare .NET",
+                Company = "Tech Solutions AB",
+                JobDescription = "Utvecklade och underhöll webbaserade applikationer i .NET och React.",
+                StartYear = "2021",
+                EndYear = "2023"
+            },
+            new ExperienceModel
+            {
+                JobTitle = "Junior Systemutvecklare",
+                Company = "Innovate IT",
+                JobDescription = "Arbetade med backend-utveckling och databashantering i SQL Server och Entity Framework.",
+                StartYear = "2018",
+                EndYear = "2021"
+            }
+        };
+
+        referenceList = new List<ReferenceModel>
+        {
+            new ReferenceModel
+            {
+                Name = "Gunilla Persson",
+                Relation = "Tidigare arbetsledare på Digital Solutions AB",
+                PhoneNumber = "079-8459283"
+            },
+            new ReferenceModel
+            {
+                Name = "Tommy Tran",
+                Relation = "Tidigare kollega på Digital Solutions AB",
+                PhoneNumber = "079-8459283"
+            },
+            new ReferenceModel
+            {
+                Name = "Anders Andersson",
+                Relation = "Tidigare chef på Tech Solutions AB",
+                PhoneNumber = "079-6536786"
+            }
+        };
+    }
 
 }
-
-
