@@ -13,6 +13,8 @@
 @if(isFormVisible)
 {
 
+    <button class="btn btn-primary" @onclick="AutofillForm">Fyll data för testning</button>
+
     <h1 class="section-title">Personligt brev</h1>
 
     <h1>Om dig själv</h1>
@@ -190,7 +192,7 @@
 
     protected override void OnInitialized()
     {
-        
+
         for (int i = 0; i <= 10; i++)
         {
             if (i == 0)
@@ -222,16 +224,16 @@
 
 
 
-            // Name = "Emil",
-            // ProfessionalTitle = "Systemutvecklare inom .NET",
-            // CompanyName = "Microsoft",
-            // AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
-            // Weaknesses = "",
-            // Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
-            // CareerGoals = "",
-            // Hobbies = "Spela tv-spel, dator-spel, kolla film och serier",
-            // BusinessOverview = "",
-            // ExtraInfo = ""
+        // Name = "Emil",
+        // ProfessionalTitle = "Systemutvecklare inom .NET",
+        // CompanyName = "Microsoft",
+        // AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
+        // Weaknesses = "",
+        // Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
+        // CareerGoals = "",
+        // Hobbies = "Spela tv-spel, dator-spel, kolla film och serier",
+        // BusinessOverview = "",
+        // ExtraInfo = ""
         };
 
     private string GetMotivationPlaceholder()
@@ -256,7 +258,7 @@
     {
         try
         {
-            
+
             var apiBaseUrl = Configuration["ApiBaseUrl"];
             var response = await Http.PostAsJsonAsync($"{apiBaseUrl}PersonalLetter", personalLetter);
 
@@ -364,7 +366,7 @@
                 return;
             }
 
-           
+
             var generatedPersonalLetter = new GeneratedPersonalLetter
                 {
                     UserId = userId,
@@ -372,14 +374,14 @@
                     FileName = $"Personligt_brev_{personalLetter.CompanyName}.pdf",
                     CreatedAt = DateTime.Now
                 };
-           
+
             await DbContext.GeneratedPersonalLetters.AddAsync(generatedPersonalLetter);
             await DbContext.SaveChangesAsync();
 
             loadingMessage = "Personligt brev sparat i databasen!";
         }
         catch (Exception ex)        {
-            
+
             loadingMessage = $"Fel vid sparande: {ex.Message}";
             Console.Error.WriteLine(ex);
         }
@@ -393,4 +395,30 @@
     {
         isFormVisible = true;
     }
+
+    private async void AutofillForm()
+    {
+        personalLetter = new PersonalLetterModel
+            {
+                Name = "Test Testsson",
+                ProfessionalTitle = "Systemutvecklare",
+                YearsOfExperience = "5 år",
+                AboutMe = "Jag är en driven utvecklare med stort intresse för ny teknik.",
+                Hobbies = "Löpning och fotografering",
+                CareerGoals = "Att bli en lead developer inom de kommande fem åren.",
+                Strenghts = "Problemlösning, lagarbete, kommunikation",
+                Weaknesses = "Kan ibland vara för detaljfokuserad",
+                CompanyName = "Testbolaget AB",
+                BusinessOverview = "De jobbar med digitala lösningar inom e-handel.",
+                WhyThisCompany = "För att de har ett gott rykte och jobbar med spännande projekt.",
+                YourValueToUs = "Jag kan bidra med struktur, effektivitet och nytänkande.",
+                ExtraInfo = "Jag har också erfarenhet av projektledning."
+            };
+
+        hasAnyHobby = true;
+        hasExtraInfo = true;
+
+        await GenerateLetterAndPdf();
+    }
+
 }

@@ -590,12 +590,20 @@ button.btn {
     background-color: #ef4444;
     color: white;
 }
+btn-generate
 
     .btn-danger:hover {
         background-color: #dc2626;
         transform: scale(1.03);
     }
 
+.btn-generate {
+    background-color: black;
+    
+}
+    .btn-generate:hover {
+        transform: scale(1.03);
+    }
 /* ======= Kompetens Chips ======= */
 .skills-container {
     display: flex;
