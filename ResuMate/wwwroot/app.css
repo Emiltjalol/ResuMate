@@ -734,20 +734,23 @@ button.btn {
     margin-bottom: 10px; /* Lite utrymme under bilden */
 }
 
-.template-button {
-    background-color: #4CAF50; /* Grön bakgrund på knappen */
-    color: white;
-    border: none;
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.template-item {
+   /*background-color: #4CAF50;*/ /* Grön bakgrund på knappen */
+   color: white;
+   border: none;
+   padding: 10px;
+   font-size: 14px;
+   border-radius: 5px;
+   cursor: pointer;
+   transition: transform 0.3s ease;
 }
 
-.template-button:hover {
-    background-color: #45a049; /* Mörkare grön när man hovrar över knappen */
+.template-item:hover {
+
+   transform: scale(1.08);
 }
+
+
 
 
 
