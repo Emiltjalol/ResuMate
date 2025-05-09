@@ -37,14 +37,39 @@
                     <option value="@year">@year</option>
                 }
             </select>
-        </div>
-
+        </div>       
     </div>
+
+    <div class="form-group label" style="flex: 1;">
+        <label for="Email">Email</label>
+        <input id="email" @bind="personalLetter.Email" class="form-control" placeholder="Fyll i din email" />
+    </div>
+    <div class="form-group label" style="flex: 1;">
+        <label for="adress">Adress</label>
+        <input id="adress" @bind="personalLetter.Address" class="form-control" placeholder="Fyll i din adress" />
+    </div>
+
+    <div class="form-group label" style="flex: 1;">
+        <label for="postnummer">Postnummer</label>
+        <input id="postralcode" @bind="personalLetter.PostalCode" class="form-control" placeholder="Fyll i ditt postnummer" />
+    </div>
+
+    <div class="form-group label" style="flex: 1;">
+        <label for="telefon">Telefon</label>
+        <input id="telefon" @bind="personalLetter.PhoneNumber" class="form-control" placeholder="Fyll i ditt telefonnummer" />
+    </div>
+
+    <div class="form-group label" style="flex: 1;">
+        <label for="stad">Stad</label>
+        <input id="stad" @bind="personalLetter.City" class="form-control" placeholder="Fyll i din stad" />
+    </div>
+
 
     <div class="form-group label">
         <label for="aboutMe">Kort om mig</label>
         <textarea id="aboutMe" @bind="personalLetter.AboutMe" class="form-control" placeholder="Skriv en liten beskrivning om vem du är."></textarea>
     </div>
+
 
 
     <h3>Har du någon speciell hobby du vill berätta om?</h3>
@@ -189,9 +214,9 @@
 
     string generatedLetter = "";
 
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await AutofillFromLoggedInUser();
 
         for (int i = 0; i <= 10; i++)
         {
@@ -202,15 +227,10 @@
             else
                 experienceOptions.Add($"{i} år");
         }
-
     }
 
-
-
-
     private PersonalLetterModel personalLetter = new PersonalLetterModel
-        {
-            Name = "",
+        {            
             ProfessionalTitle = "",
             CompanyName = "",
             AboutMe = "",
@@ -220,20 +240,6 @@
             Hobbies = "",
             BusinessOverview = "",
             ExtraInfo = ""
-
-
-
-
-        // Name = "Emil",
-        // ProfessionalTitle = "Systemutvecklare inom .NET",
-        // CompanyName = "Microsoft",
-        // AboutMe = "Jag är en glad snäll kille med 2 barn på 3 och 6 år, jag arbetar med .NET som systemutvecklare.",
-        // Weaknesses = "",
-        // Strenghts = "Jag vill alltid lära mig mer, är en bra lagspelare",
-        // CareerGoals = "",
-        // Hobbies = "Spela tv-spel, dator-spel, kolla film och serier",
-        // BusinessOverview = "",
-        // ExtraInfo = ""
         };
 
     private string GetMotivationPlaceholder()
@@ -390,7 +396,6 @@
         StateHasChanged();
     }
 
-
     private void ShowFormAgain()
     {
         isFormVisible = true;
@@ -400,7 +405,12 @@
     {
         personalLetter = new PersonalLetterModel
             {
-                Name = "Test Testsson",
+                Name = "Pelle Andersson",
+                Email = "Pelle.andersson@gmail.com",
+                PhoneNumber = "0701234567",
+                Address = "Gåsvägen 73",
+                PostalCode = "12345",
+                City = "Stockholm",
                 ProfessionalTitle = "Systemutvecklare",
                 YearsOfExperience = "5 år",
                 AboutMe = "Jag är en driven utvecklare med stort intresse för ny teknik.",
@@ -420,5 +430,39 @@
 
         await GenerateLetterAndPdf();
     }
+
+  
+    private async Task AutofillFromLoggedInUser()  
+    {  
+        try  
+        {  
+            var userId = await GetCurrentUserIdAsync();  
+            if (userId == null)  
+            {  
+                loadingMessage = "Kunde inte hitta användaren.";  
+                return;  
+            }  
+               
+            var user = await DbContext.Users.FindAsync(userId);  
+            if (user != null)  
+            {  
+                personalLetter.Name = user.FirstName + " " + user.LastName;  
+                personalLetter.Email = user.Email;  
+                personalLetter.Address = user.Address;  
+                personalLetter.PostalCode = user.PostalCode;  
+                personalLetter.City = user.County;  
+                personalLetter.PhoneNumber = user.PhoneNumber;  
+            }  
+            else  
+            {  
+                loadingMessage = "Kunde inte hämta användaruppgifter.";  
+            }  
+        }  
+        catch (Exception ex)  
+        {  
+            loadingMessage = $"Ett fel inträffade: {ex.Message}";  
+        }  
+    }  
+    
 
 }

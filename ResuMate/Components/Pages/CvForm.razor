@@ -262,8 +262,10 @@
         Skills = new List<string>()
     };
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await AutofillFromLoggedInUser();
+
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
@@ -427,6 +429,23 @@
             await SaveCvToDatabase(pdfBytes, fileName);
             PdfData = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
         }
+    }
+    private async Task AutofillFromLoggedInUser()
+    {      
+        
+            var userId = await GetCurrentUserIdAsync();        
+
+            var user = await DbContext.Users.FindAsync(userId);
+            if (user != null)
+            {
+                cv.Name = user.FirstName + " " + user.LastName;
+                cv.Email = user.Email;
+                cv.Address = user.Address;
+                cv.PostalCode = user.PostalCode;
+                cv.City = user.County;
+                cv.PhoneNumber = user.PhoneNumber;
+            }
+        
     }
 
     private void AddTestData()

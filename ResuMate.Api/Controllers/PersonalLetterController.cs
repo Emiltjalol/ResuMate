@@ -27,6 +27,9 @@ namespace ResuMate.Api.Controllers
 
             var sb = new StringBuilder();
             sb.AppendLine($"Skriv ett professionellt personligt brev på svenska för {model.Name} som söker jobb som {model.ProfessionalTitle} på {model.CompanyName}.");
+            //sb.AppendLine($"Min email är {model.Email} och min telefonnummer är {model.PhoneNumber}.");
+            //sb.AppendLine($"Jag bor på {model.Address} på postnummer {model.PostalCode} i {model.City}.");
+            //sb.AppendLine($"Dagens datum är {DateTime.Now.ToString("yyyy-MM-dd")}");
             sb.AppendLine($"Jag har {model.YearsOfExperience} erfarenhet inom yrket som {model.ProfessionalTitle}.");
             sb.AppendLine($"Företaget arbetar med: {model.BusinessOverview}");
             sb.AppendLine($"Om {model.Name}: {model.AboutMe}");
@@ -43,9 +46,10 @@ namespace ResuMate.Api.Controllers
                 sb.AppendLine($"Extra information: {model.ExtraInfo}");
             
             sb.AppendLine("Använd all information ovan där det är relevant. Om 'Hobbies' eller 'Extra information' är angivet är det mycket viktigt att det vävs in naturligt i brevet.");
+            sb.AppendLine("Namn, E-post, adress, postkod och stad kommer att genereras automatiskt i ett annat steg så det behöver du inte ha med i brevet som genereras.");
+            sb.AppendLine("För och efternamn ska dock finnas med i slutet efter Med vänliga hälsningar,");
 
-            
-            sb.AppendLine("Du behöver inte ta med någon kontaktinformation angående mig eller företaget i fråga, för det kommer automatiskt genereras i ett annat steg.");
+
 
             string prompt = sb.ToString();
 

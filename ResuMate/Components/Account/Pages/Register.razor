@@ -41,6 +41,33 @@
             </div>
 
 
+            <div class="form-group d-flex gap-2">
+                <div class="form-floating mb-3" style="flex: 3;">
+                    <InputText @bind-Value="Input.Address" id="Input.Adress" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
+                    <label for="Input.Adress">Adress</label>
+                    <ValidationMessage For="() => Input.Address" class="text-danger" />
+                </div>              
+
+                <div class="form-floating mb-3" style="flex: 2;">
+                    <InputText @bind-Value="Input.County" id="Input.County" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
+                    <label for="Input.County">Ort</label>
+                    <ValidationMessage For="() => Input.LastName" class="text-danger" />
+                </div>
+
+                <div class="form-floating mb-3" style="flex: 1;">
+                    <InputText @bind-Value="Input.PostalCode" id="Input.Postalcode" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
+                    <label for="Input.Postalcode">Postnummer</label>
+                    <ValidationMessage For="() => Input.PostalCode" class="text-danger" />
+                </div>
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.PhoneNumber" id="Input.Phonenumber" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
+                <label for="Input.phonenumber">Telefonnummer</label>
+                <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
+            </div>
+
+
 
 
             <div class="form-floating mb-3">
@@ -61,7 +88,7 @@
             <button type="submit" class="w-100 btn btn-lg btn-primary">Registrera konto</button>
         </EditForm>
     </div>
-   
+
 </div>
 
 @code {
@@ -119,6 +146,10 @@
             var user = Activator.CreateInstance<ApplicationUser>();            
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
+            user.PhoneNumber = Input.PhoneNumber;
+            user.Address = Input.Address;
+            user.County = Input.County;
+            user.PostalCode = Input.PostalCode;
 
             return user;
         }
@@ -140,28 +171,47 @@
 
     private sealed class InputModel
     {
-        [Required(ErrorMessage = "Du måste ange ett förnamn")]
+        [Required(ErrorMessage = "Du måste ange ett förnamn.")]
         [Display(Name = "Förnamn")]
         public string FirstName { get; set; } = "";
 
-        [Required(ErrorMessage = "Du måste ange ett efternamn")]
+        [Required(ErrorMessage = "Du måste ange ett efternamn.")]
         [Display(Name = "Efternamn")]        
         public string LastName { get; set; } = "";
 
-        [Required(ErrorMessage ="Du måste ange en giltig e-postadress")]
+        [Required(ErrorMessage = "Du måste ange en adress.")]        
+        [Display(Name = "Adress")]
+        public string Address { get; set; } = "";
+
+        [Required(ErrorMessage = "Du måste ange en postnummer.")]        
+        [Display(Name = "Postnummer")]
+        public string PostalCode { get; set; } = "";
+
+        [Required(ErrorMessage = "Du måste ange en ort.")]        
+        [Display(Name = "Ort")]
+        public string County { get; set; } = "";
+
+        [Required(ErrorMessage = "Du måste ett giltigt telefonnummer.")]
+        [Phone]
+        [Display(Name = "Telefonnummer")]
+        public string PhoneNumber { get; set; } = "";
+
+        [Required(ErrorMessage ="Du måste ange en giltig e-postadress.")]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } = "";
 
-        [Required(ErrorMessage = "Du måste ange ett lösenord")]
-        [StringLength(100, ErrorMessage = "Lösenordet måste vara minst {2} tecken långt", MinimumLength = 6)]
+        
+
+        [Required(ErrorMessage = "Du måste ange ett lösenord.")]
+        [StringLength(100, ErrorMessage = "Lösenordet måste vara minst {2} tecken långt.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Lösenord")]
         public string Password { get; set; } = "";
 
         [DataType(DataType.Password)]
         [Display(Name = "Bekräfta lösenord")]
-        [Compare("Password", ErrorMessage = "Lösenorden matchar inte, vänligen försök igen")]
+        [Compare("Password", ErrorMessage = "Lösenorden matchar inte, vänligen försök igen.")]
         public string ConfirmPassword { get; set; } = "";
     }
 }
