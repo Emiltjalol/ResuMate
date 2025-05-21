@@ -3,12 +3,11 @@ name: CI Build Check
 on:
   push:
     branches:
-      - main
+      - master
       - feature/**
   pull_request:
     branches:
-      - main
-
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,7 +19,7 @@ jobs:
     - name: Set up .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x'  # Anpassa efter din .NET-version
+        dotnet-version: '9.0.x'
 
     - name: Restore dependencies
       run: dotnet restore
