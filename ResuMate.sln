@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResuMate.Api", "ResuMate.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResuMate.Shared", "ResuMate.Shared\ResuMate.Shared.csproj", "{BF69BDA5-347F-49DF-94D6-04714F3F9827}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResuMate.Tests", "ResuMate.Tests\ResuMate.Tests.csproj", "{4C52530D-79A2-470D-A763-BAB26F622CBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BF69BDA5-347F-49DF-94D6-04714F3F9827}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF69BDA5-347F-49DF-94D6-04714F3F9827}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF69BDA5-347F-49DF-94D6-04714F3F9827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C52530D-79A2-470D-A763-BAB26F622CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C52530D-79A2-470D-A763-BAB26F622CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C52530D-79A2-470D-A763-BAB26F622CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C52530D-79A2-470D-A763-BAB26F622CBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
