@@ -6,237 +6,239 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-
-<h3 class="section-title">Fyll i dina uppgifter</h3>
-<button class="btn btn-secondary" @onclick="AddTestData">Lägg till Testdata</button>
-<button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
-<h3 class="section-title">CV detaljer</h3>
-
-<div class="form-group label">
-    <label for="name">Namn</label>
-    <input id="name" @bind="cv.Name" class="form-control" placeholder="Ditt namn" />
+<div class="page-header">
+    <h1>CV Generator</h1>
+    <div class="floating-element floating-element-1"></div>
+    <div class="floating-element floating-element-2"></div>
+    <div class="floating-element floating-element-3"></div>
+    <div class="floating-element floating-element-4"></div>
+    <div class="floating-element floating-element-5"></div>
 </div>
 
-<div class="form-group label">
-    <label for="yrkestitel">Yrkestitel</label>
-    <input id="yrkestitel" @bind="cv.ProfessionalTitle" class="form-control" placeholder="Din yrkestitel" />
-</div>
+<div class="cv-form-container">
+    <div class="content-wrapper">
+        <h3 class="section-title">Fyll i dina uppgifter</h3>
+        <button class="btn btn-secondary" @onclick="AddTestData">Lägg till Testdata</button>
+        <button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
 
-<div class="form-group label">
-    <label for="email">Email</label>
-    <input id="email" @bind="cv.Email" class="form-control" placeholder="Din e-postadress" />
-</div>
-
-@if (DoesTemplateSupportProfileImage(selectedTemplate))
-{
-    <p>Vill du lägga till en profilbild?</p>
-
-    <div>
-        <input type="radio" id="yes" name="uploadImage" @onchange="@(() => UserUploadedImage = true)" checked="@UserUploadedImage" />
-        <label for="yes">Ja</label>
-
-        <input type="radio" id="no" name="UploadImage" @onchange="@(() => UserUploadedImage = false)" checked="@(!UserUploadedImage)" />
-        <label for="no">Nej</label>
-    </div>
-
-    @if (UserUploadedImage)
-    {
-        <div class="form-group label">
-            <label for="profileImage">Profilbild</label>
-            <InputFile OnChange="HandleImageUpload" />
-            @if (!string.IsNullOrEmpty(cv.ProfileImage))
+        <!-- Personuppgifter -->
+        <div class="card mb-4 p-4">
+            <h4 class="mb-3">Personuppgifter</h4>
+            <div class="form-group d-flex gap-2">
+                <div class="form-group label flex-fill">
+                    <label for="name">Namn</label>
+                    <input id="name" @bind="cv.Name" class="form-control" placeholder="Ditt namn" />
+                </div>
+                <div class="form-group label flex-fill">
+                    <label for="yrkestitel">Yrkestitel</label>
+                    <input id="yrkestitel" @bind="cv.ProfessionalTitle" class="form-control" placeholder="Din yrkestitel" />
+                </div>
+            </div>
+            <div class="form-group label">
+                <label for="email">Email</label>
+                <input id="email" @bind="cv.Email" class="form-control" placeholder="Din e-postadress" />
+            </div>
+            <div class="form-group d-flex gap-2">
+                <div class="form-group label flex-fill">
+                    <label for="address">Adress</label>
+                    <input id="address" @bind="cv.Address" class="form-control" placeholder="Din adress" />
+                </div>
+                <div class="form-group label" style="flex:1;">
+                    <label for="postalcode">Postkod</label>
+                    <input id="postalcode" @bind="cv.PostalCode" class="form-control" placeholder="Postkod" />
+                </div>
+                <div class="form-group label" style="flex:1;">
+                    <label for="city">Stad</label>
+                    <input id="city" @bind="cv.City" class="form-control" placeholder="Stad" />
+                </div>
+            </div>
+            <div class="form-group label">
+                <label for="phone">Telefonnummer</label>
+                <input id="phone" @bind="cv.PhoneNumber" class="form-control" placeholder="Telefonnummer" />
+            </div>
+            @if (DoesTemplateSupportProfileImage(selectedTemplate))
             {
-                <img src="@cv.ProfileImage" alt="Profilbild" style="max-width: 150px; max-height: 150px; margin-top: 10px;" />
-                <br />
-                <button class="btn btn-danger" @onclick="RemoveProfileImage">Ta bort bild</button>
+                <div class="form-group label">
+                    <label>Profilbild</label>
+                    <div>
+                        <input type="radio" id="yes" name="uploadImage" @onchange="@(() => UserUploadedImage = true)" checked="@UserUploadedImage" />
+                        <label for="yes">Ja</label>
+                        <input type="radio" id="no" name="UploadImage" @onchange="@(() => UserUploadedImage = false)" checked="@(!UserUploadedImage)" />
+                        <label for="no">Nej</label>
+                    </div>
+                    @if (UserUploadedImage)
+                    {
+                        <InputFile OnChange="HandleImageUpload" />
+                        @if (!string.IsNullOrEmpty(cv.ProfileImage))
+                        {
+                            <img src="@cv.ProfileImage" alt="Profilbild" style="max-width: 150px; max-height: 150px; margin-top: 10px;" />
+                            <br />
+                            <button class="btn btn-danger" @onclick="RemoveProfileImage">Ta bort bild</button>
+                        }
+                    }
+                </div>
             }
-
         </div>
-    }
-}
-<div class="form-group d-flex gap-2">
-    <div class="form-group label" style="flex: 2;">
-        <label for="address">Address</label>
-        <input id="address" @bind="cv.Address" class="form-control" placeholder="Din adress" />
-    </div>
-    <div class="form-group label" style="flex: 1;">
-        <label for="postalcode">Postkod</label>
-        <input id="postalcode" @bind="cv.PostalCode" class="form-control" placeholder="Postkod" />
-    </div>
-    <div class="form-group label" style="flex: 1;">
-        <label for="city">Stad</label>
-        <input id="city" @bind="cv.City" class="form-control" placeholder="Stad" />
-    </div>
-</div>
 
-<div class="form-group label">
-    <label for="phone">Telefonnummer</label>
-    <input id="phone" @bind="cv.PhoneNumber" class="form-control" placeholder="Telefonnummer" />
-</div>
-
-<div class="form-group label">
-    <label for="aboutMe">Kort om mig</label>
-    <textarea id="aboutMe" @bind="cv.AboutMe" class="form-control" placeholder="Skriv kort om dig själv"></textarea>
-</div>
-
-<hr class="section-divider">
-
-<h3 class="section-title">Utbildningar</h3>
-<p>Ange dina senaste utbildningar (Max tre)</p>
-@foreach (var edu in educationList)
-{
-    <div class="education-card">
-        <h4>Utbildning @(@educationList.IndexOf(edu) + 1)</h4>
-        <div class="form-group d-flex gap-2">
+        <!-- Om mig -->
+        <div class="card mb-4 p-4">
+            <h4 class="mb-3">Om mig</h4>
             <div class="form-group label">
-                <label for="school">Skola</label>
-                <input id="school" @bind="edu.School" class="form-control" placeholder="Skolans namn" />
-            </div>
-
-            <div class="form-group label">
-                <label for="specialization">Inriktning</label>
-                <input id="specialization" @bind="edu.Specialization" class="form-control" placeholder="Inriktning" />
-            </div>
-        </div>
-        <div class="form-group label">
-            <label for="degree">Examen</label>
-            <input id="degree" @bind="edu.Degree" class="form-control" placeholder="Examen" />
-        </div>
-
-        <div class="form-group d-flex gap-3 label">
-            <div>
-                <label for="startYear">Startår</label>
-                <input id="startYear" type="number" @bind="edu.StartYear" class="form-control" placeholder="Startår" />
-            </div>
-            <div>
-                <label for="endYear">Slutår</label>
-                <input id="endYear" type="number" @bind="edu.EndYear" class="form-control" placeholder="Slutår" />
+                <label for="aboutMe">Kort om mig</label>
+                <textarea id="aboutMe" @bind="cv.AboutMe" class="form-control" placeholder="Skriv kort om dig själv"></textarea>
             </div>
         </div>
 
-        <button class="btn btn-danger" @onclick="() => RemoveEducation(edu)">Ta bort utbildning</button>
-    </div>
-}
+        <hr class="section-divider">
 
-@if (educationList.Count < 3)
-{
-    <button class="btn btn-secondary" @onclick="AddEducation">Lägg till utbildning</button>
-}
-
-<hr class="section-divider">
-
-<h3 class="section-title">Arbetslivserfarenhet</h3>
-<p>Ange dinasenaste arbetslivserfarenheter (Max tre)</p>
-
-@foreach (var job in experienceList)
-{
-    <div class="job-card">
-        <h4>Jobb @(@experienceList.IndexOf(job) + 1)</h4>
-        <div class="form-group d-flex gap-2">
-            <div class="form-group label">
-                <label for="jobTitle">Jobbtitel</label>
-                <input id="jobTitle" @bind="job.JobTitle" class="form-control" placeholder="Jobbtitel" />
-            </div>
-
-            <div class="form-group label">
-                <label for="company">Företag</label>
-                <input id="company" @bind="job.Company" class="form-control" placeholder="Företag" />
-            </div>
-        </div>
-        <div class="form-group label">
-            <label for="jobDescription">Beskrivning av arbetsuppgifter</label>
-            <textarea id="jobDescription" @bind="job.JobDescription" class="form-control" placeholder="Beskriv arbetsuppgifterna"></textarea>
-        </div>
-
-        <div class="form-group d-flex gap-3 label">
-            <div>
-                <label for="jobStartYear">Startår</label>
-                <input id="jobStartYear" type="number" @bind="job.StartYear" class="form-control" placeholder="Startår" />
-            </div>
-            <div>
-                <label for="jobEndYear">Slutår</label>
-                <input id="jobEndYear" type="number" @bind="job.EndYear" class="form-control" placeholder="Slutår" />
-            </div>
-        </div>
-
-        <button class="btn btn-danger" @onclick="() => RemoveJobExperience(job)">Ta bort arbetslivserfarenhet</button>
-    </div>
-}
-
-@if (experienceList.Count < 3)
-{
-    <button class="btn btn-secondary" @onclick="AddExperience">Lägg till ny erfarenhet</button>
-}
-
-<hr class="section-divider">
-
-<h3 class="section-title">Referenser</h3>
-<p>Ange dina referenser (Max tre)</p>
-
-@foreach (var reference in referenceList)
-{
-    <div class="reference-card">
-        <h4>Referens @(@referenceList.IndexOf(reference) + 1)</h4>
-
-        <div class="form-group d-flex gap-3 label">
-            <div class="flex-fill">
-                <label for="referenceName">Namn</label>
-                <input id="referenceName" @bind="reference.Name" class="form-control" placeholder="Referensens namn" />
-            </div>
-            <div class="flex-fill">
-                <label for="referenceRelation">Relation</label>
-                <input id="referenceRelation" @bind="reference.Relation" class="form-control" placeholder="Relation till referens" />
-            </div>
-            <div class="flex-fill">
-                <label for="referencePhone">Telefonnummer</label>
-                <input id="referencePhone" @bind="reference.PhoneNumber" class="form-control" placeholder="Telefonnummer" />
-            </div>
-        </div>
-
-        <button class="btn btn-danger mt-2" @onclick="() => RemoveReference(reference)">Ta bort referens</button>
-    </div>
-}
-
-@if (referenceList.Count < 3)
-{
-    <button class="btn btn-secondary" @onclick="AddReference">Lägg till ny referens</button>
-}
-
-<hr class="section-divider">
-
-<h3 class="section-title">Övrigt</h3>
-
-<div class="form-group label">
-    <label for="newSkill">Här kan du lägga till andra kompetenser eller meriterande egenskaper</label>
-    <input id="newSkill" @bind="newSkill" class="form-control" placeholder="Kompetens eller merit" />
-</div>
-
-<button class="btn btn-secondary" @onclick="AddSkill">Lägg till</button>
-
-<div class="skills-container">
-    @if (cv.Skills != null)
-    {
-        @foreach (var skill in cv.Skills)
+        <!-- Utbildningar -->
+        <h3 class="section-title">Utbildningar</h3>
+        <p>Ange dina senaste utbildningar (Max tre)</p>
+        @foreach (var edu in educationList)
         {
-            <div class="skill-card">
-                <span class="skill-name">@skill</span>
-                <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+            <div class="education-card mb-3">
+                <h4>Utbildning @(@educationList.IndexOf(edu) + 1)</h4>
+                <div class="form-group d-flex gap-2">
+                    <div class="form-group label flex-fill">
+                        <label for="school">Skola</label>
+                        <input id="school" @bind="edu.School" class="form-control" placeholder="Skolans namn" />
+                    </div>
+                    <div class="form-group label flex-fill">
+                        <label for="specialization">Inriktning</label>
+                        <input id="specialization" @bind="edu.Specialization" class="form-control" placeholder="Inriktning" />
+                    </div>
+                </div>
+                <div class="form-group d-flex gap-3 align-items-end">
+                    <div class="flex-grow-2" style="flex: 2;">
+                        <label for="degree">Examen</label>
+                        <input id="degree" @bind="edu.Degree" class="form-control" placeholder="Examen" />
+                    </div>
+                    <div style="flex:0.5;">
+                        <label for="startYear">Startår</label>
+                        <input id="startYear" type="number" @bind="edu.StartYear" class="form-control" placeholder="Startår" />
+                    </div>
+                    <div style="flex:0.5;">
+                        <label for="endYear">Slutår</label>
+                        <input id="endYear" type="number" @bind="edu.EndYear" class="form-control" placeholder="Slutår" />
+                    </div>
+                </div><div>
+                    <button class="btn btn-danger mt-2" @onclick="() => RemoveEducation(edu)">Ta bort</button>
+                </div>
             </div>
         }
-    }
+        @if (educationList.Count < 3)
+        {
+            <button class="btn btn-secondary" @onclick="AddEducation">Lägg till utbildning</button>
+        }
+        <hr class="section-divider">
+
+        <!-- Arbetslivserfarenhet -->
+        <h3 class="section-title">Arbetslivserfarenhet</h3>
+        <p>Ange dina senaste arbetslivserfarenheter (Max tre)</p>
+        @foreach (var job in experienceList)
+        {
+            <div class="job-card mb-3">
+                <h4>Jobb @(@experienceList.IndexOf(job) + 1)</h4>
+                <div class="form-group d-flex gap-2">
+                    <div class="form-group label flex-fill">
+                        <label for="jobTitle">Jobbtitel</label>
+                        <input id="jobTitle" @bind="job.JobTitle" class="form-control" placeholder="Jobbtitel" />
+                    </div>
+                    <div class="form-group label flex-fill">
+                        <label for="company">Företag</label>
+                        <input id="company" @bind="job.Company" class="form-control" placeholder="Företag" />
+                    </div>
+                </div>
+                <div class="form-group label">
+                    <label for="jobDescription">Beskrivning av arbetsuppgifter</label>
+                    <textarea id="jobDescription" @bind="job.JobDescription" class="form-control" placeholder="Beskriv arbetsuppgifterna"></textarea>
+                </div>
+                <div class="form-group d-flex gap-3 align-items-end">
+                    <div class="form-group label mb-0">
+                        <label for="jobStartYear">Startår</label>
+                        <input id="jobStartYear" type="number" @bind="job.StartYear" class="form-control" placeholder="Startår" />
+                    </div>
+                    <div class="form-group label mb-0">
+                        <label for="jobEndYear">Slutår</label>
+                        <input id="jobEndYear" type="number" @bind="job.EndYear" class="form-control" placeholder="Slutår" />
+                    </div>
+                    <button class="btn btn-danger mt-2" @onclick="() => RemoveJobExperience(job)">Ta bort</button>
+                </div>
+            </div>
+        }
+        @if (experienceList.Count < 3)
+        {
+            <button class="btn btn-secondary" @onclick="AddExperience">Lägg till ny erfarenhet</button>
+        }
+
+        <hr class="section-divider">
+
+        <!-- Referenser -->
+        <h3 class="section-title">Referenser</h3>
+        <p>Ange dina referenser (Max tre)</p>
+        @foreach (var reference in referenceList)
+        {
+            <div class="reference-card mb-3">
+                <h4>Referens @(@referenceList.IndexOf(reference) + 1)</h4>
+                <div class="form-group d-flex gap-3 align-items-end">
+                    <div class="form-group label flex-fill mb-0">
+                        <label for="referenceName">Namn</label>
+                        <input id="referenceName" @bind="reference.Name" class="form-control" placeholder="Referensens namn" />
+                    </div>
+                    <div class="form-group label flex-fill mb-0">
+                        <label for="referenceRelation">Relation</label>
+                        <input id="referenceRelation" @bind="reference.Relation" class="form-control" placeholder="Relation till referens" />
+                    </div>
+                    <div class="form-group label flex-fill mb-0">
+                        <label for="referencePhone">Telefonnummer</label>
+                        <input id="referencePhone" @bind="reference.PhoneNumber" class="form-control" placeholder="Telefonnummer" />
+                    </div>
+                    <button class="btn btn-danger mt-2" @onclick="() => RemoveReference(reference)">Ta bort</button>
+                </div>
+            </div>
+        }
+        @if (referenceList.Count < 3)
+        {
+            <button class="btn btn-secondary" @onclick="AddReference">Lägg till ny referens</button>
+        }
+
+        <hr class="section-divider">
+
+        <!-- Övrigt -->
+        <div class="card mb-4 p-4">
+            <h4 class="mb-3"> Övriga kompetenser</h4>
+            <div class="form-group label">
+                <label for="newSkill">Här kan du lägga till andra kompetenser eller meriterande egenskaper</label>
+                <input id="newSkill" @bind="newSkill" class="form-control" placeholder="Kompetens eller merit" />
+            </div>
+            <button class="btn btn-secondary" @onclick="AddSkill">Lägg till</button>
+            <div class="skills-container mt-3">
+                @if (cv.Skills != null)
+                {
+                    @foreach (var skill in cv.Skills)
+                    {
+                        <div class="skill-card">
+                            <span class="skill-name">@skill</span>
+                            <button class="btn-remove" @onclick="() => RemoveSkill(skill)">Ta bort</button>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        @if (PdfData != null)
+        {
+            <div class="pdf-container">
+                <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>
+                <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>
+            </div>
+        }
+
+        <button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
+
+    </div>
 </div>
 
-
-
-@if (PdfData != null)
-{
-    <div class="pdf-container">
-        <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>
-        <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>
-    </div>
-}
-
-<button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
 
 
 @code {

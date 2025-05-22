@@ -3,31 +3,62 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-<h3>Välj en mall</h3>
+<div class="template-selection-container">
 
-<p>Välj en mall som passar dig bäst.</p>
+    <div class="template-header">
+        <h3>Välj en mall</h3>
+        <p>Välj en mall som passar dig bäst.</p>
+    </div>
 
-<div class="template-list">
-    <div class="template-item" @onclick="() => OnTemplateSelected(1)" style="cursor: pointer;">
-        <img src="../Images/Template1.jpg" alt="Mall 1 Preview" class="template-preview" />
-    </div>
-    <div class="template-item" @onclick="() => OnTemplateSelected(2)" style="cursor: pointer;">
-        <img src="../images/Template2.jpg" alt="Mall 2 Preview" class="template-preview" />
-    </div>
-    <div class="template-item" @onclick="() => OnTemplateSelected(3)" style="cursor: pointer;">
-        <img src="../Images/Template3.jpg" alt="Mall 3 Preview" class="template-preview" />
-    </div>
-    <div class="template-item" @onclick="() => OnTemplateSelected(4)" style="cursor: pointer;">
-        <img src="../images/Template4.jpg" alt="Mall 4 Preview" class="template-preview" />
-    </div>
-    <div class="template-item" @onclick="() => OnTemplateSelected(5)" style="cursor: pointer;">
-        <img src="../Images/Template5.jpg" alt="Mall 5 Preview" class="template-preview" />
-    </div>
-    <div class="template-item" @onclick="() => OnTemplateSelected(6)" style="cursor: pointer;">
-        <img src="../Images/Template6.jpg" alt="Mall 5 Preview" class="template-preview" />
-    </div>
-    <div class="template-item" @onclick="() => OnTemplateSelected(7)" style="cursor: pointer;">
-        <img src="../Images/Template7.jpg" alt="Mall 5 Preview" class="template-preview" />
+    <div class="template-list">
+        <div class="template-item" @onclick="() => OnTemplateSelected(1)">
+            <div class="template-number">1</div>
+            <div class="template-content">
+                <img src="../Images/Template1.jpg" alt="Mall 1 Preview" class="template-preview" />
+            </div>           
+        </div>
+
+        <div class="template-item" @onclick="() => OnTemplateSelected(2)">
+            <div class="template-number">2</div>
+            <div class="template-content">
+                <img src="../images/Template2.jpg" alt="Mall 2 Preview" class="template-preview" />
+            </div>            
+        </div>
+
+        <div class="template-item" @onclick="() => OnTemplateSelected(3)">
+            <div class="template-number">3</div>
+            <div class="template-content">
+                <img src="../Images/Template3.jpg" alt="Mall 3 Preview" class="template-preview" />
+            </div>            
+        </div>
+
+        <div class="template-item" @onclick="() => OnTemplateSelected(4)">
+            <div class="template-number">4</div>
+            <div class="template-content">
+                <img src="../images/Template4.jpg" alt="Mall 4 Preview" class="template-preview" />
+            </div>            
+        </div>
+
+        <div class="template-item" @onclick="() => OnTemplateSelected(5)">
+            <div class="template-number">5</div>
+            <div class="template-content">
+                <img src="../Images/Template5.jpg" alt="Mall 5 Preview" class="template-preview" />
+            </div>          
+        </div>
+
+        <div class="template-item" @onclick="() => OnTemplateSelected(6)">
+            <div class="template-number">6</div>
+            <div class="template-content">
+                <img src="../Images/Template6.jpg" alt="Mall 6 Preview" class="template-preview" />
+            </div>            
+        </div>
+
+        <div class="template-item" @onclick="() => OnTemplateSelected(7)">
+            <div class="template-number">7</div>
+            <div class="template-content">
+                <img src="../Images/Template7.jpg" alt="Mall 7 Preview" class="template-preview" />
+            </div>            
+        </div>
     </div>
 </div>
 

@@ -10,140 +10,167 @@
 @rendermode InteractiveServer
 
 
-@if(isFormVisible)
-{
 
-    <button class="btn btn-primary" @onclick="AutofillForm">Fyll data för testning</button>
+    
+<div class="personal-letter-container">
+    @if(isFormVisible)
+    {
+        <button class="btn btn-primary" @onclick="AutofillForm">Fyll data för testning</button>
 
-    <h1 class="section-title">Personligt brev</h1>
+        <h1 class="section-title">Personligt brev</h1>
 
-    <h1>Om dig själv</h1>
-    <div class="form-group d-flex gap-2">
-        <div class="form-group label" style="flex: 1;">
-            <label for="name">Namn</label>
-            <input id="name" @bind="personalLetter.Name" class="form-control" placeholder="För och efternamn" />
+        <!-- Personal Information Section -->
+        <div class="personal-info-card">
+            <h1>Personuppgifter</h1>
+            <div class="form-row">
+                <div class="form-group label">
+                    <label for="name">Namn</label>
+                    <input id="name" @bind="personalLetter.Name" class="form-control" placeholder="För och efternamn" />
+                </div>
+
+                <div class="form-group label">
+                    <label for="yrkestitel">Din yrkestitel</label>
+                    <input id="yrkestitel" @bind="personalLetter.ProfessionalTitle" class="form-control" placeholder="Fyll i din yrkestitel" />
+                </div>
+                
+                <div class="form-group label">
+                    <label for="yrkestitel">Tidigare erfarenhet i yrket</label>
+                    <select id="yrkestitel" @bind="personalLetter.YearsOfExperience" class="form-control">
+                        <option value="">Välj antal år</option>
+                        @foreach (var year in experienceOptions)
+                        {
+                            <option value="@year">@year</option>
+                        }
+                    </select>
+                </div>       
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group label">
+                    <label for="Email">Email</label>
+                    <input id="email" @bind="personalLetter.Email" class="form-control" placeholder="Fyll i din email" />
+                </div>
+                <div class="form-group label">
+                    <label for="adress">Adress</label>
+                    <input id="adress" @bind="personalLetter.Address" class="form-control" placeholder="Fyll i din adress" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group label">
+                    <label for="postnummer">Postnummer</label>
+                    <input id="postralcode" @bind="personalLetter.PostalCode" class="form-control" placeholder="Fyll i ditt postnummer" />
+                </div>
+
+                <div class="form-group label">
+                    <label for="telefon">Telefon</label>
+                    <input id="telefon" @bind="personalLetter.PhoneNumber" class="form-control" placeholder="Fyll i ditt telefonnummer" />
+                </div>
+
+                <div class="form-group label">
+                    <label for="stad">Stad</label>
+                    <input id="stad" @bind="personalLetter.City" class="form-control" placeholder="Fyll i din stad" />
+                </div>
+            </div>
         </div>
 
-        <div class="form-group label" style="flex: 1;">
-            <label for="yrkestitel">Din yrkestitel</label>
-            <input id="yrkestitel" @bind="personalLetter.ProfessionalTitle" class="form-control" placeholder="Fyll i din yrkestitel" />
+        <!-- About Me Section -->
+        <div class="section-card">
+            <h1>Om dig själv</h1>
+            <div class="form-group label">
+                <label for="aboutMe">Berätta kort om dig</label>
+                <textarea id="aboutMe" @bind="personalLetter.AboutMe" class="form-control" placeholder="Skriv en liten beskrivning om vem du är."></textarea>
+            </div>
+
+            <h3>Har du någon speciell hobby du vill berätta om?</h3>
+
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="yes" name="hobbys" @onchange="@(() => hasAnyHobby = true)" checked="@hasAnyHobby" />
+                    <label for="yes">Ja</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="no" name="hobbys" @onchange="@(() => hasAnyHobby = false)" checked="@(!hasAnyHobby)" />
+                    <label for="no">Nej</label>
+                </div>
+            </div>
+
+            @if (hasAnyHobby)
+            {
+                <div class="form-group label">
+                    <label for="personalLetter.hobbies">Beskriv din hobby</label>
+                    <textarea id="addHobbys" @bind="personalLetter.Hobbies" class="form-control" placeholder="Beskriv kort om din hobby"></textarea>
+                </div>
+            }
+
+            <div class="form-group label">
+                <label for="careerGoals">Karriärmål</label>
+                <textarea id="careerGoals" @bind="personalLetter.CareerGoals" class="form-control" placeholder="Vad är dina karriärsmål?"></textarea>
+            </div>
+
+            <div class="form-group label">
+                <label for="styrkor">Styrkor</label>
+                <textarea id="styrkor" @bind="personalLetter.Strenghts" class="form-control" placeholder="Dina styrkor"></textarea>
+            </div>
+
+            <div class="form-group label">
+                <label for="svagheter">Svagheter</label>
+                <textarea id="svagheter" @bind="personalLetter.Weaknesses" class="form-control" placeholder="Dina svagheter"></textarea>
+            </div>
         </div>
-        <div class="form-group label" style="flex: 1;">
-            <label for="yrkestitel">Tidigare erfarenhet i yrket</label>
-            <select id="yrkestitel" @bind="personalLetter.YearsOfExperience" class="form-control">
-                <option value="">Välj antal år</option>
-                @foreach (var year in experienceOptions)
-                {
-                    <option value="@year">@year</option>
-                }
-            </select>
-        </div>       
-    </div>
 
-    <div class="form-group label" style="flex: 1;">
-        <label for="Email">Email</label>
-        <input id="email" @bind="personalLetter.Email" class="form-control" placeholder="Fyll i din email" />
-    </div>
-    <div class="form-group label" style="flex: 1;">
-        <label for="adress">Adress</label>
-        <input id="adress" @bind="personalLetter.Address" class="form-control" placeholder="Fyll i din adress" />
-    </div>
+        <!-- Company Section -->
+        <div class="company-card">
+            <h1>Om företaget du söker jobb hos</h1>
+            <div class="form-row">
+                <div class="form-group label">
+                    <label for="firma">Företagsnamn</label>
+                    <input id="firma" @bind="personalLetter.CompanyName" class="form-control" placeholder="Ange vilket företag brevet riktar sig till." />
+                </div>
 
-    <div class="form-group label" style="flex: 1;">
-        <label for="postnummer">Postnummer</label>
-        <input id="postralcode" @bind="personalLetter.PostalCode" class="form-control" placeholder="Fyll i ditt postnummer" />
-    </div>
+                <div class="form-group label">
+                    <label for="firma">Vad företaget arbetar med</label>
+                    <input id="firma" @bind="personalLetter.BusinessOverview" class="form-control" placeholder="Beskriv kort vad företaget arbetar med." />
+                </div>
+            </div>
 
-    <div class="form-group label" style="flex: 1;">
-        <label for="telefon">Telefon</label>
-        <input id="telefon" @bind="personalLetter.PhoneNumber" class="form-control" placeholder="Fyll i ditt telefonnummer" />
-    </div>
+            <div class="form-group label">
+                <label for="motivation">Motivation</label>
+                <textarea id="motivation" @bind="personalLetter.WhyThisCompany" class="form-control" placeholder="@GetMotivationPlaceholder()"></textarea>
+            </div>
 
-    <div class="form-group label" style="flex: 1;">
-        <label for="stad">Stad</label>
-        <input id="stad" @bind="personalLetter.City" class="form-control" placeholder="Fyll i din stad" />
-    </div>
+            <div class="form-group label">
+                <label for="aboutMe">Vad kan du bidra med i detta arbete?</label>
+                <textarea id="aboutMe" @bind="personalLetter.YourValueToUs" class="form-control" placeholder="@GetContributionPlaceholder()"></textarea>
+            </div>
 
+            <h3>Har du något mer information som du vill lägga till?</h3>
 
-    <div class="form-group label">
-        <label for="aboutMe">Kort om mig</label>
-        <textarea id="aboutMe" @bind="personalLetter.AboutMe" class="form-control" placeholder="Skriv en liten beskrivning om vem du är."></textarea>
-    </div>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="yes" name="extraInfo" @onchange="@(() => hasExtraInfo = true)" checked="@hasExtraInfo" />
+                    <label for="yes">Ja</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="no" name="extraInfo" @onchange="@(() => hasExtraInfo = false)" checked="@(!hasExtraInfo)" />
+                    <label for="no">Nej</label>
+                </div>
+            </div>
 
-
-
-    <h3>Har du någon speciell hobby du vill berätta om?</h3>
-
-    <div>
-        <input type="radio" id="yes" name="hobbys" @onchange="@(() => hasAnyHobby = true)" checked="@hasAnyHobby" />
-        <label for="yes">Ja</label>
-
-        <input type="radio" id="no" name="hobbys" @onchange="@(() => hasAnyHobby = false)" checked="@(!hasAnyHobby)" />
-        <label for="no">Nej</label>
-    </div>
-
-    @if (hasAnyHobby)
-    {
-        <div class="form-group label">
-            <label for="personalLetter.hobbies">Beskriv din hobby</label>
-            <textarea id="addHobbys" @bind="personalLetter.Hobbies" class="form-control" placeholder="Beskriv kort om din hobby"></textarea>
-        </div>}
-
-    <div class="form-group label">
-        <label for="careerGoals">Karriärmål</label>
-        <textarea id="careerGoals" @bind="personalLetter.CareerGoals" class="form-control" placeholder="Vad är dina karriärsmål?"></textarea>
-    </div>
-
-    <div class="form-group label">
-        <label for="styrkor">Styrkor</label>
-        <textarea id="styrkor" @bind="personalLetter.Strenghts" class="form-control" placeholder="Dina styrkor"></textarea>
-    </div>
-
-    <div class="form-group label">
-        <label for="svagheter">Svagheter</label>
-        <textarea id="svagheter" @bind="personalLetter.Weaknesses" class="form-control" placeholder="Dina svagheter"></textarea>
-    </div>
-
-    <h1>Om företaget du söker jobb hos</h1>
-    <div class="form-group label">
-        <label for="firma">Företagsnamn</label>
-        <input id="firma" @bind="personalLetter.CompanyName" class="form-control" placeholder="Ange vilket företag brevet riktar sig till." />
-    </div>
-
-    <div class="form-group label">
-        <label for="firma">Vad företaget arbetar med</label>
-        <input id="firma" @bind="personalLetter.BusinessOverview" class="form-control" placeholder="Beskriv kort vad företaget arbetar med." />
-    </div>
-
-    <div class="form-group label">
-        <label for="motivation">Motivation</label>
-        <textarea id="motivation" @bind="personalLetter.WhyThisCompany" class="form-control" placeholder="@GetMotivationPlaceholder()"></textarea>
-    </div>
-
-    <div class="form-group label">
-        <label for="aboutMe">Vad kan du bidra med i detta arbete?</label>
-        <textarea id="aboutMe" @bind="personalLetter.YourValueToUs" class="form-control" placeholder="@GetContributionPlaceholder()"></textarea>
-    </div>
-
-
-    <h3>Har du något mer information som du vill lägga till?</h3>
-
-    <div>
-        <input type="radio" id="yes" name="extraInfo" @onchange="@(() => hasExtraInfo = true)" checked="@hasExtraInfo" />
-        <label for="yes">Ja</label>
-
-        <input type="radio" id="no" name="extraInfo" @onchange="@(() => hasExtraInfo = false)" checked="@(!hasExtraInfo)" />
-        <label for="no">Nej</label>
-    </div>
-
-    @if (hasExtraInfo)
-    {
-        <div class="form-group label">
-            <label for="extraDetails">Vad vill du lägga till?</label>
-            <textarea id="extraDetails" @bind="personalLetter.ExtraInfo" class="form-control" placeholder="Skriv mer här..."></textarea>
+            @if (hasExtraInfo)
+            {
+                <div class="form-group label">
+                    <label for="extraDetails">Vad vill du lägga till?</label>
+                    <textarea id="extraDetails" @bind="personalLetter.ExtraInfo" class="form-control" placeholder="Skriv mer här..."></textarea>
+                </div>
+            }
         </div>
     }
-}
+
+    <div class="content-container">
+        <!-- Rest of your content remains the same -->
+    </div>
+</div>
 
 
 
@@ -194,6 +221,8 @@
         <p class="text-light mt-2">@loadingMessage</p>
     </div>
 }
+
+
 
 
 
