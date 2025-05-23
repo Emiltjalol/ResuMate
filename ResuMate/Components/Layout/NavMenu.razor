@@ -13,69 +13,79 @@
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="nav-scrollable">
+    <div class="nav-header">
+        <h3>Meny</h3>
+    </div>
     <nav class="nav flex-column">
-     
-
         <AuthorizeView>
             <Authorized>
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="/account/manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>
-                        @if (user != null)
-                        {
-                            @($"{user.FirstName} {user.LastName}")
-                        }
-                        else
-                        {
-                            <em>Laddar...</em>
-                        }
+                        <span class="bi bi-person-fill" aria-hidden="true"></span>
+                        <span class="nav-text">
+                            @if (user != null)
+                            {
+                                @($"{user.FirstName} {user.LastName}")
+                            }
+                            else
+                            {
+                                <em>Laddar...</em>
+                            }
+                        </span>
                     </NavLink>
                 </div>
 
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="select-template" Match="NavLinkMatch.All">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Nytt CV
+                        <span class="bi bi-file-earmark-plus" aria-hidden="true"></span>
+                        <span class="nav-text">Nytt CV</span>
                     </NavLink>
                 </div>
 
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="personal-letter">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Nytt personligt brev
+                        <span class="bi bi-envelope" aria-hidden="true"></span>
+                        <span class="nav-text">Nytt personligt brev</span>
                     </NavLink>
-                </div>           
+                </div>
 
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="user-cvs" Match="NavLinkMatch.All">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Mina cvn
+                        <span class="bi bi-file-earmark-text" aria-hidden="true"></span>
+                        <span class="nav-text">Mina cvn</span>
                     </NavLink>
                 </div>
 
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="user-personal-letters" Match="NavLinkMatch.All">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Mina personliga brev
+                        <span class="bi bi-envelope-paper" aria-hidden="true"></span>
+                        <span class="nav-text">Mina personliga brev</span>
                     </NavLink>
                 </div>
 
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
                         <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logga ut
+                            <span class="bi bi-box-arrow-right" aria-hidden="true"></span>
+                            <span class="nav-text">Logga ut</span>
                         </button>
                     </form>
                 </div>
             </Authorized>
             <NotAuthorized>
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Registera konto
+                        <span class="bi bi-person-plus" aria-hidden="true"></span>
+                        <span class="nav-text">Registera konto</span>
                     </NavLink>
                 </div>
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Logga in
+                        <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span>
+                        <span class="nav-text">Logga in</span>
                     </NavLink>
                 </div>
             </NotAuthorized>

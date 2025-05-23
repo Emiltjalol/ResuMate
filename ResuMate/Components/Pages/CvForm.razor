@@ -1,5 +1,6 @@
 ﻿@page "/cvform"
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IDbContextFactory<ApplicationDbContext> DbContextFactory
 @inject ApplicationDbContext DbContext
 @inject CreateCvPdfService CreateCvPdfService
 @inject NavigationManager NavigationManager
@@ -7,7 +8,7 @@
 @rendermode InteractiveServer
 
 <div class="page-header">
-    <h1>CV Generator</h1>
+    <h1>CV Skaparen</h1>
     <div class="floating-element floating-element-1"></div>
     <div class="floating-element floating-element-2"></div>
     <div class="floating-element floating-element-3"></div>
@@ -22,8 +23,8 @@
         <button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
 
         <!-- Personuppgifter -->
-        <div class="card mb-4 p-4">
-            <h4 class="mb-3">Personuppgifter</h4>
+        <div class="personal-info-card">
+            <h1>Personuppgifter</h1>
             <div class="form-group d-flex gap-2">
                 <div class="form-group label flex-fill">
                     <label for="name">Namn</label>
@@ -81,11 +82,11 @@
         </div>
 
         <!-- Om mig -->
-        <div class="card mb-4 p-4">
-            <h4 class="mb-3">Om mig</h4>
+        <div class="section-card">
+            <h1>Om dig</h1>
             <div class="form-group label">
-                <label for="aboutMe">Kort om mig</label>
-                <textarea id="aboutMe" @bind="cv.AboutMe" class="form-control" placeholder="Skriv kort om dig själv"></textarea>
+                <label for="aboutMe">Kort beskrivning av dig</label>
+                <textarea id="aboutMe" @bind="cv.AboutMe" class="form-control" placeholder="Berätta något om dig själv, tänk på att du senare ska sälja in dig själv via ditt personliga brev så detta ska bara vara något kort som får dig att sticka ut."></textarea>
             </div>
         </div>
 
@@ -388,21 +389,24 @@
 
     private async Task SaveCvToDatabase(byte[] pdfBytes, string fileName)
     {
+        using var context = DbContextFactory.CreateDbContext();
         var userId = await GetCurrentUserIdAsync();
+
         if (userId != null)
         {
             var generatedCv = new GeneratedCv
-                {
-                    UserId = userId,
-                    CvData = pdfBytes,
-                    FileName = fileName,
-                    CreatedAt = DateTime.UtcNow
-                };
+            {
+                UserId = userId,
+                CvData = pdfBytes,
+                FileName = fileName,
+                CreatedAt = DateTime.UtcNow
+            };
 
-            DbContext.GeneratedCvs.Add(generatedCv);
-            await DbContext.SaveChangesAsync();
+            context.GeneratedCvs.Add(generatedCv);
+            await context.SaveChangesAsync();
         }
     }
+
 
     private async Task GenerateCvPdf()
     {
@@ -433,22 +437,31 @@
         }
     }
     private async Task AutofillFromLoggedInUser()
-    {      
-        
-            var userId = await GetCurrentUserIdAsync();        
+    {
+        try
+        {
+            var userId = await GetCurrentUserIdAsync();
+            if (userId == null)
+                return;
 
             var user = await DbContext.Users.FindAsync(userId);
-            if (user != null)
-            {
-                cv.Name = user.FirstName + " " + user.LastName;
-                cv.Email = user.Email;
-                cv.Address = user.Address;
-                cv.PostalCode = user.PostalCode;
-                cv.City = user.County;
-                cv.PhoneNumber = user.PhoneNumber;
-            }
-        
+            if (user == null || cv == null)
+                return;
+
+            cv.Name = user.FirstName + " " + user.LastName;
+            cv.Email = user.Email;
+            cv.Address = user.Address;
+            cv.PostalCode = user.PostalCode;
+            cv.City = user.County;
+            cv.PhoneNumber = user.PhoneNumber;
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            Console.WriteLine("Autofill failed: " + ex.Message);
+        }
     }
+
 
     private void AddTestData()
     {
