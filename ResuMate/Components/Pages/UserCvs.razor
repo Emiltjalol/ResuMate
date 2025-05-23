@@ -2,49 +2,122 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject Services.CvServices.GetCvService CvService
 @inject Services.CvServices.DeleteCvService DeleteCvService
+@inject IJSRuntime JS
+
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-
-
-<h3 class="section-title">Dina CV:n</h3>
-
-@if (generatedCvs == null)
-{
-    <p>Läser in dina CV:n...</p>
-}
-else if (generatedCvs.Count == 0)
-{
-    <p>Du har inte genererat några CV:n än.</p>
-}
-else
-{
-    <div class="cv-thumbnails">
-        @foreach (var cv in generatedCvs)
+<link href="lib/bootstrap/dist/css/cv-gallery.css" rel="stylesheet" />
+<div class="cv-gallery-container">
+    <div class="gallery-header">
+        <h3 class="section-title">Dina CV:n</h3>
+        @if (generatedCvs != null && generatedCvs.Count > 0)
         {
-            <div class="cv-thumbnail-card">
-                @* <p>@cv.FileName.Substring(0, Math.Min(15, cv.FileName.Length))...</p> *@
-
-
-                @if (!string.IsNullOrEmpty(cv.Base64CvData))
-                {
-                    <iframe src="data:application/pdf;base64,@cv.Base64CvData" style="width: 100%; height: 450px; border: none;" />
-                }
-                else
-                {
-                    <p>Ingen förhandsvisning tillgänglig</p>
-                }
-
-                <button class="btn btn-danger" @onclick="() => DeleteCv(cv)">Ta bort</button>                
-
+            <p class="gallery-subtitle">Hantera och ladda ner dina sparade CV:n</p>
+            <div class="cv-count-badge">
+                📄
+                <span>@generatedCvs.Count CV@(generatedCvs.Count != 1 ? ":n" : "") sparade</span>
             </div>
         }
     </div>
-}
 
+    @if (generatedCvs == null)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Läser in dina CV:n...</p>
+        </div>
+    }
+    else if (generatedCvs.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                📄
+            </div>
+            <h4>Inga CV:n än</h4>
+            <p>Du har inte genererat några CV:n än. Skapa ditt första CV för att komma igång!</p>
+            <a href="/select-template" class="btn-create-first">
+                ➕ Skapa ditt första CV
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="cv-thumbnails">
+            @foreach (var (cv, index) in generatedCvs.Select((cv, i) => (cv, i)))
+            {
+                <div class="cv-thumbnail-card" style="animation-delay: @(index * 0.1)s">
+                    <div class="cv-preview-container">
+                        @if (!string.IsNullOrEmpty(cv.Base64CvData))
+                        {
+                            <iframe src="data:application/pdf;base64,@cv.Base64CvData"
+                                    class="cv-preview-iframe"
+                                    title="CV Preview - @cv.FileName" />
+                        }
+                        else
+                        {
+                            <div class="no-preview">
+                                <div class="no-preview-icon">
+                                    📄
+                                </div>
+                                <p>Ingen förhandsvisning tillgänglig</p>
+                            </div>
+                        }
+                        
+                    </div>
+
+                    <div class="cv-card-footer">                     
+
+                        <div class="cv-date">
+                            📅 <span>@cv.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </div>
+
+                        <div class="cv-actions">
+                            <button class="btn-view" @onclick="() => ViewCv(cv)">
+                                Visa
+                            </button>
+
+                            <button class="btn-icon btn-download" @onclick="() => DownloadCv(cv)" title="Ladda ner CV">
+                                ⬇️
+                            </button>
+
+                            <button class="btn-icon btn-delete" @onclick="() => ShowDeleteModal(cv)" title="Ta bort CV">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @* Delete Confirmation Modal *@
+    @if (deleteModalCv != null)
+    {
+        <div class="delete-modal-overlay">
+            <div class="delete-modal">
+                <h4>Bekräfta borttagning</h4>
+                <p>
+                    Är du säker på att du vill ta bort CV:t "@deleteModalCv.FileName"?
+                    Denna åtgärd kan inte ångras.
+                </p>
+                <div class="delete-modal-actions">
+                    <button class="btn btn-secondary" @onclick="CancelDelete" disabled="@isDeleting">
+                        Avbryt
+                    </button>
+                    <button class="btn btn-danger" @onclick="ConfirmDelete" disabled="@isDeleting">
+                        @(isDeleting ? "Tar bort..." : "Ta bort")
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
-    private List<GeneratedCv>? generatedCvs;       
+    private List<GeneratedCv>? generatedCvs;
+    private GeneratedCv? deleteModalCv;
+    private bool isDeleting = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,6 +127,28 @@ else
             generatedCvs = await CvService.GetUserGeneratedCvsAsync(userId);
         }
     }
+
+    private void ShowDeleteModal(GeneratedCv cv)
+    {
+        deleteModalCv = cv;
+    }
+
+    private void CancelDelete()
+    {
+        deleteModalCv = null;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (deleteModalCv != null)
+        {
+            isDeleting = true;
+            await DeleteCv(deleteModalCv);
+            isDeleting = false;
+            deleteModalCv = null;
+        }
+    }
+
     private async Task DeleteCv(GeneratedCv cv)
     {
         var userId = await GetCurrentUserIdAsync();
@@ -61,15 +156,31 @@ else
         {
             var success = await DeleteCvService.DeleteCvAsync(cv.Id, userId);
             if (success && generatedCvs != null)
-            {               
+            {
                 generatedCvs.Remove(cv);
                 StateHasChanged();
             }
         }
     }
 
+    private async void ViewCv(GeneratedCv cv)
+    {
+        await JS.InvokeVoidAsync("viewPdf", cv.Base64CvData, cv.FileName);
+    }
 
+    private async void DownloadCv(GeneratedCv cv)
+    {
+        await JS.InvokeVoidAsync("downloadPdf", cv.Base64CvData, cv.FileName);
+    }
 
+    private string FormatFileSize(long? bytes)
+    {
+        if (!bytes.HasValue) return "Okänd storlek";
+        var kb = bytes.Value / 1024.0;
+        if (kb < 1024) return $"{Math.Round(kb)} KB";
+        var mb = kb / 1024.0;
+        return $"{Math.Round(mb * 10) / 10} MB";
+    }
 
     private async Task<string?> GetCurrentUserIdAsync()
     {
