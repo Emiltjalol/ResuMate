@@ -330,13 +330,14 @@ body {
 
     100% {
         opacity: 0;
-        transform: scale(40, 40);
+        transform: scale(40, 40); 
     }
 }
 
 .btn-secondary {
     background-color: var(--color-accent-1);
     color: var(--color-gray-800);
+    width: auto;
 }
 
     .btn-secondary:hover {
@@ -690,7 +691,7 @@ textarea.form-control {
             left: 0;
             width: 50px;
             height: 3px;
-            background-color: var(--color-accent-2);
+            background-color: var(--color-accent-3);            
             border-radius: var(--border-radius);
             transition: width var(--animation-speed) ease;
         }
@@ -702,7 +703,7 @@ textarea.form-control {
             left: 0;
             width: 50px;
             height: 3px;
-            background-color: var(--color-accent-3);
+            background-color: var(--color-accent-2);
             border-radius: var(--border-radius);
             transition: width var(--animation-speed) ease;
         }
@@ -759,7 +760,7 @@ textarea.form-control {
     padding: 0.5rem 1rem;
     background-color: var(--color-accent-1);
     color: var(--color-gray-800);
-    border-radius: 2rem;
+    border-radius: 0.5rem;
     font-weight: 600;
     animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     transition: transform var(--animation-speed) ease, background-color var(--animation-speed) ease;
@@ -803,7 +804,7 @@ textarea.form-control {
     .btn-remove:hover {
         color: var(--color-danger);
         background-color: rgba(0, 0, 0, 0.05);
-        transform: rotate(90deg);
+       
     }
 
 /* PDF Container */
@@ -1880,7 +1881,7 @@ input[type="radio"] {
 }
 
     /* Hover indicator line */
-    .nav-item::before {
+    /*.nav-item::before {
         content: '';
         position: absolute;
         left: 0;
@@ -1895,7 +1896,7 @@ input[type="radio"] {
 
     .nav-item:hover::before {
         transform: scaleY(1);
-    }
+    }*/
 
 .nav-link {
     display: flex;
@@ -1925,10 +1926,7 @@ input[type="radio"] {
         transition: transform 0.3s ease;
     }
 
-    .nav-link:hover::after {
-        transform: scaleX(1);
-        transform-origin: left;
-    }
+
 
     .nav-link:hover {
         color: #ff6b6b !important;

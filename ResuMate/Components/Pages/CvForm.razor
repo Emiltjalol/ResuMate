@@ -7,20 +7,23 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-<div class="page-header">
+@* <div class="page-header">
     <h1>CV Skaparen</h1>
     <div class="floating-element floating-element-1"></div>
     <div class="floating-element floating-element-2"></div>
     <div class="floating-element floating-element-3"></div>
     <div class="floating-element floating-element-4"></div>
     <div class="floating-element floating-element-5"></div>
-</div>
+</div> *@
+<button class="btn btn-secondary" @onclick="AddTestData">Lägg till Testdata</button>
+<button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
 
 <div class="cv-form-container">
+
     <div class="content-wrapper">
-        <h3 class="section-title">Fyll i dina uppgifter</h3>
-        <button class="btn btn-secondary" @onclick="AddTestData">Lägg till Testdata</button>
-        <button class="btn btn-primary btn-generate" @onclick="GenerateCvPdf">Generera CV</button>
+        <h1 class="section-title">Nytt CV</h1>
+        @* <h3 class="section-title">Fyll i dina uppgifter</h3> *@
+      
 
         <!-- Personuppgifter -->
         <div class="personal-info-card">
@@ -210,9 +213,13 @@
             <h4 class="mb-3"> Övriga kompetenser</h4>
             <div class="form-group label">
                 <label for="newSkill">Här kan du lägga till andra kompetenser eller meriterande egenskaper</label>
-                <input id="newSkill" @bind="newSkill" class="form-control" placeholder="Kompetens eller merit" />
+                <div class="d-flex gap-2">
+                    <input id="newSkill" @bind="newSkill" class="form-control flex-grow-1" placeholder="Kompetens eller merit" />
+                    <button class="btn btn-secondary flex-shrink-0" style="width: 120px;" @onclick="AddSkill">Lägg till</button>
+                </div>
             </div>
-            <button class="btn btn-secondary" @onclick="AddSkill">Lägg till</button>
+
+          
             <div class="skills-container mt-3">
                 @if (cv.Skills != null)
                 {
@@ -231,7 +238,7 @@
         {
             <div class="pdf-container">
                 <iframe class="pdf-viewer" src="@PdfData" style="width: 100%; height: 600px;"></iframe>
-                <a class="btn-download" href="@PdfData" download="Resume.pdf">Download PDF</a>
+                <a class="btn-download" href="@PdfData" download="Resume.pdf">Ladda ner PDF</a>
             </div>
         }
 
