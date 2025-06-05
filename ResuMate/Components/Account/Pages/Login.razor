@@ -11,41 +11,47 @@
 @inject IdentityRedirectManager RedirectManager
 
 <PageTitle>Logga in</PageTitle>
-
-<h1>Logga in</h1>
-<div class="row">
-    <div class="col-lg-6">
-        <section>
-            <StatusMessage Message="@errorMessage" />
-            <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-                <DataAnnotationsValidator />
-                <h2>Ange kontouppgifter för att logga in.</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="namn@example.com" />
-                    <label for="Input.Email" class="form-label">E-post</label>
-                    <ValidationMessage For="() => Input.Email" class="text-danger" />
-                </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Lösenord" />
-                    <label for="Input.Password" class="form-label">Lösenord</label>
-                    <ValidationMessage For="() => Input.Password" class="text-danger" />
-                </div>
-                <div class="checkbox mb-3">
-                    <label class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                        Kom ihåg mig
-                    </label>
-                </div>
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Logga in</button>
-                </div>
-               
-            </EditForm>
-        </section>
+<div class="login-container">
+    <div class="login-header">
+        <h1>Logga in</h1>
     </div>
-    
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="login-form-card">
+                <StatusMessage Message="@errorMessage" />
+                <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+                    <DataAnnotationsValidator />
+                    <h2>Ange kontouppgifter för att logga in</h2>
+                    <hr />
+                    <ValidationSummary class="text-danger validation-summary" role="alert" />
+
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="namn@example.com" />
+                        <label for="Input.Email" class="form-label">E-post</label>
+                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Lösenord" />
+                        <label for="Input.Password" class="form-label">Lösenord</label>
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+
+                    <div class="checkbox mb-3">
+                        <label class="form-label">
+                            <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                            Kom ihåg mig
+                        </label>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn-login">Logga in</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
@@ -92,7 +98,7 @@
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            errorMessage = "Fel vid inloggning. Kontrollera e-post och lösenord och försök igen.";
         }
     }
 

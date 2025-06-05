@@ -24,9 +24,9 @@ namespace ResuMate.Api
 
             builder.Services.AddHttpClient();
 
-            var apiKey = builder.Configuration["MY_API_KEY"];           
+            var apiKey = builder.Configuration["MY_API_KEY"];         
 
-            // Lägg till Swagger
+      
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -58,7 +58,7 @@ namespace ResuMate.Api
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Resumate API v1");
-                    c.RoutePrefix = string.Empty; // Gör så att Swagger är startsidan
+                    c.RoutePrefix = string.Empty;
                 });
             }
 
@@ -69,8 +69,6 @@ namespace ResuMate.Api
             }
 
             app.UseHttpsRedirection();
-
-
             
 
             app.UseAuthorization();
