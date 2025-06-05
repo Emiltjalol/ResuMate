@@ -183,7 +183,7 @@
         public string LastName { get; set; } = "";
 
         [Required(ErrorMessage = "Du måste ange en adress.")]        
-        [Display(Name = "Adress")]
+        [Display(Name = "Address")]
         public string Address { get; set; } = "";
 
         [Required(ErrorMessage = "Du måste ange ett postnummer.")]        
@@ -208,9 +208,12 @@
 
         [Required(ErrorMessage = "Du måste ange ett lösenord.")]
         [StringLength(100, ErrorMessage = "Lösenordet måste vara minst {2} tecken långt.", MinimumLength = 6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$",
+         ErrorMessage = "Lösenordet måste innehålla minst en stor bokstav, en liten bokstav, en siffra samt innehålla minst ett specialtecken.")]
         [DataType(DataType.Password)]
         [Display(Name = "Lösenord")]
         public string Password { get; set; } = "";
+
 
         [DataType(DataType.Password)]
         [Display(Name = "Bekräfta lösenord")]

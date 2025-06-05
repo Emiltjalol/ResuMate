@@ -374,7 +374,7 @@
 
         isLoadingLetter = true;
         await SetLoadingMessage("Sparar personligt brev...", 2000);
-        await SetLoadingMessage("Brevet är nu sparat och finns tillgängligt i din profil.", 5000);
+        await SetLoadingMessage("Ditt personliga brev har blivit sparat och finns under 'Mina personliga brev'.", 5000);
 
         try
         {            
@@ -397,7 +397,7 @@
             await DbContext.GeneratedPersonalLetters.AddAsync(generatedPersonalLetter);
             await DbContext.SaveChangesAsync();
 
-            loadingMessage = "Personligt brev sparat i databasen!";
+            loadingMessage = "";
         }
         catch (Exception ex)        {
 

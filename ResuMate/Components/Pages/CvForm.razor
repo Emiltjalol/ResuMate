@@ -429,7 +429,7 @@
         {
             isLoadingCV = true;
             await SetLoadingMessage("Sparar CV...", 2000);
-            await SetLoadingMessage("Ditt CV är sparat och finns i din profil under 'Mina CVn'.", 3000);
+            await SetLoadingMessage("Ditt CV är sparat och finns under 'Mina CVn'.", 3000);
             await SaveCvToDatabase(generatedPdfBytes, generatedFileName);
             isLoadingCV = false;
             
