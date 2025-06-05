@@ -355,8 +355,8 @@ namespace ResuMate.Services
                                 {
                                     col.Item().Text(text =>
                                     {
-                                        text.Span(reference.Name).Bold(); // Namnet i bold
-                                        text.Span($" - {reference.Relation} - {reference.PhoneNumber}").FontSize(10); // Resten i vanlig stil
+                                        text.Span(reference.Name).Bold();
+                                        text.Span($" - {reference.Relation} - {reference.PhoneNumber}").FontSize(10);
                                     });
                                 });
                             });

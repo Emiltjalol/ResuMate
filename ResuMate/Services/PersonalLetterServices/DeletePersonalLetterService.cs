@@ -17,7 +17,7 @@ namespace ResuMate.Services.PersonalLetterServices
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                Console.WriteLine($"Försöker ta bort persnligt brev med ID: {letterId} och UserId: {userId}");
+                Console.WriteLine($"Försöker ta bort personligt brev med ID: {letterId} och UserId: {userId}");
 
                 var letterToDelete = await context.GeneratedPersonalLetters
                     .FirstOrDefaultAsync(cv => cv.Id == letterId && cv.UserId == userId);

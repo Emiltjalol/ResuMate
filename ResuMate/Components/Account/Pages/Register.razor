@@ -17,80 +17,83 @@
 
 <PageTitle>Registera</PageTitle>
 
-<h1>Registrera konto</h1>
-
-<div class="row">
-    <div class="col-lg-6">
-        <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
-            <h2>Skapa nytt konto.</h2>
-            <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.FirstName" id="Input.FirstName" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
-                <label for="Input.Email">Förnamn</label>
-                <ValidationMessage For="() => Input.FirstName" class="text-danger" />
-            </div>
-
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.LastName" id="Input.LastName" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
-                <label for="Input.Email">Efternamn</label>
-                <ValidationMessage For="() => Input.LastName" class="text-danger" />
-            </div>
-
-
-            <div class="form-group d-flex gap-2">
-                <div class="form-floating mb-3" style="flex: 3;">
-                    <InputText @bind-Value="Input.Address" id="Input.Adress" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
-                    <label for="Input.Adress">Adress</label>
-                    <ValidationMessage For="() => Input.Address" class="text-danger" />
-                </div>              
-
-                <div class="form-floating mb-3" style="flex: 2;">
-                    <InputText @bind-Value="Input.County" id="Input.County" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
-                    <label for="Input.County">Ort</label>
-                    <ValidationMessage For="() => Input.LastName" class="text-danger" />
-                </div>
-
-                <div class="form-floating mb-3" style="flex: 1;">
-                    <InputText @bind-Value="Input.PostalCode" id="Input.Postalcode" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
-                    <label for="Input.Postalcode">Postnummer</label>
-                    <ValidationMessage For="() => Input.PostalCode" class="text-danger" />
-                </div>
-            </div>
-
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.PhoneNumber" id="Input.Phonenumber" class="form-control" autocomplete="form-control" aria-required="true" placeholder="" />
-                <label for="Input.phonenumber">Telefonnummer</label>
-                <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
-            </div>
-
-
-
-
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="namn@exempel.com" />
-                <label for="Input.Email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="" />
-                <label for="Input.Password">Lösenord</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="" />
-                <label for="Input.ConfirmPassword">Bekräfta lösenord</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Registrera konto</button>
-        </EditForm>
+<div class="register-container">
+    <div class="register-header">
+        <h1>Registrera konto</h1>        
     </div>
 
-</div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="register-form-card">
+                <StatusMessage Message="@Message" />
+                <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger validation-summary" role="alert" />
 
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.FirstName" id="Input.FirstName" class="form-control" autocomplete="given-name" aria-required="true" placeholder="Förnamn" />
+                        <label for="Input.FirstName">Förnamn</label>
+                        <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.LastName" id="Input.LastName" class="form-control" autocomplete="family-name" aria-required="true" placeholder="Efternamn" />
+                        <label for="Input.LastName">Efternamn</label>
+                        <ValidationMessage For="() => Input.LastName" class="text-danger" />
+                    </div>
+
+                    <div class="address-row">
+                        <div class="form-floating" style="flex: 2;">
+                            <InputText @bind-Value="Input.Address" id="Input.Address" class="form-control" autocomplete="street-address" aria-required="true" placeholder="Adress" />
+                            <label for="Input.Address">Adress</label>
+                            <ValidationMessage For="() => Input.Address" class="text-danger" />
+                        </div>              
+
+                        <div class="form-floating" style="flex: 2;">
+                            <InputText @bind-Value="Input.County" id="Input.County" class="form-control" autocomplete="address-level2" aria-required="true" placeholder="Ort" />
+                            <label for="Input.County">Ort</label>
+                            <ValidationMessage For="() => Input.County" class="text-danger" />
+                        </div>
+
+                        <div class="form-floating" style="flex: 1;">
+                            <InputText @bind-Value="Input.PostalCode" id="Input.PostalCode" class="form-control" autocomplete="postal-code" aria-required="true" placeholder="Postnummer" />
+                            <label for="Input.PostalCode">Postnummer</label>
+                            <ValidationMessage For="() => Input.PostalCode" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.PhoneNumber" id="Input.PhoneNumber" class="form-control" autocomplete="tel" aria-required="true" placeholder="Telefonnummer" />
+                        <label for="Input.PhoneNumber">Telefonnummer</label>
+                        <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="namn@exempel.com" />
+                        <label for="Input.Email">Email</label>
+                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Lösenord" />
+                        <label for="Input.Password">Lösenord</label>
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Bekräfta lösenord" />
+                        <label for="Input.ConfirmPassword">Bekräfta lösenord</label>
+                        <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                    </div>
+
+                    <button type="submit" class="btn-register">
+                        Registrera konto
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
 @code {
     private IEnumerable<IdentityError>? identityErrors;
 
@@ -183,7 +186,7 @@
         [Display(Name = "Adress")]
         public string Address { get; set; } = "";
 
-        [Required(ErrorMessage = "Du måste ange en postnummer.")]        
+        [Required(ErrorMessage = "Du måste ange ett postnummer.")]        
         [Display(Name = "Postnummer")]
         public string PostalCode { get; set; } = "";
 
